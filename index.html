@@ -75,78 +75,17 @@
     </section>
 
     <section id="produtos" class="products">
-      <h2>Destaques da Semana</h2>
+  <h2>Destaques da Semana</h2>
 
-      <div class="grid">
-        <div class="card">
-          <img src="https://m.media-amazon.com/images/I/71vGZ2v0XDL.jpg" />
-          <h3>Whey ForceLab 900g</h3>
-          <p class="price">R$149,00</p>
-          <button
-            onclick="
-              addToCart(
-                'Whey ForceLab 900g',
-                149,
-                'https://m.media-amazon.com/images/I/71vGZ2v0XDL.jpg',
-              )
-            "
-          >
-            ADICIONAR
-          </button>
-        </div>
+  <!-- GRID AUTOMÁTICA -->
+  <div class="grid" id="productsGrid">
+    <p style="opacity:0.6;">Carregando produtos...</p>
+  </div>
+</section>
 
-        <div class="card">
-          <img src="https://m.media-amazon.com/images/I/61wz6jR7R5L.jpg" />
-          <h3>Creatina Monohidratada</h3>
-          <p class="price">R$99,00</p>
-          <button
-            onclick="
-              addToCart(
-                'Creatina Monohidratada',
-                99,
-                'https://m.media-amazon.com/images/I/61wz6jR7R5L.jpg',
-              )
-            "
-          >
-            ADICIONAR
-          </button>
-        </div>
+<!-- Script automático -->
+<script type="module" src="js/products.js"></script>
 
-        <div class="card">
-          <img src="https://m.media-amazon.com/images/I/61ZyO6Z3JBL.jpg" />
-          <h3>Pré-Treino Insano</h3>
-          <p class="price">R$89,00</p>
-          <button
-            onclick="
-              addToCart(
-                'Pré-Treino Insano',
-                89,
-                'https://m.media-amazon.com/images/I/61ZyO6Z3JBL.jpg',
-              )
-            "
-          >
-            ADICIONAR
-          </button>
-        </div>
-
-        <div class="card">
-          <img src="https://m.media-amazon.com/images/I/61fYhG2ZzCL.jpg" />
-          <h3>Camiseta ForceLab</h3>
-          <p class="price">R$59,00</p>
-          <button
-            onclick="
-              addToCart(
-                'Camiseta ForceLab',
-                59,
-                'https://m.media-amazon.com/images/I/61fYhG2ZzCL.jpg',
-              )
-            "
-          >
-            ADICIONAR
-          </button>
-        </div>
-      </div>
-    </section>
 
     <footer id="contato">
       <h3>ForceLab Nutrition</h3>
@@ -176,8 +115,8 @@
     </div>
     <section class="products" id="productsGrid"></section>
 
+    
     <script type="module" src="js/products.js"></script>
-
     <script src="js/cart.js"></script>
   </body>
 </html>

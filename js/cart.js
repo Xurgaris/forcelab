@@ -134,3 +134,8 @@ function toggleCart() {
 }
 
 updateCart();
+// Tornar funções globais
+window.addToCart = addToCart;
+window.removeItem = removeItem;
+window.changeQty = changeQty;
+window.toggleCart = toggleCart;

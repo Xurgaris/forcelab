@@ -1,28 +1,51 @@
-import { db } from "./firebase";
+import { db } from "./firebase.js";
 
 import {
   collection,
   onSnapshot,
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-const grid = document.getElementById("productsGrid");
+/* ================================
+   GRID DA HOME
+================================ */
+
+const productsGrid = document.getElementById("productsGrid");
+
+/* ================================
+   LISTAR PRODUTOS AUTOMÁTICOS
+================================ */
 
 onSnapshot(collection(db, "produtos"), (snapshot) => {
-  grid.innerHTML = "";
+  productsGrid.innerHTML = "";
+
+  if (snapshot.empty) {
+    productsGrid.innerHTML = `
+      <p style="opacity:0.6;">
+        Nenhum produto cadastrado ainda.
+      </p>
+    `;
+    return;
+  }
 
   snapshot.forEach((docSnap) => {
-    let p = docSnap.data();
+    const produto = docSnap.data();
 
-    grid.innerHTML += `
-      <div class="product-card">
-        <img src="${p.imagem}" />
+    productsGrid.innerHTML += `
+      <div class="card">
+        <img src="${produto.imagem}" alt="${produto.nome}" />
 
-        <h3>${p.nome}</h3>
+        <h3>${produto.nome}</h3>
 
-        <p>R$ ${p.preco.toFixed(2)}</p>
+        <p class="price">
+          R$ ${produto.preco.toFixed(2)}
+        </p>
 
-        <button onclick="addToCart('${p.nome}', ${p.preco}, '${p.imagem}')">
-          Adicionar ao Carrinho
+        <button onclick="addToCart(
+          '${produto.nome}',
+          ${produto.preco},
+          '${produto.imagem}'
+        )">
+          ADICIONAR
         </button>
       </div>
     `;

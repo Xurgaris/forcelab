@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ForceLab Nutrition | Loja Oficial</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- TOPBAR PREMIUM -->
+<header class="topbar">
+  <div class="logo">
+    <h1>FORCE<span>LAB</span></h1>
+    <small>Nutrition</small>
+  </div>
+
+  <nav>
+    <a class="active" href="#">Início</a>
+    <a href="#produtos">Produtos</a>
+    <a href="#beneficios">Benefícios</a>
+    <a href="#contato">Contato</a>
+  </nav>
+
+  <div class="icons">
+<button onclick="toggleCart()">
+ 🛒 Carrinho (<span id="cartCount">0</span>)
+</button>
+
+  </div>
+</header>
+
+
+<!-- HERO BANNER -->
+<section class="hero">
+  <div class="hero-text">
+    <h2>Super Oferta</h2>
+    <h1>ATÉ <span>20% OFF</span></h1>
+    <p>Suplementos premium para performance máxima.</p>
+
+    <div class="hero-buttons">
+      <a href="#produtos" class="btn-main">APROVEITAR AGORA</a>
+      <a href="#beneficios" class="btn-outline">Ver Benefícios</a>
+    </div>
+  </div>
+
+  <div class="hero-img">
+    <img src="https://m.media-amazon.com/images/I/71vGZ2v0XDL.jpg">
+  </div>
+</section>
+
+
+<!-- CATEGORIAS -->
+<section class="categories">
+  <button class="cat active">Todos</button>
+  <button class="cat">Whey Protein</button>
+  <button class="cat">Creatina</button>
+  <button class="cat">Pré-Treino</button>
+  <button class="cat">Acessórios</button>
+</section>
+
+
+<!-- BENEFÍCIOS -->
+<section id="beneficios" class="benefits">
+  <h2>Por que escolher a ForceLab?</h2>
+
+  <div class="benefits-grid">
+    <div class="benefit">
+      🚚 <h3>Entrega Rápida</h3>
+      <p>Receba em casa com total segurança e agilidade.</p>
+    </div>
+
+    <div class="benefit">
+      🏋️ <h3>Alta Performance</h3>
+      <p>Produtos feitos para resultados reais.</p>
+    </div>
+
+    <div class="benefit">
+      ⭐ <h3>Qualidade Premium</h3>
+      <p>Suplementos testados e aprovados.</p>
+    </div>
+
+    <div class="benefit">
+      💬 <h3>Suporte WhatsApp</h3>
+      <p>Atendimento imediato para tirar dúvidas.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- PRODUTOS -->
+<section id="produtos" class="products">
+  <h2>Destaques da Semana</h2>
+
+  <div class="grid">
+
+    <div class="card">
+      <img src="https://m.media-amazon.com/images/I/71vGZ2v0XDL.jpg">
+      <h3>Whey ForceLab 900g</h3>
+      <p class="price">R$149,00</p>
+      <button onclick="addToCart(
+  'Whey ForceLab 900g',
+  149,
+  'https://m.media-amazon.com/images/I/71vGZ2v0XDL.jpg'
+)">
+ADICIONAR
+</button>
+
+
+    </div>
+
+    <div class="card">
+      <img src="https://m.media-amazon.com/images/I/61wz6jR7R5L.jpg">
+      <h3>Creatina Monohidratada</h3>
+      <p class="price">R$99,00</p>
+     <button onclick="addToCart(
+  'Creatina Monohidratada',
+  99,
+  'https://m.media-amazon.com/images/I/61wz6jR7R5L.jpg'
+)">
+ADICIONAR
+</button>
+
+
+    </div>
+
+    <div class="card">
+      <img src="https://m.media-amazon.com/images/I/61ZyO6Z3JBL.jpg">
+      <h3>Pré-Treino Insano</h3>
+      <p class="price">R$89,00</p>
+   <button onclick="addToCart(
+  'Pré-Treino Insano',
+  89,
+  'https://m.media-amazon.com/images/I/61ZyO6Z3JBL.jpg'
+)">
+ADICIONAR
+</button>
+
+
+    </div>
+
+    <div class="card">
+      <img src="https://m.media-amazon.com/images/I/61fYhG2ZzCL.jpg">
+      <h3>Camiseta ForceLab</h3>
+      <p class="price">R$59,00</p>
+      <button onclick="addToCart(
+  'Camiseta ForceLab',
+  59,
+  'https://m.media-amazon.com/images/I/61fYhG2ZzCL.jpg'
+)">
+ADICIONAR
+</button>
+
+  </div>
+</section>
+
+
+<!-- DEPOIMENTOS -->
+<section class="testimonials">
+  <h2>Clientes que aprovaram</h2>
+
+  <div class="testimonial-grid">
+    <div class="review">
+      ⭐⭐⭐⭐⭐
+      <p>"Melhor whey que já comprei. Entrega rápida!"</p>
+      <strong>- João M.</strong>
+    </div>
+
+    <div class="review">
+      ⭐⭐⭐⭐⭐
+      <p>"Creatina top demais, resultados em 2 semanas."</p>
+      <strong>- Lucas R.</strong>
+    </div>
+
+    <div class="review">
+      ⭐⭐⭐⭐⭐
+      <p>"Loja linda e atendimento excelente no WhatsApp."</p>
+      <strong>- Ana S.</strong>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer id="contato">
+  <h3>ForceLab Nutrition</h3>
+  <p>Suplementos, acessórios e performance máxima.</p>
+  <p>📍 Brasil | 📞 WhatsApp: (00) 00000-0000</p>
+</footer>
+
+
+<!-- WHATSAPP FLOAT -->
+<a class="whatsapp" href="https://wa.me/5500000000000" target="_blank">
+  💬
+</a>
+
+
+<!-- MINI CART -->
+<!-- MINI CART PREMIUM -->
+<div id="miniCart" class="mini-cart">
+
+  <div class="cart-header">
+    <h3>Seu Carrinho</h3>
+    <button class="close-cart" onclick="toggleCart()">✖</button>
+  </div>
+
+  <div id="miniCartItems" class="mini-items"></div>
+
+  <div class="cart-footer">
+    <p>Total:</p>
+    <h2>R$ <span id="miniTotal">0</span></h2>
+
+    <a href="carrinho.html" class="btn-main full">
+      Ver Carrinho
+    </a>
+
+    <a href="checkout.html" class="btn-outline full">
+      Finalizar Pedido
+    </a>
+  </div>
+
+</div>
+
+
+<script src="js/cart.js"></script>
+</body>
+</html>

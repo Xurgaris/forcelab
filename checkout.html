@@ -1,28 +1,78 @@
-<form class="checkout-form" name="pedido" method="POST" data-netlify="true">
-  <!-- OBRIGATÓRIO -->
-  <input type="hidden" name="form-name" value="pedido" />
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ForceLab | Checkout</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">
+        <h1>FORCE<span>LAB</span></h1>
+        <small>Checkout</small>
+      </div>
 
-  <h2>Dados do Cliente</h2>
+      <nav>
+        <a href="cart.html">⬅ Voltar</a>
+      </nav>
+    </header>
 
-  <input type="text" name="nome" placeholder="Nome completo" required />
-  <input type="text" name="whatsapp" placeholder="WhatsApp" required />
-  <input type="text" name="endereco" placeholder="Endereço completo" required />
+    <section class="checkout-page">
+      <h1 class="checkout-title">Finalizar Pedido</h1>
 
-  <select name="pagamento">
-    <option value="Pix">Pix</option>
-    <option value="Cartão">Cartão</option>
-    <option value="Dinheiro">Dinheiro</option>
-  </select>
+      <div class="checkout-grid">
+        <form
+          class="checkout-form"
+          name="pedido"
+          method="POST"
+          data-netlify="true"
+          action="/success.html"
 
-  <textarea name="obs" placeholder="Observações do pedido..."></textarea>
+        >
+          <input type="hidden" name="form-name" value="pedido" />
 
-  <!-- Pedido escondido -->
-  <input type="hidden" name="carrinho" id="pedidoFinal" />
+          <h2>Dados do Cliente</h2>
 
-  <button type="submit" class="btn-main full">ENVIAR PEDIDO 🚀</button>
-  <script>
-    document.getElementById("pedidoFinal").value = JSON.stringify(
-      JSON.parse(localStorage.getItem("cart")) || [],
-    );
-  </script>
-</form>
+          <input type="text" name="nome" placeholder="Nome completo" required />
+          <input type="text" name="whatsapp" placeholder="WhatsApp" required />
+          <input
+            type="text"
+            name="endereco"
+            placeholder="Endereço completo"
+            required
+          />
+
+          <select name="pagamento">
+            <option value="Pix">Pix</option>
+            <option value="Cartão">Cartão</option>
+            <option value="Dinheiro">Dinheiro</option>
+          </select>
+
+          <textarea name="obs" placeholder="Observações..."></textarea>
+
+          <input type="hidden" name="carrinho" id="pedidoFinal" />
+
+          <button type="submit" class="btn-main full">ENVIAR PEDIDO 🚀</button>
+        </form>
+
+        <div class="checkout-box">
+          <h2>Resumo do Pedido</h2>
+          <div id="miniCartItems"></div>
+
+          <h3 class="checkout-total">
+            Total: R$ <span id="miniTotal">0</span>
+          </h3>
+        </div>
+      </div>
+    </section>
+
+    <script src="js/cart.js"></script>
+
+    <script>
+      document.getElementById("pedidoFinal").value = JSON.stringify(
+        JSON.parse(localStorage.getItem("cart")) || [],
+      );
+    </script>
+  </body>
+</html>

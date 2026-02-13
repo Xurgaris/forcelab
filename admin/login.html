@@ -1,27 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin Login | ForceLab</title>
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ForceLab Admin | Login</title>
 
-<section class="checkout-page">
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
 
-  <h1 style="text-align:center;">Painel Admin</h1>
+  <body>
+    <section class="checkout-page">
+      <h1 class="checkout-title">Painel Admin</h1>
 
-  <form class="checkout-form" onsubmit="login(event)">
-    <h2>Login</h2>
+      <form class="checkout-form" id="loginForm">
+        <h2>Login ForceLab</h2>
 
-    <input type="text" id="user" placeholder="Usuário" required>
-    <input type="password" id="pass" placeholder="Senha" required>
+        <input
+          type="email"
+          id="email"
+          placeholder="Email Admin"
+          required
+        />
 
-    <button class="btn-main full">Entrar</button>
-  </form>
+        <input
+          type="password"
+          id="password"
+          placeholder="Senha"
+          required
+        />
 
-</section>
+        <button type="submit" class="btn-main full">
+          Entrar no Dashboard 🚀
+        </button>
+      </form>
+    </section>
 
-<script src="admin.js"></script>
-</body>
+    <script type="module" src="admin.js"></script>
+  </body>
 </html>

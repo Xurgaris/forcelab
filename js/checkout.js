@@ -37,3 +37,4 @@ document.querySelector("form").addEventListener("submit", async (e) => {
   localStorage.removeItem("cart");
   window.location.href = "index.html";
 });
+<script type="module" src="js/checkout.js"></script>

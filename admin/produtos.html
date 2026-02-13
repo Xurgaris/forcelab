@@ -5,53 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ForceLab Admin | Produtos</title>
 
-    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="admin-ui.css" />
   </head>
 
   <body>
-    <!-- HEADER -->
-    <header class="topbar">
-      <div class="logo">
-        <h1>FORCE<span>LAB</span></h1>
-        <small>Gerenciar Produtos</small>
-      </div>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2>FORCE<span>LAB</span></h2>
+      <small>Admin Panel</small>
 
-      <nav style="display:flex; gap:15px;">
-        <a href="dashboard.html">Pedidos</a>
-        <a href="produtos.html" style="color:red;">Produtos</a>
-        <button class="btn-main" onclick="logoutAdmin()">Sair</button>
+      <nav>
+        <a href="dashboard.html">📦 Pedidos</a>
+        <a href="produtos.html" class="active">🛒 Produtos</a>
+        <a href="#" onclick="logoutAdmin()">🚪 Sair</a>
       </nav>
-    </header>
+    </aside>
 
-    <!-- FORM PRODUTO -->
-    <section class="checkout-page">
-      <h1 class="checkout-title">Cadastrar Produto</h1>
+    <main class="main-content">
+      <!-- Conteúdo do cadastro e lista aqui -->
+    </main>
+  </div>
+</body>
 
-      <form class="checkout-form" id="productForm">
-        <input type="text" id="nome" placeholder="Nome do Produto" required />
-
-        <input type="number" id="preco" placeholder="Preço (Ex: 149.90)" required />
-
-        <input
-          type="text"
-          id="imagem"
-          placeholder="Link da Imagem do Produto"
-          required
-        />
-
-        <button type="submit" class="btn-main full">
-          Salvar Produto ➕
-        </button>
-      </form>
-    </section>
-
-    <!-- LISTA -->
-    <section class="cart-page">
-      <h1 class="cart-title">Produtos Cadastrados</h1>
-
-      <div id="productsBox" class="cart-items"></div>
-    </section>
-
-    <script type="module" src="../admin/produtos.js"></script>
-  </body>
 </html>

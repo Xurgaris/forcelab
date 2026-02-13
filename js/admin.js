@@ -1,7 +1,6 @@
 import { auth, db } from "../js/firebase.js";
 
 import {
-  signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
@@ -14,40 +13,14 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 /* ================================
-   LOGIN ADMIN
-================================ */
-
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-
-      alert("Login realizado com sucesso!");
-      window.location.href = "dashboard.html";
-    } catch (err) {
-      alert("Erro no login: " + err.message);
-    }
-  });
-}
-
-/* ================================
-   PROTEÇÃO DO DASHBOARD
+   PROTEÇÃO
 ================================ */
 
 onAuthStateChanged(auth, (user) => {
-  if (window.location.href.includes("dashboard")) {
-    if (!user) {
-      window.location.href = "login.html";
-    } else {
-      loadOrders();
-    }
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    loadDashboard();
   }
 });
 
@@ -61,77 +34,72 @@ window.logoutAdmin = async function () {
 };
 
 /* ================================
-   LISTAR PEDIDOS EM TEMPO REAL
+   DASHBOARD
 ================================ */
 
-function loadOrders() {
+function loadDashboard() {
   const ordersBox = document.getElementById("ordersBox");
 
+  const totalPedidosEl = document.getElementById("totalPedidos");
+  const pendentesEl = document.getElementById("pendentes");
+  const totalProdutosEl = document.getElementById("totalProdutos");
+
+  /* PEDIDOS */
   onSnapshot(collection(db, "pedidos"), (snapshot) => {
     ordersBox.innerHTML = "";
+
+    let totalPedidos = snapshot.size;
+    let pendentes = 0;
 
     snapshot.forEach((docSnap) => {
       let pedido = docSnap.data();
       let id = docSnap.id;
 
+      if (pedido.status === "Pendente") pendentes++;
+
       ordersBox.innerHTML += `
-        <div class="cart-row" style="flex-direction:column; align-items:flex-start;">
-          
-          <h3 style="color:var(--primary)">
-            👤 ${pedido.cliente}
-          </h3>
+        <div class="order-item">
+          <h4>👤 ${pedido.cliente}</h4>
+          <p>Total: <strong>R$ ${pedido.total.toFixed(2)}</strong></p>
+          <p>Status: <strong>${pedido.status}</strong></p>
 
-          <p>📞 WhatsApp: ${pedido.whatsapp}</p>
-          <p>📍 Endereço: ${pedido.endereco}</p>
-          <p>💳 Pagamento: <strong>${pedido.pagamento}</strong></p>
-
-          <p>
-            📦 Status:
-            <strong style="color:yellow">${pedido.status}</strong>
-          </p>
-
-          <p style="margin-top:10px;">
-            💰 Total: <strong style="color:red">R$ ${pedido.total.toFixed(
-              2
-            )}</strong>
-          </p>
-
-          <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
-            
-            <button class="btn-main" onclick="updateStatus('${id}','Pago')">
-              Marcar como Pago ✅
+          <div class="order-actions">
+            <button class="btn-admin" onclick="updateStatus('${id}','Pago')">
+              Pago ✅
             </button>
 
-            <button class="btn-main" onclick="updateStatus('${id}','Enviado')">
-              Marcar como Enviado 🚚
+            <button class="btn-admin" onclick="updateStatus('${id}','Enviado')">
+              Enviado 🚚
             </button>
 
             <a class="btn-outline"
               target="_blank"
-              href="https://wa.me/55${pedido.whatsapp.replace(
-                /\D/g,
-                ""
-              )}">
-              Abrir WhatsApp 💬
+              href="https://wa.me/55${pedido.whatsapp.replace(/\D/g, "")}">
+              WhatsApp 💬
             </a>
-
           </div>
         </div>
       `;
     });
+
+    totalPedidosEl.innerText = totalPedidos;
+    pendentesEl.innerText = pendentes;
+  });
+
+  /* PRODUTOS */
+  onSnapshot(collection(db, "produtos"), (snapshot) => {
+    totalProdutosEl.innerText = snapshot.size;
   });
 }
 
 /* ================================
-   ATUALIZAR STATUS
+   STATUS UPDATE
 ================================ */
 
 window.updateStatus = async function (id, status) {
-  const ref = doc(db, "pedidos", id);
-
-  await updateDoc(ref, {
+  await updateDoc(doc(db, "pedidos", id), {
     status: status,
   });
 
-  alert("Status atualizado para: " + status);
+  alert("Status atualizado: " + status);
 };

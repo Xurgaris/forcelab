@@ -3,37 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ForceLab Admin | Pedidos</title>
+    <title>ForceLab Admin | Dashboard</title>
 
-    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="admin-ui.css" />
   </head>
 
   <body>
-    <!-- HEADER -->
-    <header class="topbar">
-      <div class="logo">
-        <h1>FORCE<span>LAB</span></h1>
-        <small>Admin Dashboard</small>
-      </div>
+    <div class="admin-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <h2>FORCE<span>LAB</span></h2>
+        <small>Admin Panel</small>
 
-      <!-- MENU -->
-      <nav style="display:flex; gap:15px; align-items:center;">
-        <a href="dashboard.html" style="color:red;">Pedidos</a>
-        <a href="produtos.html">Produtos</a>
+        <nav>
+          <a href="dashboard.html" class="active">📦 Pedidos</a>
+          <a href="produtos.html">🛒 Produtos</a>
+          <a href="#" onclick="logoutAdmin()">🚪 Sair</a>
+        </nav>
+      </aside>
 
-        <button class="btn-main" onclick="logoutAdmin()">
-          Sair
-        </button>
-      </nav>
-    </header>
+      <!-- MAIN -->
+      <main class="main-content">
+        <h1>Dashboard</h1>
 
-    <!-- PEDIDOS -->
-    <section class="cart-page">
-      <h1 class="cart-title">Pedidos Recebidos</h1>
+        <!-- CARDS -->
+        <div class="cards">
+          <div class="card-box">
+            <h3>Total de Pedidos</h3>
+            <p id="totalPedidos">0</p>
+          </div>
 
-      <div id="ordersBox" class="cart-items"></div>
-    </section>
+          <div class="card-box">
+            <h3>Pendentes</h3>
+            <p id="pendentes">0</p>
+          </div>
 
-    <script type="module" src="../js/admin.js"></script>
+          <div class="card-box">
+            <h3>Produtos</h3>
+            <p id="totalProdutos">0</p>
+          </div>
+        </div>
+
+        <!-- LISTA -->
+        <div class="admin-list">
+          <h2>Pedidos Recentes</h2>
+          <div id="ordersBox"></div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="admin.js"></script>
   </body>
 </html>

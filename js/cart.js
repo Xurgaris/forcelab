@@ -1,14 +1,11 @@
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-/* ===========================
+/* ==========================
    ADD TO CART
-=========================== */
+========================== */
 function addToCart(name, price, image) {
-
-  // ✅ Garantia de valor correto
   price = Number(price);
 
-  // ✅ Caso a imagem venha vazia
   if (!image) {
     image = "https://via.placeholder.com/80";
   }
@@ -19,9 +16,9 @@ function addToCart(name, price, image) {
     existing.qty++;
   } else {
     cart.push({
-      name: name,
-      price: price,
-      image: image,
+      name,
+      price,
+      image,
       qty: 1
     });
   }
@@ -30,19 +27,18 @@ function addToCart(name, price, image) {
   updateCart();
 }
 
-
-/* ===========================
+/* ==========================
    REMOVE ITEM
-=========================== */
+========================== */
 function removeItem(name) {
   cart = cart.filter(item => item.name !== name);
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCart();
 }
 
-/* ===========================
+/* ==========================
    CHANGE QUANTITY
-=========================== */
+========================== */
 function changeQty(name, action) {
   cart.forEach(item => {
     if (item.name === name) {
@@ -55,12 +51,13 @@ function changeQty(name, action) {
   updateCart();
 }
 
-/* ===========================
+/* ==========================
    UPDATE CART UI
-=========================== */
+========================== */
 function updateCart() {
-  let count = cart.reduce((sum, item) => sum + item.qty, 0);
 
+  /* CART COUNT */
+  let count = cart.reduce((sum, item) => sum + item.qty, 0);
   let cartCount = document.getElementById("cartCount");
   if (cartCount) cartCount.innerText = count;
 
@@ -68,7 +65,7 @@ function updateCart() {
   let miniItems = document.getElementById("miniCartItems");
   let miniTotal = document.getElementById("miniTotal");
 
-  if (miniItems) {
+  if (miniItems && miniTotal) {
     miniItems.innerHTML = "";
     let total = 0;
 
@@ -80,7 +77,7 @@ function updateCart() {
           <img src="${item.image}">
           <div>
             <p>${item.name}</p>
-            <small>R$${item.price} x ${item.qty}</small>
+            <small>R$ ${item.price} x ${item.qty}</small>
           </div>
           <button onclick="removeItem('${item.name}')">✖</button>
         </div>
@@ -94,7 +91,7 @@ function updateCart() {
   let cartItems = document.getElementById("cartItems");
   let cartTotal = document.getElementById("cartTotal");
 
-  if (cartItems) {
+  if (cartItems && cartTotal) {
     cartItems.innerHTML = "";
     let total = 0;
 
@@ -104,9 +101,10 @@ function updateCart() {
       cartItems.innerHTML += `
         <div class="cart-row">
           <img src="${item.image}">
+          
           <div class="cart-info">
             <h3>${item.name}</h3>
-            <p>R$${item.price}</p>
+            <p>R$ ${item.price}</p>
           </div>
 
           <div class="cart-qty">
@@ -128,9 +126,9 @@ function updateCart() {
   }
 }
 
-/* ===========================
-   TOGGLE SIDEBAR CART
-=========================== */
+/* ==========================
+   TOGGLE CART SIDEBAR
+========================== */
 function toggleCart() {
   document.getElementById("miniCart").classList.toggle("active");
 }

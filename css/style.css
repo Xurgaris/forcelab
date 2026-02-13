@@ -2,14 +2,17 @@
 
 :root {
   --bg: #050505;
-  --card: #101010;
+  --card: #111111;
   --text: #ffffff;
-  --muted: #bdbdbd;
-  --primary: #00ff7f;
-  --primary-dark: #00cc66;
+  --muted: #aaaaaa;
+
+  --primary: #ff1a1a;       /* VERMELHO FORCE */
+  --primary-dark: #cc0000;  /* VERMELHO ESCURO */
+
   --border: rgba(255, 255, 255, 0.08);
   --radius: 18px;
 }
+
 
 * {
   margin: 0;
@@ -99,41 +102,27 @@ nav a.active {
    HERO
 =========================== */
 .hero {
+  min-height: 85vh;
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 50px;
+  grid-template-columns: 1.3fr 1fr;
   align-items: center;
-}
-
-.hero-text h2 {
-  color: var(--primary);
-  font-size: 22px;
+  gap: 60px;
 }
 
 .hero-text h1 {
-  font-size: 55px;
-  margin: 10px 0;
-}
-
-.hero-text span {
-  color: var(--primary);
+  font-size: 65px;
+  line-height: 1.05;
 }
 
 .hero-text p {
-  color: var(--muted);
-  margin-bottom: 25px;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 15px;
+  font-size: 18px;
+  max-width: 480px;
 }
 
 .hero-img img {
-  width: 100%;
-  max-width: 420px;
-  border-radius: var(--radius);
-  box-shadow: 0 0 60px rgba(0, 255, 127, 0.25);
+  max-width: 430px;
+  border-radius: 22px;
+  box-shadow: 0 0 80px rgba(255, 0, 0, 0.25);
 }
 
 /* ===========================
@@ -143,8 +132,8 @@ nav a.active {
   display: inline-block;
   padding: 14px 20px;
   border-radius: 999px;
-  background: var(--primary);
-  color: black;
+   background: var(--primary);
+  color: white;
   font-weight: 800;
   text-align: center;
   transition: 0.2s;
@@ -225,9 +214,11 @@ nav a.active {
 }
 
 .card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-10px) scale(1.02);
   border-color: var(--primary);
+  box-shadow: 0 0 40px rgba(255, 0, 0, 0.20);
 }
+
 
 .card img {
   width: 100%;
@@ -396,11 +387,17 @@ nav a.active {
 }
 
 .checkout-box {
-  background: var(--card);
-  padding: 25px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.9)
+  );
+
+  padding: 30px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 0, 0, 0.25);
 }
+
 
 /* ===========================
    FOOTER

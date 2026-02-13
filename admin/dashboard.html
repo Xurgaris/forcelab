@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos | ForceLab Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h2>Dashboard - Pedidos</h2>
+  <button class="btn-main" onclick="logout()">Sair</button>
+</header>
+
+<section>
+  <h1>Pedidos Recebidos</h1>
+
+  <p style="color:var(--muted)">
+    Aqui aparecerão os pedidos enviados pelo Netlify Forms.
+  </p>
+
+  <div class="checkout-box">
+    <h2>📦 Netlify Forms</h2>
+
+    <p>
+      Para ver os pedidos:
+      <br><br>
+      Vá no Netlify → Forms → pedido
+    </p>
+
+    <p style="margin-top:15px; color:var(--primary)">
+      Em breve vamos integrar API e mostrar tudo aqui dentro.
+    </p>
+  </div>
+</section>
+<section class="cart-page">
+  <h1 class="cart-title">Pedidos Recebidos</h1>
+
+  <div id="pedidos"></div>
+</section>
+
+<script type="module" src="admin.js"></script>
+
+
+<script src="admin.js"></script>
+</body>
+</html>

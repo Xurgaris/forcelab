@@ -28,19 +28,9 @@
         <form class="checkout-form">
           <h2>Dados do Cliente</h2>
 
-          <input
-            type="text"
-            name="nome"
-            placeholder="Nome completo"
-            required
-          />
+          <input type="text" name="nome" placeholder="Nome completo" required />
 
-          <input
-            type="text"
-            name="whatsapp"
-            placeholder="WhatsApp"
-            required
-          />
+          <input type="text" name="whatsapp" placeholder="WhatsApp" required />
 
           <input
             type="text"
@@ -55,14 +45,9 @@
             <option value="Dinheiro">Dinheiro</option>
           </select>
 
-          <textarea
-            name="obs"
-            placeholder="Observações..."
-          ></textarea>
+          <textarea name="obs" placeholder="Observações..."></textarea>
 
-          <button type="submit" class="btn-main full">
-            ENVIAR PEDIDO 🚀
-          </button>
+          <button type="submit" class="btn-main full">ENVIAR PEDIDO 🚀</button>
         </form>
 
         <!-- RESUMO -->
@@ -74,6 +59,25 @@
           <h3 class="checkout-total">
             Total: R$ <span id="miniTotal">0</span>
           </h3>
+          <div class="pix-box">
+            <h2>Pagamento via Pix</h2>
+
+            <p style="opacity: 0.8">
+              Chave Pix:
+              <strong id="pixKey">00000000000</strong>
+            </p>
+
+            <img
+              id="pixQr"
+              src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00000000000"
+              alt="QR Code Pix"
+              style="margin-top: 15px; border-radius: 12px"
+            />
+
+            <p style="font-size: 13px; opacity: 0.6; margin-top: 10px">
+              Após o pagamento, envie o comprovante no WhatsApp.
+            </p>
+          </div>
         </div>
       </div>
     </section>

@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ForceLab | Checkout</title>
+
     <link rel="stylesheet" href="css/style.css" />
   </head>
+
   <body>
+    <!-- HEADER -->
     <header class="topbar">
       <div class="logo">
         <h1>FORCE<span>LAB</span></h1>
@@ -14,27 +17,33 @@
       </div>
 
       <nav>
-        <a href="cart.html">⬅ Voltar</a>
+        <a href="carrinho.html">⬅ Voltar</a>
       </nav>
     </header>
 
+    <!-- CHECKOUT -->
     <section class="checkout-page">
       <h1 class="checkout-title">Finalizar Pedido</h1>
 
       <div class="checkout-grid">
-        <form
-          class="checkout-form"
-          name="pedido"
-          method="POST"
-          action="/success.html"
-
-        >
-          <input type="hidden" name="form-name" value="pedido" />
-
+        <!-- FORM -->
+        <form class="checkout-form" id="checkoutForm">
           <h2>Dados do Cliente</h2>
 
-          <input type="text" name="nome" placeholder="Nome completo" required />
-          <input type="text" name="whatsapp" placeholder="WhatsApp" required />
+          <input
+            type="text"
+            name="nome"
+            placeholder="Nome completo"
+            required
+          />
+
+          <input
+            type="text"
+            name="whatsapp"
+            placeholder="WhatsApp"
+            required
+          />
+
           <input
             type="text"
             name="endereco"
@@ -42,36 +51,39 @@
             required
           />
 
-          <select name="pagamento">
+          <select name="pagamento" required>
             <option value="Pix">Pix</option>
             <option value="Cartão">Cartão</option>
             <option value="Dinheiro">Dinheiro</option>
           </select>
 
-          <textarea name="obs" placeholder="Observações..."></textarea>
+          <textarea
+            name="obs"
+            placeholder="Observações do pedido..."
+          ></textarea>
 
-          <input type="hidden" name="carrinho" id="pedidoFinal" />
-
-          <button type="submit" class="btn-main full">ENVIAR PEDIDO 🚀</button>
+          <button type="submit" class="btn-main full">
+            ENVIAR PEDIDO 🚀
+          </button>
         </form>
 
+        <!-- RESUMO -->
         <div class="checkout-box">
           <h2>Resumo do Pedido</h2>
-          <div id="miniCartItems"></div>
+
+          <div id="miniCartItems" class="mini-items"></div>
 
           <h3 class="checkout-total">
-            Total: R$ <span id="miniTotal">0</span>
+            Total: R$ <span id="miniTotal">0.00</span>
           </h3>
         </div>
       </div>
     </section>
 
+    <!-- CART SCRIPT -->
     <script src="js/cart.js"></script>
 
-    <script>
-      document.getElementById("pedidoFinal").value = JSON.stringify(
-        JSON.parse(localStorage.getItem("cart")) || [],
-      );
-    </script>
+    <!-- FIREBASE CHECKOUT SCRIPT -->
+    <script type="module" src="js/checkout.js"></script>
   </body>
 </html>

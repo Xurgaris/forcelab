@@ -7,57 +7,69 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 /* ================================
-   CHECKOUT FIREBASE - FORCE LAB
+   PEGAR FORM
 ================================ */
 
-const form = document.getElementById("checkoutForm");
+const form = document.querySelector(".checkout-form");
+
+/* ================================
+   ENVIAR PEDIDO FIRESTORE
+================================ */
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   // Dados do cliente
-  let nome = form.nome.value;
-  let whatsapp = form.whatsapp.value;
-  let endereco = form.endereco.value;
-  let pagamento = form.pagamento.value;
-  let obs = form.obs.value;
+  const nome = form.nome.value;
+  const whatsapp = form.whatsapp.value;
+  const endereco = form.endereco.value;
+  const pagamento = form.pagamento.value;
+  const obs = form.obs.value;
 
-  // Carrinho
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  // Carrinho salvo
+  const carrinho =
+    JSON.parse(localStorage.getItem("cart")) || [];
 
-  if (cart.length === 0) {
+  if (carrinho.length === 0) {
     alert("Seu carrinho está vazio!");
     return;
   }
 
-  // Total do pedido
-  let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  // Total calculado
+  let total = 0;
+  carrinho.forEach((item) => {
+    total += item.price * item.qty;
+  });
+
+  /* ================================
+     SALVAR NO FIRESTORE
+  ================================ */
 
   try {
-    // Salvar pedido no Firestore
     await addDoc(collection(db, "pedidos"), {
       cliente: nome,
       whatsapp: whatsapp,
       endereco: endereco,
       pagamento: pagamento,
-      observacoes: obs,
+      obs: obs,
 
-      itens: cart,
+      carrinho: carrinho,
       total: total,
 
       status: "Pendente",
+
       criadoEm: Timestamp.now(),
     });
 
-    alert("Pedido enviado com sucesso 🚀");
+    alert("Pedido enviado com sucesso! 🚀");
 
     // Limpar carrinho
     localStorage.removeItem("cart");
 
-    // Voltar para home
-    window.location.href = "index.html";
-  } catch (error) {
-    console.error("Erro ao enviar pedido:", error);
-    alert("Erro ao enviar pedido. Verifique o console (F12).");
+    // Redirecionar
+    window.location.href = "success.html";
+  } catch (err) {
+    alert("Erro ao enviar pedido ❌");
+    console.error(err);
   }
 });

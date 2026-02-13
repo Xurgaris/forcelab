@@ -1,16 +1,11 @@
-// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 
-import {
-  getFirestore
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-import {
-  getAuth
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
- 
-  const firebaseConfig = {
+/* CONFIG FIREBASE */
+ const firebaseConfig = {
     apiKey: "AIzaSyA7nEeM0RAJ77HS-bvq84rpAbvV4IGosEw",
     authDomain: "forcelabnutrition-afaa7.firebaseapp.com",
     projectId: "forcelabnutrition-afaa7",
@@ -20,8 +15,8 @@ import {
     measurementId: "G-CHKES1V24B"
   };
 
-// INIT
 const app = initializeApp(firebaseConfig);
 
-export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+

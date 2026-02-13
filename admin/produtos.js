@@ -1,4 +1,4 @@
-import { auth, db } from "../js/firebase.js";
+import { db } from "../js/firebase.js";
 
 import {
   collection,
@@ -8,44 +8,19 @@ import {
   onSnapshot,
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-import {
-  signOut,
-  onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
 /* ================================
-   PROTEÇÃO
+   ADD PRODUTO
 ================================ */
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-  } else {
-    loadProducts();
-  }
-});
-
-/* ================================
-   LOGOUT
-================================ */
-
-window.logoutAdmin = async function () {
-  await signOut(auth);
-  window.location.href = "login.html";
-};
-
-/* ================================
-   CADASTRAR PRODUTO
-================================ */
-
-const form = document.getElementById("productForm");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
+window.addProduto = async function () {
   let nome = document.getElementById("nome").value;
-  let preco = parseFloat(document.getElementById("preco").value);
+  let preco = Number(document.getElementById("preco").value);
   let imagem = document.getElementById("imagem").value;
+
+  if (!nome || !preco || !imagem) {
+    alert("Preencha tudo!");
+    return;
+  }
 
   await addDoc(collection(db, "produtos"), {
     nome,
@@ -53,51 +28,43 @@ form.addEventListener("submit", async (e) => {
     imagem,
   });
 
-  alert("Produto cadastrado com sucesso!");
+  alert("Produto cadastrado!");
 
-  form.reset();
-});
+  document.getElementById("nome").value = "";
+  document.getElementById("preco").value = "";
+  document.getElementById("imagem").value = "";
+};
 
 /* ================================
    LISTAR PRODUTOS
 ================================ */
 
-function loadProducts() {
-  const box = document.getElementById("productsBox");
+const produtosBox = document.getElementById("produtosBox");
 
-  onSnapshot(collection(db, "produtos"), (snapshot) => {
-    box.innerHTML = "";
+onSnapshot(collection(db, "produtos"), (snapshot) => {
+  produtosBox.innerHTML = "";
 
-    snapshot.forEach((docSnap) => {
-      let produto = docSnap.data();
-      let id = docSnap.id;
+  snapshot.forEach((docSnap) => {
+    let produto = docSnap.data();
 
-      box.innerHTML += `
-        <div class="cart-row">
+    produtosBox.innerHTML += `
+      <div class="order-item">
+        <h4>${produto.nome}</h4>
+        <p>R$ ${produto.preco}</p>
 
-          <img src="${produto.imagem}" width="70" style="border-radius:10px;" />
-
-          <div style="flex:1;">
-            <h3>${produto.nome}</h3>
-            <p>R$ ${produto.preco.toFixed(2)}</p>
-          </div>
-
-          <button class="btn-outline" onclick="deleteProduct('${id}')">
-            Apagar ❌
-          </button>
-        </div>
-      `;
-    });
+        <button class="btn-outline"
+          onclick="deleteProduto('${docSnap.id}')">
+          ❌ Remover
+        </button>
+      </div>
+    `;
   });
-}
+});
 
 /* ================================
-   DELETAR
+   DELETE PRODUTO
 ================================ */
 
-window.deleteProduct = async function (id) {
-  if (confirm("Deseja apagar este produto?")) {
-    await deleteDoc(doc(db, "produtos", id));
-    alert("Produto removido!");
-  }
+window.deleteProduto = async function (id) {
+  await deleteDoc(doc(db, "produtos", id));
 };

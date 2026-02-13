@@ -1,5 +1,5 @@
 /* ================================
-   FORCE LAB ADMIN UI (SHOPIFY)
+   FORCE LAB ADMIN UI (ULTRA PRO)
 ================================ */
 
 body {
@@ -149,4 +149,19 @@ body {
 .btn-outline:hover {
   background: red;
   color: white;
+}
+
+/* FORM */
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+button {
+  padding: 12px;
+  border-radius: 10px;
 }

@@ -9,22 +9,42 @@
   </head>
 
   <body>
-  <div class="admin-layout">
-    <aside class="sidebar">
-      <h2>FORCE<span>LAB</span></h2>
-      <small>Admin Panel</small>
+    <div class="admin-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <h2>FORCE<span>LAB</span></h2>
+        <small>Admin Panel</small>
 
-      <nav>
-        <a href="dashboard.html">📦 Pedidos</a>
-        <a href="produtos.html" class="active">🛒 Produtos</a>
-        <a href="#" onclick="logoutAdmin()">🚪 Sair</a>
-      </nav>
-    </aside>
+        <nav>
+          <a href="dashboard.html">📦 Pedidos</a>
+          <a href="produtos.html" class="active">🛒 Produtos</a>
+          <a href="#" onclick="logoutAdmin()">🚪 Sair</a>
+        </nav>
+      </aside>
 
-    <main class="main-content">
-      <!-- Conteúdo do cadastro e lista aqui -->
-    </main>
-  </div>
-</body>
+      <!-- MAIN -->
+      <main class="main-content">
+        <h1>Cadastro de Produtos</h1>
 
+        <div class="admin-list">
+          <input id="nome" placeholder="Nome do Produto" />
+          <input id="preco" placeholder="Preço" />
+          <input id="imagem" placeholder="URL da Imagem" />
+
+          <button class="btn-admin" onclick="addProduto()">
+            ➕ Adicionar Produto
+          </button>
+        </div>
+
+        <br />
+
+        <div class="admin-list">
+          <h2>Produtos cadastrados</h2>
+          <div id="produtosBox"></div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="produtos.js"></script>
+  </body>
 </html>

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -12,7 +12,7 @@
     <header class="topbar">
       <div class="logo">
         <h1>FORCE<span>LAB</span></h1>
-        <small>Finalizar Pedido</small>
+        <small>Checkout</small>
       </div>
 
       <nav>
@@ -28,16 +28,9 @@
         <form class="checkout-form">
           <h2>Dados do Cliente</h2>
 
-          <input type="text" name="nome" placeholder="Nome completo" required />
-
-          <input type="text" name="whatsapp" placeholder="WhatsApp" required />
-
-          <input
-            type="text"
-            name="endereco"
-            placeholder="Endereço completo"
-            required
-          />
+          <input name="nome" placeholder="Nome completo" required />
+          <input name="whatsapp" placeholder="WhatsApp" required />
+          <input name="endereco" placeholder="Endereço completo" required />
 
           <select name="pagamento">
             <option value="Pix">Pix</option>
@@ -47,37 +40,19 @@
 
           <textarea name="obs" placeholder="Observações..."></textarea>
 
-          <button type="submit" class="btn-main full">ENVIAR PEDIDO 🚀</button>
+          <button type="submit" class="btn-main full">
+            ENVIAR PEDIDO 🚀
+          </button>
         </form>
 
         <!-- RESUMO -->
         <div class="checkout-box">
           <h2>Resumo do Pedido</h2>
-
           <div id="miniCartItems"></div>
 
           <h3 class="checkout-total">
             Total: R$ <span id="miniTotal">0</span>
           </h3>
-          <div class="pix-box">
-            <h2>Pagamento via Pix</h2>
-
-            <p style="opacity: 0.8">
-              Chave Pix:
-              <strong id="pixKey">00000000000</strong>
-            </p>
-
-            <img
-              id="pixQr"
-              src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00000000000"
-              alt="QR Code Pix"
-              style="margin-top: 15px; border-radius: 12px"
-            />
-
-            <p style="font-size: 13px; opacity: 0.6; margin-top: 10px">
-              Após o pagamento, envie o comprovante no WhatsApp.
-            </p>
-          </div>
         </div>
       </div>
     </section>
@@ -85,7 +60,7 @@
     <!-- Carrinho -->
     <script src="js/cart.js"></script>
 
-    <!-- Checkout Firebase -->
+    <!-- Checkout Firestore -->
     <script type="module" src="js/checkout.js"></script>
   </body>
 </html>

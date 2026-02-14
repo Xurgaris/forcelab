@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ForceLab Admin | Dashboard</title>
+    <title>ForceLab Admin | Pedidos</title>
 
     <link rel="stylesheet" href="admin.css" />
   </head>
@@ -22,36 +22,14 @@
 
     <!-- CONTEÚDO -->
     <main style="padding: 40px; flex: 1">
-      <h1 style="color: red">📊 Dashboard</h1>
+      <h1 style="color: red">📦 Pedidos Recebidos</h1>
 
-      <div
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 20px;
-          margin-top: 30px;
-        "
-      >
-        <div class="card">
-          <h2>Total Vendido</h2>
-          <p id="totalVendido">R$ 0</p>
-        </div>
-
-        <div class="card">
-          <h2>Pedidos Pendentes</h2>
-          <p id="pendentes">0</p>
-        </div>
-
-        <div class="card">
-          <h2>Total Pedidos</h2>
-          <p id="totalPedidos">0</p>
-        </div>
-      </div>
+      <div id="listaPedidos" style="margin-top: 30px"></div>
     </main>
 
     <!-- SCRIPTS -->
     <script type="module" src="protect.js"></script>
     <script type="module" src="logout.js"></script>
-    <script type="module" src="dashboard.js"></script>
+    <script type="module" src="pedidos.js"></script>
   </body>
 </html>

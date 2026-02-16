@@ -2160,3 +2160,61 @@ html, body { width: 100%; max-width: 100%; }
   transform: translateY(-1px);
 }
 @media (min-width: 761px){ .sticky-buy{display:none;} }
+/* ===============================
+   PRODUTOS EM DESTAQUE (MOBILE 2x2)
+   - só no mobile
+   - 2 colunas (pares) e cards alinhados
+================================ */
+@media (max-width: 760px){
+  /* o #productsGrid é o container dos produtos */
+  #productsGrid{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    align-items: stretch;
+  }
+
+  /* garante que o card ocupa certinho */
+  #productsGrid .card{
+    width: 100% !important;
+    margin: 0 !important;
+    height: 100%;
+    border-radius: 18px;
+    padding: 12px;
+  }
+
+  /* imagem mais compacta pra caber 2 colunas */
+  #productsGrid .product-media{
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  #productsGrid .product-media img{
+    height: 160px;      /* antes tava 210 */
+    object-fit: contain;
+  }
+
+  /* título e preços ajustados pra não estourar */
+  #productsGrid .product-title{
+    font-size: 13px;
+    line-height: 1.2;
+    min-height: 34px;
+  }
+
+  #productsGrid .price .pix{
+    font-size: 18px;
+  }
+
+  #productsGrid .btn-buy{
+    height: 48px;
+    border-radius: 14px;
+    font-size: 13px;
+  }
+}
+
+/* se o celular for bem pequeno, cai pra 1 coluna */
+@media (max-width: 360px){
+  #productsGrid{
+    grid-template-columns: 1fr !important;
+  }
+}

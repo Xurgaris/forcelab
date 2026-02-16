@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produto | ForceLab Nutrition</title>
+  <meta name="description" content="Detalhes do produto ForceLab. Compre com Pix e parcelamento." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- HEADER (recomendo copiar igual do index pra manter tudo 100% igual) -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html">
+        <div class="logo">
+          <h1>FORCE<span>LAB</span></h1>
+          <small>Nutrition</small>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Menu principal">
+        <a href="catalogo.html">Catálogo</a>
+        <a href="catalogo.html?tag=creatina">Creatina</a>
+        <a href="catalogo.html?tag=proteinas">Proteínas</a>
+        <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+        <a href="index.html#kits">Kits</a>
+        <a href="index.html#contato">Contato</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <div class="search">
+          <svg class="search-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16.5 16.5L21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input id="searchProductTop" type="search" placeholder="O que você procura?" aria-label="Buscar produtos" />
+        </div>
+
+        <button class="icon-btn" type="button" aria-label="Minha conta">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M20 21a8 8 0 1 0-16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <button class="cart-ico-btn" type="button" onclick="toggleCart()" aria-label="Abrir carrinho">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6h15l-2 9H7L6 6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M6 6L5 3H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Breadcrumb -->
+    <section class="product-bc">
+      <div class="container product-bc-inner">
+        <a href="index.html">Início</a>
+        <span>›</span>
+        <a href="catalogo.html">Catálogo</a>
+        <span>›</span>
+        <span id="bcName" class="bc-current">Produto</span>
+      </div>
+    </section>
+
+    <!-- Produto -->
+    <section class="section product-page" aria-label="Produto">
+      <div class="container">
+        <div class="product-grid" id="productWrap">
+          <p class="muted">Carregando produto...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recomendações -->
+    <section class="section product-related" aria-label="Produtos recomendados">
+      <div class="container">
+        <div class="section-head section-head--split">
+          <div>
+            <h2>Você também pode gostar</h2>
+            <p>Mais opções com a mesma pegada pra manter a rotina.</p>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="catalogo.html">Ver catálogo</a>
+        </div>
+
+        <div class="grid" id="relatedGrid">
+          <p class="muted">Carregando recomendações...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MINI CART (reutiliza o mesmo) -->
+  <div id="miniCart" class="mini-cart" aria-label="Carrinho lateral">
+    <div class="cart-header">
+      <h3>Seu carrinho</h3>
+      <button class="close-cart" onclick="toggleCart()">Fechar</button>
+    </div>
+
+    <div id="miniCartItems" class="mini-items"></div>
+
+    <div class="cart-footer">
+      <p>Total</p>
+      <h2><span id="miniTotal">0</span></h2>
+      <a href="cart.html" class="btn btn-primary full">Ver carrinho</a>
+      <a href="checkout.html" class="btn btn-ghost full">Finalizar pedido</a>
+    </div>
+  </div>
+
+  <script src="js/cart.js"></script>
+  <script type="module" src="js/product.js"></script>
+</body>
+</html>

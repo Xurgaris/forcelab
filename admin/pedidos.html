@@ -1,35 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ForceLab Admin | Pedidos</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Pedidos | ForceLab ADM</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
 
-    <link rel="stylesheet" href="admin.css" />
-  </head>
+<body>
+  <div class="admin">
+    <div id="sidebar"></div>
 
-  <body>
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <h2>🔥 ForceLab</h2>
+    <main class="main">
+      <header class="mobilebar">
+  <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+  <div class="mobilebar-title">
+    <strong id="pageTitle">Painel</strong>
+    <small class="muted">ForceLab ADM</small>
+  </div>
+</header>
 
-      <a href="dashboard.html">📊 Dashboard</a>
-      <a href="pedidos.html">📦 Pedidos</a>
-      <a href="produtos.html">🛒 Produtos</a>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
-      <button onclick="logout()">🚪 Logout</button>
-    </div>
+      <header class="top">
+        <div>
+          <h2>Pedidos</h2>
+          <div class="muted">Visualize, filtre e gerencie os pedidos em tempo real.</div>
+        </div>
 
-    <!-- CONTEÚDO -->
-    <main style="padding: 40px; flex: 1">
-      <h1 style="color: red">📦 Pedidos Recebidos</h1>
+        <div class="top-actions">
+          <div class="search">
+            <span style="color:#111;opacity:.7">🔎</span>
+            <input id="ordersSearch" placeholder="Buscar por nome, WhatsApp, ID..." />
+          </div>
+          <button class="icon" id="btnRefresh" type="button" title="Atualizar">⟲</button>
+        </div>
+      </header>
 
-      <div id="listaPedidos" style="margin-top: 30px"></div>
+      <section class="orders-toolbar">
+        <div class="toolbar-left">
+          <div class="pill">
+            <strong id="ordersCount">0</strong>
+            <span>pedidos</span>
+          </div>
+
+          <div class="filters">
+            <label class="sr-only" for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="all">Todos</option>
+              <option value="novo">Novo</option>
+              <option value="pendente">Pendente</option>
+              <option value="pago">Pago</option>
+              <option value="enviado">Enviado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+
+            <label class="sr-only" for="sortFilter">Ordenar</label>
+            <select id="sortFilter">
+              <option value="newest">Mais recentes</option>
+              <option value="oldest">Mais antigos</option>
+              <option value="total-desc">Maior total</option>
+              <option value="total-asc">Menor total</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar-right">
+          <button class="btn btn-ghost" id="btnClear" type="button">Limpar</button>
+        </div>
+      </section>
+
+      <section class="table">
+        <div class="table-head">
+          <h3>Lista de pedidos</h3>
+          <small class="muted">Clique em um pedido para ver detalhes</small>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>WhatsApp</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th style="width:160px">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTbody">
+              <tr><td colspan="7" class="muted">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
+  </div>
 
-    <!-- SCRIPTS -->
-    <script type="module" src="protect.js"></script>
-    <script type="module" src="logout.js"></script>
-    <script type="module" src="pedidos.js"></script>
-  </body>
+  <!-- MODAL DETALHES -->
+  <div class="modal" id="orderModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="1"></div>
+
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Detalhes do pedido">
+      <div class="modal-head">
+        <div>
+          <h3 id="mTitle">Pedido</h3>
+          <small class="muted" id="mSub">—</small>
+        </div>
+        <button class="icon" type="button" data-close="1" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="panel">
+            <h4>Cliente</h4>
+            <div class="kv">
+              <span>Nome</span>
+              <strong id="mName">—</strong>
+            </div>
+            <div class="kv">
+              <span>Email</span>
+              <strong id="mEmail">—</strong>
+            </div>
+            <div class="kv">
+              <span>WhatsApp</span>
+              <strong id="mPhone">—</strong>
+            </div>
+            <div class="kv">
+              <span>Endereço</span>
+              <strong id="mAddress">—</strong>
+            </div>
+            <div class="kv">
+              <span>Pagamento</span>
+              <strong id="mPay">—</strong>
+            </div>
+            <div class="kv">
+              <span>Status</span>
+              <strong><span class="badge" id="mStatusBadge">—</span></strong>
+            </div>
+
+            <div class="panel-actions">
+              <label class="sr-only" for="mStatus">Alterar status</label>
+              <select id="mStatus">
+                <option value="novo">Novo</option>
+                <option value="pendente">Pendente</option>
+                <option value="pago">Pago</option>
+                <option value="enviado">Enviado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+
+              <button class="btn btn-primary" id="btnSaveStatus" type="button">Salvar</button>
+              <button class="btn btn-ghost" id="btnDeleteOrder" type="button">Excluir</button>
+            </div>
+
+            <small class="muted" id="mMsg"></small>
+          </div>
+
+          <div class="panel">
+            <h4>Itens</h4>
+            <div class="items" id="mItems"></div>
+
+            <div class="divider"></div>
+
+            <div class="totals">
+              <div class="kv">
+                <span>Subtotal</span>
+                <strong id="mSubtotal">—</strong>
+              </div>
+              <div class="kv">
+                <span>Desconto</span>
+                <strong id="mDiscount">—</strong>
+              </div>
+              <div class="kv">
+                <span>Frete</span>
+                <strong id="mShipping">—</strong>
+              </div>
+              <div class="kv total">
+                <span>Total</span>
+                <strong id="mTotal">—</strong>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <small class="muted" id="mMeta">—</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="pedidos.js"></script>
+</body>
 </html>

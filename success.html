@@ -1,24 +1,58 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pedido Enviado</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedido realizado | ForceLab</title>
+  <meta name="description" content="Seu pedido foi registrado com sucesso na ForceLab." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
 
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-
-  <body>
-    <section class="checkout-page" style="text-align:center;">
-      <h1 class="checkout-title">Pedido enviado! ✅</h1>
-
-      <p style="opacity:0.8; margin-top:15px;">
-        Recebemos seu pedido e entraremos em contato no WhatsApp.
-      </p>
-
-      <a href="index.html" class="btn-main" style="margin-top:30px;">
-        Voltar para Loja
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html">
+        <div class="logo">
+          <h1>FORCE<span>LAB</span></h1>
+          <small>Nutrition</small>
+        </div>
       </a>
-    </section>
-  </body>
+
+      <div class="topbar-actions">
+        <a class="btn btn-ghost btn-sm" href="catalogo.html">Voltar ao catálogo</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <section class="success-card" aria-label="Pedido realizado com sucesso">
+        <div class="success-badge">✓</div>
+        <h1 class="success-title">Pedido realizado com sucesso!</h1>
+        <p class="success-sub">
+          Recebemos seu pedido e já vamos separar tudo pra você.
+        </p>
+
+        <div class="success-code">
+          <span class="muted">Código do pedido</span>
+          <strong id="orderId">—</strong>
+          <button class="btn btn-ghost btn-sm" id="copyId" type="button">Copiar</button>
+        </div>
+
+        <div class="success-actions">
+          <a class="btn btn-primary full" id="whatsBtn" href="#" target="_blank" rel="noopener">
+            Chamar no WhatsApp
+          </a>
+          <a class="btn btn-ghost full" href="index.html">Voltar para a home</a>
+        </div>
+
+        <p class="muted small success-foot">
+          Dica: mande o código do pedido no WhatsApp para agilizar o atendimento.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/success.js"></script>
+</body>
 </html>

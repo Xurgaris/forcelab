@@ -1,53 +1,114 @@
-import { db } from "./firebase.js";
+import { getFeaturedProducts } from "./productsFirebase.js";
 
-import {
-  collection,
-  onSnapshot,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+const grid = document.getElementById("productsGrid");
 
-/* ================================
-   GRID DA HOME
-================================ */
+function brl(value) {
+  return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
 
-const productsGrid = document.getElementById("productsGrid");
+function calcOldPrice(price) {
+  return Number(price) * 1.18; // +18% (sensação de promo)
+}
+function calcPixPrice(price) {
+  return Number(price) * 0.93; // -7% no Pix
+}
+function calcInstallments(price, n = 3) {
+  return Number(price / n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+function stars(rating = 4.8) {
+  const full = Math.max(0, Math.min(5, Math.round(rating)));
+  return "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5 - full);
+}
 
-/* ================================
-   LISTAR PRODUTOS AUTOMÁTICOS
-================================ */
+async function loadFeatured() {
+  grid.innerHTML = `<p class="muted">Carregando produtos...</p>`;
 
-onSnapshot(collection(db, "produtos"), (snapshot) => {
-  productsGrid.innerHTML = "";
+  let products = await getFeaturedProducts();
 
-  if (snapshot.empty) {
-    productsGrid.innerHTML = `
-      <p style="opacity:0.6;">
-        Nenhum produto cadastrado ainda.
-      </p>
-    `;
-    return;
-  }
+  // Filtro por busca (sessionStorage)
+ // Filtro por busca (sessionStorage) — nome + tags + categoria
+const q = (sessionStorage.getItem("q") || "").trim().toLowerCase();
 
-  snapshot.forEach((docSnap) => {
-    const produto = docSnap.data();
+if (q) {
+  products = products.filter((p) => {
+    const name = String(p.name || "").toLowerCase();
 
-    productsGrid.innerHTML += `
-      <div class="card">
-        <img src="${produto.imagem}" alt="${produto.nome}" />
+    // tenta pegar tags em vários formatos
+    const tagsArr =
+      Array.isArray(p.tags) ? p.tags :
+      Array.isArray(p.keywords) ? p.keywords :
+      (typeof p.tags === "string" ? p.tags.split(",") : []);
 
-        <h3>${produto.nome}</h3>
+    const tagSingle =
+      p.tag ?? p.categoria ?? p.category ?? p.type ?? "";
 
-        <p class="price">
-          R$ ${produto.preco.toFixed(2)}
-        </p>
+    const tagsText = [
+      ...tagsArr.map(t => String(t).toLowerCase().trim()),
+      String(tagSingle).toLowerCase().trim()
+    ].filter(Boolean).join(" ");
 
-        <button onclick="addToCart(
-          '${produto.nome}',
-          ${produto.preco},
-          '${produto.imagem}'
-        )">
-          ADICIONAR
-        </button>
-      </div>
+    // (opcional) descrição
+    const desc = String(p.description || p.desc || "").toLowerCase();
+
+    return (
+      name.includes(q) ||
+      tagsText.includes(q) ||
+      desc.includes(q)
+    );
+  });
+}
+
+
+  grid.innerHTML = "";
+
+  products.forEach((p) => {
+    const price = Number(p.price || 0);
+    const oldPrice = p.oldPrice ? Number(p.oldPrice) : calcOldPrice(price);
+    const pixPrice = p.pixPrice ? Number(p.pixPrice) : calcPixPrice(price);
+
+    const rating = p.rating ?? 4.8;
+    const reviews = p.reviews ?? Math.floor(25 + Math.random() * 120);
+    const installmentsN = p.installments ?? 3;
+
+    const safeName = String(p.name || "").replace(/'/g, "\\'");
+    const safeImg = String(p.image || "").replace(/'/g, "\\'");
+
+    grid.innerHTML += `
+      <article class="card product-card">
+        <a class="product-link" href="product.html?id=${p.id}" aria-label="Ver ${safeName}">
+          <div class="product-media">
+            <img src="${p.image}" alt="${safeName}" loading="lazy" />
+          </div>
+
+          <h3 class="product-title">${p.name}</h3>
+
+          <div class="rating">
+            <span class="stars" aria-hidden="true">${stars(rating)}</span>
+            <span class="count">(${reviews})</span>
+          </div>
+
+          <div class="price">
+            <span class="from">${brl(oldPrice)}</span>
+            <span class="pix">${brl(pixPrice)} no Pix</span>
+            <span class="installments">
+              ou ${brl(price)} em ${installmentsN}x de ${calcInstallments(price, installmentsN)} sem juros
+            </span>
+          </div>
+        </a>
+
+        <div class="product-actions">
+          <button
+            class="btn-buy"
+            type="button"
+            onclick="addToCart('${safeName}', ${pixPrice}, '${safeImg}'); toggleCart();"
+          >
+            Comprar
+          </button>
+        </div>
+      </article>
     `;
   });
-});
+}
+
+loadFeatured();
+window.addEventListener("productSearch", loadFeatured);

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Clientes | ForceLab ADM</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <script type="module" src="protect.js"></script>
+
+  <div class="admin">
+    <div id="sidebar"></div>
+
+    <main class="main">
+      <header class="top">
+        <div>
+          <h2>Clientes</h2>
+          <div class="muted">Lista gerada automaticamente a partir dos pedidos.</div>
+        </div>
+
+        <div class="top-actions">
+          <div class="search">
+            <span style="opacity:.7">🔎</span>
+            <input id="clientsSearch" placeholder="Buscar por nome, email, WhatsApp..." />
+          </div>
+          <button class="icon" id="btnRefreshClients" type="button" title="Atualizar">⟲</button>
+        </div>
+      </header>
+
+      <section class="orders-toolbar">
+        <div class="toolbar-left">
+          <div class="pill">
+            <strong id="clientsCount">0</strong>
+            <span>clientes</span>
+          </div>
+
+          <div class="filters">
+            <label class="sr-only" for="clientsSort">Ordenar</label>
+            <select id="clientsSort">
+              <option value="last">Última compra</option>
+              <option value="spent-desc">Maior gasto</option>
+              <option value="spent-asc">Menor gasto</option>
+              <option value="orders-desc">Mais pedidos</option>
+              <option value="orders-asc">Menos pedidos</option>
+              <option value="name-asc">Nome A–Z</option>
+              <option value="name-desc">Nome Z–A</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar-right">
+          <button class="btn btn-ghost" id="btnClearClients" type="button">Limpar</button>
+        </div>
+      </section>
+
+      <section class="table">
+        <div class="table-head">
+          <h3>Lista de clientes</h3>
+          <small class="muted">Clique para ver detalhes</small>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Contato</th>
+                <th>Pedidos</th>
+                <th>Total gasto</th>
+                <th>Última compra</th>
+                <th style="width:160px;text-align:right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTbody">
+              <tr><td colspan="6" class="muted">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="clientModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="1"></div>
+
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Detalhes do cliente">
+      <div class="modal-head">
+        <div>
+          <h3 id="cTitle">Cliente</h3>
+          <small class="muted" id="cSub">—</small>
+        </div>
+        <button class="icon" type="button" data-close="1" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="panel">
+            <h4>Dados</h4>
+            <div class="kv"><span>Nome</span><strong id="cName">—</strong></div>
+            <div class="kv"><span>Email</span><strong id="cEmail">—</strong></div>
+            <div class="kv"><span>WhatsApp</span><strong id="cPhone">—</strong></div>
+            <div class="kv"><span>Endereço (último)</span><strong id="cAddress">—</strong></div>
+            <div class="divider"></div>
+
+            <div class="panel-actions" style="grid-template-columns:1fr 1fr;">
+              <button class="btn btn-primary" id="btnCopyContact" type="button">Copiar contato</button>
+              <a class="btn btn-ghost" id="btnWhats" href="#" target="_blank" rel="noreferrer">Abrir WhatsApp</a>
+            </div>
+            <small class="muted" id="cMsg"></small>
+          </div>
+
+          <div class="panel">
+            <h4>Pedidos do cliente</h4>
+            <div class="items" id="cOrders"></div>
+            <div class="divider"></div>
+            <div class="totals">
+              <div class="kv"><span>Quantidade</span><strong id="cOrdersCount">—</strong></div>
+              <div class="kv total"><span>Total gasto</span><strong id="cSpent">—</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="clientes.js"></script>
+</body>
+</html>

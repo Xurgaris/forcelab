@@ -9,31 +9,112 @@
 <body>
 
 <header class="topbar">
-  <div class="logo">
-    <h1>FORCE<span>LAB</span></h1>
-    <small>Carrinho</small>
-  </div>
+  <div class="container topbar-inner">
+    <a class="brand" href="index.html">
+      <div class="logo">
+        <h1>FORCE<span>LAB</span></h1>
+        <small>Carrinho</small>
+      </div>
+    </a>
 
-  <nav>
-    <a href="index.html">⬅ Voltar</a>
-  </nav>
+    <nav class="nav" aria-label="Voltar">
+      <a href="index.html">⬅ Voltar</a>
+    </nav>
+
+    <div class="topbar-actions">
+      <button class="cart-ico-btn" type="button" onclick="toggleCart()" aria-label="Abrir carrinho lateral">
+        🛒 <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
+      </button>
+    </div>
+  </div>
 </header>
 
-<section class="cart-page">
-  <h1 class="cart-title">Seu Carrinho</h1>
+<main class="section cart-page">
+  <div class="container">
+    <h1 class="cart-title">Seu Carrinho</h1>
 
-  <div id="cartItems" class="cart-items"></div>
+    <div class="cart-layout">
+      <!-- ITENS -->
+      <section class="cart-left" aria-label="Itens do carrinho">
+        <div id="cartItems" class="cart-items"></div>
 
-  <div class="cart-summary-box">
-    <h2>Total:</h2>
-    <h1>R$ <span id="cartTotal">0</span></h1>
+        <div class="cart-actions">
+          <a href="catalogo.html" class="btn btn-ghost full">Continuar comprando</a>
+        </div>
+      </section>
 
-    <a href="checkout.html" class="btn-main full">
-      Finalizar Pedido
-    </a>
+      <!-- RESUMO PREMIUM -->
+      <aside class="order-summary" aria-label="Resumo do pedido">
+        <div class="summary-head">
+          <h3>Resumo do pedido</h3>
+          <span class="summary-badge" id="summaryItems">0 itens</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong id="sumSubtotal">R$ 0,00</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Desconto</span>
+          <strong class="sum-discount" id="sumDiscount">- R$ 0,00</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Frete</span>
+          <strong id="sumShipping">R$ 0,00</strong>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <strong id="sumTotal">R$ 0,00</strong>
+        </div>
+
+        <p class="summary-note" id="sumETA">Calcule o frete informando seu CEP.</p>
+
+        <div class="summary-box">
+          <label class="summary-label" for="couponInput">Cupom</label>
+          <div class="summary-inline">
+            <input id="couponInput" class="summary-input" placeholder="Ex: FORCELAB10" />
+            <button class="btn btn-ghost btn-sm" id="applyCoupon" type="button">Aplicar</button>
+          </div>
+          <small class="summary-help" id="couponMsg"></small>
+        </div>
+
+        <div class="summary-box">
+          <label class="summary-label" for="cepInput">Calcular frete (CEP)</label>
+          <div class="summary-inline">
+            <input id="cepInput" class="summary-input" inputmode="numeric" placeholder="00000-000" />
+            <button class="btn btn-primary btn-sm" id="calcShipping" type="button">Calcular</button>
+          </div>
+          <small class="summary-help" id="shipMsg"></small>
+        </div>
+
+        <a href="checkout.html" class="btn btn-primary full">Finalizar pedido</a>
+      </aside>
+    </div>
   </div>
-</section>
+</main>
+
+<!-- MINI CART (se você quiser manter o lateral, opcional) -->
+<div id="miniCart" class="mini-cart" aria-label="Carrinho lateral">
+  <div class="cart-header">
+    <h3>Seu carrinho</h3>
+    <button class="close-cart" onclick="toggleCart()">Fechar</button>
+  </div>
+
+  <div id="miniCartItems" class="mini-items"></div>
+
+  <div class="cart-footer">
+    <p>Total</p>
+    <h2><span id="miniTotal">R$ 0,00</span></h2>
+    <a href="checkout.html" class="btn btn-primary full">Finalizar pedido</a>
+  </div>
+</div>
 
 <script src="js/cart.js"></script>
+<script src="js/checkoutSummary.js"></script>
 </body>
 </html>

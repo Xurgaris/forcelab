@@ -1,9 +1,27 @@
-<div class="sidebar">
-  <h2>🔥 ForceLab</h2>
+<aside class="sidebar" id="sidebarPanel">
+  <div class="brand">
+    <div>
+      <h1>FORCE<span>LAB</span> ADM</h1>
+      <small>Painel administrativo</small>
+    </div>
+  </div>
 
-  <a href="dashboard.html">📊 Dashboard</a>
-  <a href="pedidos.html">📦 Pedidos</a>
-  <a href="produtos.html">🛒 Produtos</a>
+  <nav class="nav" aria-label="Menu admin">
+    <a href="dashboard.html" data-nav="dashboard">📊 Dashboard</a>
+    <a href="pedidos.html" data-nav="pedidos">📦 Pedidos</a>
+    <a href="produtos.html" data-nav="produtos">🧃 Produtos</a>
+    <a href="clientes.html" data-nav="clientes">👤 Clientes</a>
+    <a href="configs.html" data-nav="configs">⚙️ Configurações</a>
+  </nav>
 
-  <button onclick="logout()">🚪 Logout</button>
-</div>
+  <div class="sidebar-foot">
+    <div class="userbox">
+      <strong id="adminName">Administrador</strong>
+      <small id="adminEmail">...</small>
+    </div>
+    <button class="btn btn-ghost" id="logoutBtn" type="button">Sair</button>
+  </div>
+</aside>
+
+
+<script type="module" src="logout.js"></script>

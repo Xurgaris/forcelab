@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Configurações | ForceLab ADM</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <script type="module" src="protect.js"></script>
+
+  <div class="admin">
+    <div id="sidebar"></div>
+
+    <main class="main">
+      <header class="top">
+        <div>
+          <h2>Configurações</h2>
+          <div class="muted">Preferências da loja, frete e promoções.</div>
+        </div>
+        <div class="top-actions">
+          <button class="icon" id="btnReloadCfg" type="button" title="Recarregar">⟲</button>
+        </div>
+      </header>
+
+      <section class="panel" style="margin-top:14px;">
+        <h3 style="font-weight:950;margin-bottom:10px;">Loja</h3>
+
+        <div class="form-grid">
+          <div class="form-col">
+            <label class="label" for="storeName">Nome da loja</label>
+            <input class="input" id="storeName" placeholder="Ex: ForceLab Nutrition" />
+
+            <label class="label" for="storeWhats">WhatsApp (com DDD)</label>
+            <input class="input" id="storeWhats" placeholder="Ex: (66) 99999-9999" />
+
+            <label class="label" for="storePix">Chave Pix</label>
+            <input class="input" id="storePix" placeholder="Ex: email@pix.com" />
+          </div>
+
+          <div class="form-col">
+            <label class="label" for="shipBase">Frete base (R$)</label>
+            <input class="input" id="shipBase" type="number" inputmode="numeric" placeholder="Ex: 19.90" />
+
+            <label class="label" for="freeOver">Frete grátis acima de (R$)</label>
+            <input class="input" id="freeOver" type="number" inputmode="numeric" placeholder="Ex: 199.00" />
+
+            <label class="label" for="defaultCoupon">Cupom padrão (opcional)</label>
+            <input class="input" id="defaultCoupon" placeholder="Ex: FORCELAB10" />
+            <small class="muted" style="display:block;margin-top:8px;">
+              Dica: você pode usar isso depois no pricing.js como cupom “default”.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="btnSaveCfg" type="button">Salvar</button>
+          <button class="btn btn-ghost" id="btnResetCfg" type="button">Restaurar</button>
+          <span class="muted" id="cfgMsg" style="margin-left:6px;"></span>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:14px;">
+        <h3 style="font-weight:950;margin-bottom:10px;">Integração (opcional)</h3>
+        <div class="muted" style="line-height:1.6;">
+          Essas configs ficam salvas em <code>configs/store</code>.  
+          Depois você pode carregar isso no site público (checkout/cart) pra mostrar WhatsApp, regras de frete, etc.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="configs.js"></script>
+</body>
+</html>

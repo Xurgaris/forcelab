@@ -1,66 +1,178 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ForceLab | Checkout</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ForceLab | Checkout</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
 
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-
-  <body>
-    <header class="topbar">
+<body>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="index.html">
       <div class="logo">
         <h1>FORCE<span>LAB</span></h1>
         <small>Checkout</small>
       </div>
+    </a>
 
-      <nav>
-        <a href="cart.html">⬅ Voltar</a>
-      </nav>
-    </header>
+    <nav class="nav">
+      <a href="cart.html">⬅ Voltar</a>
+    </nav>
+  </div>
+</header>
 
-    <section class="checkout-page">
-      <h1 class="checkout-title">Finalizar Pedido</h1>
+<main class="section checkout-page">
+  <div class="container">
+    <h1 class="checkout-title">Finalizar Pedido</h1>
 
-      <div class="checkout-grid">
-        <!-- FORM -->
-        <form class="checkout-form">
-          <h2>Dados do Cliente</h2>
+    <div class="checkout-layout">
+      <!-- FORM -->
+      <form class="checkout-form" id="checkoutForm">
+        <h2>Dados do Cliente</h2>
 
-          <input name="nome" placeholder="Nome completo" required />
-          <input name="whatsapp" placeholder="WhatsApp" required />
-          <input name="endereco" placeholder="Endereço completo" required />
-
-          <select name="pagamento">
-            <option value="Pix">Pix</option>
-            <option value="Cartão">Cartão</option>
-            <option value="Dinheiro">Dinheiro</option>
-          </select>
-
-          <textarea name="obs" placeholder="Observações..."></textarea>
-
-          <button type="submit" class="btn-main full">
-            ENVIAR PEDIDO 🚀
-          </button>
-        </form>
-
-        <!-- RESUMO -->
-        <div class="checkout-box">
-          <h2>Resumo do Pedido</h2>
-          <div id="miniCartItems"></div>
-
-          <h3 class="checkout-total">
-            Total: R$ <span id="miniTotal">0</span>
-          </h3>
+        <div class="form-row">
+          <div class="field">
+            <label>Nome completo</label>
+            <input type="text" name="nome" placeholder="Seu nome" required />
+          </div>
+          <div class="field">
+            <label>WhatsApp</label>
+            <input type="text" name="whatsapp" placeholder="(00) 00000-0000" required />
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Carrinho -->
-    <script src="js/cart.js"></script>
+        <div class="field">
+          <label>Endereço completo</label>
+          <input type="text" name="endereco" placeholder="Rua, número, bairro, cidade/UF" required />
+        </div>
 
-    <!-- Checkout Firestore -->
-    <script type="module" src="js/checkout.js"></script>
-  </body>
+        <div class="form-row">
+          <div class="field">
+            <label>Pagamento</label>
+            <select name="pagamento">
+              <option value="Pix">Pix</option>
+              <option value="Cartão">Cartão</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Observações</label>
+            <input type="text" name="obs" placeholder="Ex: entregar após 18h" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary full">ENVIAR PEDIDO 🚀</button>
+        <p class="muted small" style="margin-top:10px;">
+          Ao enviar, você confirma os dados e valores do resumo ao lado.
+        </p>
+      </form>
+
+      <!-- COLUNA DIREITA -->
+      <aside class="checkout-right">
+        <!-- ITENS DO PEDIDO -->
+        <div class="checkout-box">
+          <div class="summary-head" style="margin-bottom:8px;">
+            <h3>Itens do pedido</h3>
+            <span class="summary-badge" id="summaryItems">0 itens</span>
+          </div>
+          <div id="checkoutItems" class="checkout-items"></div>
+        </div>
+
+        <!-- RESUMO PREMIUM -->
+        <div class="order-summary" style="position:relative; top:auto;">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong id="sumSubtotal">R$ 0,00</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Desconto</span>
+            <strong class="sum-discount" id="sumDiscount">- R$ 0,00</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Frete</span>
+            <strong id="sumShipping">R$ 0,00</strong>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <strong id="sumTotal">R$ 0,00</strong>
+          </div>
+
+          <p class="summary-note" id="sumETA">Calcule o frete informando seu CEP.</p>
+
+          <div class="summary-box">
+            <label class="summary-label" for="couponInput">Cupom</label>
+            <div class="summary-inline">
+              <input id="couponInput" class="summary-input" placeholder="Ex: FORCELAB10" />
+              <button class="btn btn-ghost btn-sm" id="applyCoupon" type="button">Aplicar</button>
+            </div>
+            <small class="summary-help" id="couponMsg"></small>
+          </div>
+
+          <div class="summary-box">
+            <label class="summary-label" for="cepInput">Calcular frete (CEP)</label>
+            <div class="summary-inline">
+              <input id="cepInput" class="summary-input" inputmode="numeric" placeholder="00000-000" />
+              <button class="btn btn-primary btn-sm" id="calcShipping" type="button">Calcular</button>
+            </div>
+            <small class="summary-help" id="shipMsg"></small>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="js/cart.js"></script>
+<script src="js/checkoutSummary.js"></script>
+
+<!-- (opcional) seu checkout.js continua -->
+<script type="module" src="js/checkout.js"></script>
+
+<!-- Render de itens no checkout -->
+<script>
+(function(){
+  function brl(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
+  function getCart(){ try{return JSON.parse(localStorage.getItem("cart"))||[]}catch{return []} }
+
+  const wrap = document.getElementById("checkoutItems");
+
+  function renderItems(){
+    if(!wrap) return;
+    const cart = getCart();
+    wrap.innerHTML = "";
+
+    if(cart.length === 0){
+      wrap.innerHTML = '<p class="muted">Seu carrinho está vazio.</p>';
+      return;
+    }
+
+    cart.forEach(it=>{
+      const qty = Number(it.qty)||1;
+      const price = Number(it.price)||0;
+      wrap.innerHTML += `
+        <div class="checkout-item">
+          <img src="${it.image}" alt="${it.name}">
+          <div>
+            <strong>${it.name}</strong>
+            <small>${qty}x • ${brl(price)}</small>
+          </div>
+          <span class="checkout-sub">${brl(price*qty)}</span>
+        </div>
+      `;
+    });
+  }
+
+  window.addEventListener("cartUpdated", renderItems);
+  renderItems();
+})();
+</script>
+
+</body>
 </html>

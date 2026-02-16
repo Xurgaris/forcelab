@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo | ForceLab Nutrition</title>
+    <meta
+      name="description"
+      content="Catálogo ForceLab: filtre por objetivo, categoria e encontre seu suplemento ideal."
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <!-- HEADER: pode reutilizar o mesmo do index (recomendo copiar igual) -->
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="brand" href="index.html">
+          <div class="logo">
+            <h1>FORCE<span>LAB</span></h1>
+            <small>Nutrition</small>
+          </div>
+        </a>
+
+        <!-- Desktop nav -->
+        <nav class="nav" aria-label="Menu principal">
+          <a href="catalogo.html">Catálogo</a>
+          <a href="catalogo.html?tag=creatina">Creatina</a>
+          <a href="catalogo.html?tag=proteinas">Proteínas</a>
+          <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+          <a href="index.html#kits">Kits</a>
+          <a href="index.html#contato">Contato</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <!-- Search desktop -->
+          
+
+          <!-- Mobile menu button -->
+          <button
+            class="icon-btn menu-btn"
+            type="button"
+            aria-label="Abrir menu"
+            aria-expanded="false"
+          >
+            ☰
+          </button>
+
+         
+
+          <button
+            class="cart-ico-btn"
+            type="button"
+            onclick="toggleCart()"
+            aria-label="Abrir carrinho"
+          >
+            🛒
+            <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MOBILE MENU (overlay) -->
+      <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+        <div class="mobile-panel">
+          <div class="mobile-top">
+            <strong>Menu</strong>
+            <button class="mobile-close" type="button" aria-label="Fechar menu">
+              ✕
+            </button>
+          </div>
+
+          <div class="mobile-search">
+            <input
+              type="search"
+              placeholder="Buscar produtos..."
+              aria-label="Buscar produtos"
+            />
+          </div>
+
+          <nav class="mobile-links" aria-label="Menu mobile">
+            <a href="catalogo.html">Catálogo</a>
+            <a href="catalogo.html?tag=creatina">Creatina</a>
+            <a href="catalogo.html?tag=proteinas">Proteínas</a>
+            <a href="catalogo.html?tag=pre-treino">Pré-treino</a>
+            <a href="catalogo.html?tag=massa">Massa</a>
+            <a href="catalogo.html?tag=energia">Energia</a>
+            <a href="catalogo.html?tag=forca">Força</a>
+            <a href="catalogo.html?tag=saude">Saúde</a>
+            <a href="index.html#kits">Kits</a>
+            <a href="index.html#contato">Contato</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO DO CATÁLOGO -->
+      <section class="catalog-hero">
+        <div class="container">
+          <div class="catalog-hero-inner">
+            <div>
+              <div class="hero-kicker">Catálogo ForceLab</div>
+              <h1 class="catalog-title">
+                Encontre o suplemento ideal por objetivo.
+              </h1>
+              <p class="catalog-sub">
+                Filtre por categoria, ordene por preço e compre em poucos
+                cliques.
+              </p>
+
+              <div
+                class="catalog-chips"
+                id="catalogChips"
+                aria-label="Categorias do catálogo"
+              ></div>
+            </div>
+
+            <div class="catalog-controls">
+              <div class="control">
+                <label for="sortSelect">Ordenar</label>
+                <select id="sortSelect">
+                  <option value="featured">Destaques</option>
+                  <option value="price-asc">Menor preço</option>
+                  <option value="price-desc">Maior preço</option>
+                  <option value="name-asc">A–Z</option>
+                  <option value="name-desc">Z–A</option>
+                </select>
+              </div>
+
+              <div class="control">
+                <label for="priceMax">Preço máx.</label>
+                <input
+                  id="priceMax"
+                  type="number"
+                  inputmode="numeric"
+                  placeholder="Ex: 300"
+                />
+              </div>
+
+              <button id="clearFilters" class="btn btn-ghost" type="button">
+                Limpar filtros
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRID -->
+      <section class="section products" aria-label="Produtos do catálogo">
+        <div class="container">
+          <div class="catalog-meta">
+            <div class="catalog-count">
+              <strong id="resultCount">0</strong>
+              <span>produtos encontrados</span>
+            </div>
+
+            <button
+              class="btn btn-primary btn-sm catalog-open-filters"
+              type="button"
+              id="openFiltersMobile"
+            >
+              Filtros
+            </button>
+          </div>
+
+          <div class="grid" id="catalogGrid">
+            <p class="muted">Carregando catálogo...</p>
+          </div>
+
+          <!-- Paginação simples -->
+          <div class="catalog-pagination" id="pagination"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- MINI CART (reutiliza o mesmo do index) -->
+    <div id="miniCart" class="mini-cart" aria-label="Carrinho lateral">
+      <div class="cart-header">
+        <h3>Seu carrinho</h3>
+        <button class="close-cart" onclick="toggleCart()">Fechar</button>
+      </div>
+
+      <div id="miniCartItems" class="mini-items"></div>
+
+      <div class="cart-footer">
+        <p>Total</p>
+        <h2>R$ <span id="miniTotal">0</span></h2>
+        <a href="cart.html" class="btn btn-primary full">Ver carrinho</a>
+        <a href="checkout.html" class="btn btn-ghost full">Finalizar pedido</a>
+      </div>
+    </div>
+
+    <script src="js/cart.js"></script>
+    <script src="js/header.js"></script>
+    <script type="module" src="js/catalogo.js"></script>
+  </body>
+</html>

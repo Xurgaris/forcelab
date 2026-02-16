@@ -5,118 +5,1039 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ForceLab Nutrition | Loja Oficial</title>
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- SEO básico -->
+    <meta
+      name="description"
+      content="ForceLab Nutrition: suplementos premium, kits em oferta, entrega rápida e checkout simplificado."
+    />
+    <meta name="theme-color" content="#0b0b0b" />
   </head>
+
   <body>
+    <!-- TOPBAR / HEADER -->
     <header class="topbar">
-      <div class="logo">
-        <h1>FORCE<span>LAB</span></h1>
-        <small>Nutrition</small>
+      <div class="container topbar-inner">
+        <!-- Brand -->
+        <a class="brand" href="#">
+          <div class="logo">
+            <h1>FORCE<span>LAB</span></h1>
+            <small>Nutrition</small>
+          </div>
+        </a>
+
+        <!-- Main nav (desktop) -->
+        <nav class="nav" aria-label="Menu principal">
+          <div class="nav-dd">
+            <button
+              class="nav-dd-btn"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Categorias
+              <svg
+                class="chev"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+
+            <div class="nav-dd-menu" role="menu" aria-label="Categorias">
+              <a role="menuitem" href="catalogo.html?tag=forca">Força</a>
+              <a role="menuitem" href="catalogo.html?tag=energia">Energia</a>
+              <a role="menuitem" href="catalogo.html?tag=massa">Massa</a>
+              <a role="menuitem" href="catalogo.html?tag=saude">Saúde</a>
+              <div class="sep"></div>
+              <a role="menuitem" href="catalogo.html">Ver catálogo completo</a>
+            </div>
+          </div>
+
+          <a href="catalogo.html?tag=creatina">Creatina</a>
+          <a href="catalogo.html?tag=proteinas">Proteínas</a>
+          <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+          <a href="#kits">Kits</a>
+          <a href="#blog">Blog</a>
+        </nav>
+
+        <!-- Actions -->
+        <div class="topbar-actions">
+          <!-- Menu (mobile) -->
+          <button
+            class="menu-btn"
+            id="menuBtn"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="mobileMenu"
+            aria-expanded="false"
+          >
+            <span class="sr-only">Abrir menu</span>
+          </button>
+
+          <!-- Cart -->
+          <button
+            class="cart-ico-btn"
+            type="button"
+            onclick="toggleCart()"
+            aria-label="Abrir carrinho"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M6 6h15l-2 9H7L6 6z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M6 6L5 3H2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+
+            <span class="cart-count-pill">
+              (<span id="cartCount">0</span>)
+            </span>
+          </button>
+        </div>
       </div>
 
-      <nav>
-        <a class="active" href="#">Início</a>
-        <a href="#produtos">Produtos</a>
-        <a href="#beneficios">Benefícios</a>
-        <a href="#contato">Contato</a>
-      </nav>
-
-      <div class="icons">
-        <button onclick="toggleCart()">
-          🛒 Carrinho (<span id="cartCount">0</span>)
-        </button>
-      </div>
+      <!-- MOBILE MENU (overlay + painel) -->
+      
     </header>
 
-    <section class="hero">
-      <div class="hero-text">
-        <h2>Super Oferta</h2>
-        <h1>ATÉ <span>20% OFF</span></h1>
-        <p>Suplementos premium para performance máxima.</p>
+    <main>
+      <!-- HERO -->
+      <section class="hero" aria-label="Banner principal">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-glow" aria-hidden="true"></div>
 
-        <div class="hero-buttons">
-          <a href="#produtos" class="btn-main">APROVEITAR AGORA</a>
-          <a href="#beneficios" class="btn-outline">Ver Benefícios</a>
+        <div class="container hero-grid">
+          <div class="hero-left">
+            <div class="hero-kicker">Loja oficial ForceLab</div>
+
+            <h1 class="hero-title">
+              Alta performance começa com consistência.
+              <span>Suplementos premium</span> com entrega rápida.
+            </h1>
+
+            <p class="hero-sub">
+              Curadoria direta, vitrine organizada e checkout simples. Tudo
+              pensado para compra rápida e experiência premium.
+            </p>
+
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#produtos">Ver produtos</a>
+              <a class="btn btn-ghost" href="#kits">Ver kits em oferta</a>
+            </div>
+
+            <div class="hero-metrics">
+              <div class="metric">
+                <strong>4.9</strong>
+                <span>Avaliação média</span>
+              </div>
+              <div class="metric">
+                <strong>24h</strong>
+                <span>Despacho rápido</span>
+              </div>
+              <div class="metric">
+                <strong>Pix</strong>
+                <span>Pagamento prático</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <div class="hero-card">
+              <div class="hero-card-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/kit-whey-900g-e-creatina-300g-dark-lab.png?v=1766760360&width=800"
+                  alt="Linha premium ForceLab"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="hero-card-body">
+                <div class="hero-tag">Destaque da semana</div>
+                <h3>Performance + Recuperação</h3>
+                <p>
+                  Vitrine com produtos essenciais para rotina de treino
+                  consistente.
+                </p>
+                <a class="hero-link" href="#produtos">Abrir vitrine</a>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="hero-img">
-        <img src="https://m.media-amazon.com/images/I/71vGZ2v0XDL.jpg" />
-      </div>
-    </section>
+      <!-- TRUST STRIP -->
+      <section class="trust-strip" aria-label="Benefícios de compra">
+        <div class="container trust-strip-grid">
+          <div class="trust-strip-item">
+            <span class="trust-ico">✓</span>
+            <div>
+              <strong>Envio rápido</strong>
+              <p>Despacho organizado e rastreio.</p>
+            </div>
+          </div>
 
-    <section id="beneficios" class="benefits">
-      <h2>Por que escolher a ForceLab?</h2>
+          <div class="trust-strip-item">
+            <span class="trust-ico">✓</span>
+            <div>
+              <strong>Pagamento seguro</strong>
+              <p>Pix e cartão com fluxo otimizado.</p>
+            </div>
+          </div>
 
-      <div class="benefits-grid">
-        <div class="benefit">
-          🚚
-          <h3>Entrega Rápida</h3>
-          <p>Receba em casa com total segurança.</p>
+          <div class="trust-strip-item">
+            <span class="trust-ico">✓</span>
+            <div>
+              <strong>Produtos selecionados</strong>
+              <p>Curadoria por objetivo e consistência.</p>
+            </div>
+          </div>
+
+          <div class="trust-strip-item">
+            <span class="trust-ico">✓</span>
+            <div>
+              <strong>Atendimento direto</strong>
+              <p>Suporte para dúvidas e acompanhamento.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUTOS -->
+      <section id="produtos" class="section products" aria-label="Produtos em destaque">
+        <div class="container">
+          <div class="section-head">
+            <h2>Produtos em destaque</h2>
+            <p>Carregados automaticamente do seu sistema atual.</p>
+          </div>
+
+          <div class="grid" id="productsGrid">
+            <p class="muted">Carregando produtos...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- OBJETIVOS -->
+      <section class="objectives section" id="objetivos">
+        <div class="container">
+          <header class="section-head">
+            <div class="objectives-head-top">
+              <div>
+                <h2 class="objective-title">Compre por objetivo</h2>
+                <p>
+                  Navegue por foco e encontre a linha ideal. Selecione um
+                  objetivo para abrir o catálogo filtrado.
+                </p>
+              </div>
+
+              <div
+                class="objective-chips"
+                role="tablist"
+                aria-label="Filtros por objetivo"
+              >
+                <a class="chip chip--active" href="catalogo.html" role="tab" aria-selected="true">Todos</a>
+                <a class="chip" href="catalogo.html?tag=forca" role="tab">Força</a>
+                <a class="chip" href="catalogo.html?tag=energia" role="tab">Energia</a>
+                <a class="chip" href="catalogo.html?tag=massa" role="tab">Massa</a>
+                <a class="chip" href="catalogo.html?tag=saude" role="tab">Saúde</a>
+              </div>
+            </div>
+          </header>
+
+          <!-- Desktop -->
+          <div class="objectives-grid desktop-only" id="objGrid">
+            <a class="objective-card" href="catalogo.html?tag=massa" aria-label="Comprar por objetivo: Massa">
+              <img
+                class="objective-img"
+                src="https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=2000&q=80"
+                alt="Massa"
+                loading="lazy"
+              />
+              <div class="objective-overlay"></div>
+              <div class="objective-content">
+                <div class="objective-tag">Massa</div>
+                <h3>Ganho de massa</h3>
+                <p>Proteínas e base diária para evolução consistente.</p>
+                <span class="objective-cta">Explorar</span>
+              </div>
+            </a>
+
+            <a class="objective-card" href="catalogo.html?tag=forca" aria-label="Comprar por objetivo: Força">
+              <img
+                class="objective-img"
+                src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=2000&q=80"
+                alt="Força"
+                loading="lazy"
+              />
+              <div class="objective-overlay"></div>
+              <div class="objective-content">
+                <div class="objective-tag">Força</div>
+                <h3>Alta performance</h3>
+                <p>Creatina e essenciais para progressão de carga.</p>
+                <span class="objective-cta">Explorar</span>
+              </div>
+            </a>
+
+            <a class="objective-card" href="catalogo.html?tag=energia" aria-label="Comprar por objetivo: Energia">
+              <img
+                class="objective-img"
+                src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=2000&q=80"
+                alt="Energia"
+                loading="lazy"
+              />
+              <div class="objective-overlay"></div>
+              <div class="objective-content">
+                <div class="objective-tag">Energia</div>
+                <h3>Energia e foco</h3>
+                <p>Pré-treinos e suporte para sessões intensas.</p>
+                <span class="objective-cta">Explorar</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Mobile (CARROSSEL) -->
+          <div class="mobile-carousel mobile-only" id="objCarousel" aria-label="Carrossel de objetivos">
+            <a class="objective-card" href="catalogo.html?tag=massa" aria-label="Comprar por objetivo: Massa">
+              <img
+                class="objective-img"
+                src="https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=2000&q=80"
+                alt="Massa"
+                loading="lazy"
+              />
+              <div class="objective-overlay"></div>
+              <div class="objective-content">
+                <div class="objective-tag">Massa</div>
+                <h3>Ganho de massa</h3>
+                <p>Proteínas e base diária para evolução consistente.</p>
+                <span class="objective-cta">Explorar</span>
+              </div>
+            </a>
+
+            <a class="objective-card" href="catalogo.html?tag=forca" aria-label="Comprar por objetivo: Força">
+              <img
+                class="objective-img"
+                src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=2000&q=80"
+                alt="Força"
+                loading="lazy"
+              />
+              <div class="objective-overlay"></div>
+              <div class="objective-content">
+                <div class="objective-tag">Força</div>
+                <h3>Alta performance</h3>
+                <p>Creatina e essenciais para progressão de carga.</p>
+                <span class="objective-cta">Explorar</span>
+              </div>
+            </a>
+
+            <a class="objective-card" href="catalogo.html?tag=energia" aria-label="Comprar por objetivo: Energia">
+              <img
+                class="objective-img"
+                src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=2000&q=80"
+                alt="Energia"
+                loading="lazy"
+              />
+              <div class="objective-overlay"></div>
+              <div class="objective-content">
+                <div class="objective-tag">Energia</div>
+                <h3>Energia e foco</h3>
+                <p>Pré-treinos e suporte para sessões intensas.</p>
+                <span class="objective-cta">Explorar</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- KITS -->
+      <section class="kits section" id="kits">
+        <div class="container">
+          <header class="section-head kits-head">
+            <h2>Kits em oferta</h2>
+            <p>
+              Combinações prontas para rotina. Melhor custo-benefício e compra
+              rápida em poucos cliques.
+            </p>
+          </header>
+
+          <!-- Desktop -->
+          <div class="kits-grid desktop-only" id="kitsGrid">
+            <article class="kit-card">
+              <div class="kit-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/kit-whey-900g-e-creatina-300g-dark-lab.png?v=1766760360&width=800"
+                  alt="Kit Força Total"
+                  loading="lazy"
+                />
+                <div class="kit-badge">Oferta</div>
+              </div>
+
+              <div class="kit-body">
+                <div class="kit-top">
+                  <h3>Kit Força Total</h3>
+                  <p class="kit-desc">
+                    Creatina + Whey para base diária e evolução consistente.
+                  </p>
+                </div>
+
+                <ul class="kit-list">
+                  <li>Creatina premium (300g)</li>
+                  <li>Whey protein (900g)</li>
+                  <li>Rotina diária simplificada</li>
+                </ul>
+
+                <div class="kit-price-row">
+                  <div class="kit-price">
+                    <span class="kit-old">R$ 299,00</span>
+                    <strong class="kit-new">R$ 249,00</strong>
+                    <span class="kit-off">-17%</span>
+                  </div>
+
+                  <div class="kit-actions">
+                    <button class="btn btn-primary kit-btn" type="button">
+                      Adicionar kit
+                    </button>
+                    <a class="btn btn-ghost kit-link" href="catalogo.html">
+                      Ver detalhes
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="kit-card kit-card--featured">
+              <div class="kit-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/6_96433a77-9711-4d5b-a92c-a658334857cf.png?v=1755530611&width=800"
+                  alt="Kit Massa e Recuperação"
+                  loading="lazy"
+                />
+                <div class="kit-badge kit-badge--hot">Mais vendido</div>
+              </div>
+
+              <div class="kit-body">
+                <div class="kit-top">
+                  <h3>Kit Massa e Recuperação</h3>
+                  <p class="kit-desc">
+                    Proteína + suporte para recuperação. Ideal para consistência.
+                  </p>
+                </div>
+
+                <ul class="kit-list">
+                  <li>Whey premium (900g)</li>
+                  <li>Aminoácidos (uso diário)</li>
+                  <li>Recuperação + constância</li>
+                </ul>
+
+                <div class="kit-price-row">
+                  <div class="kit-price">
+                    <span class="kit-old">R$ 339,00</span>
+                    <strong class="kit-new">R$ 279,00</strong>
+                    <span class="kit-off">-18%</span>
+                  </div>
+
+                  <div class="kit-actions">
+                    <button class="btn btn-primary kit-btn" type="button">
+                      Adicionar kit
+                    </button>
+                    <a class="btn btn-ghost kit-link" href="catalogo.html">
+                      Ver detalhes
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="kit-card">
+              <div class="kit-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/6_550598e7-6d9e-4801-be5d-eb1d3281cdbb.png?v=1757104161&width=800"
+                  alt="Kit Energia e Foco"
+                  loading="lazy"
+                />
+                <div class="kit-badge">Oferta</div>
+              </div>
+
+              <div class="kit-body">
+                <div class="kit-top">
+                  <h3>Kit Energia e Foco</h3>
+                  <p class="kit-desc">
+                    Pré-treino + suporte para sessões intensas e alta entrega.
+                  </p>
+                </div>
+
+                <ul class="kit-list">
+                  <li>Pré-treino (foco e energia)</li>
+                  <li>Suporte diário (rotina)</li>
+                  <li>Treinos mais intensos</li>
+                </ul>
+
+                <div class="kit-price-row">
+                  <div class="kit-price">
+                    <span class="kit-old">R$ 269,00</span>
+                    <strong class="kit-new">R$ 219,00</strong>
+                    <span class="kit-off">-19%</span>
+                  </div>
+
+                  <div class="kit-actions">
+                    <button class="btn btn-primary kit-btn" type="button">
+                      Adicionar kit
+                    </button>
+                    <a class="btn btn-ghost kit-link" href="catalogo.html">
+                      Ver detalhes
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Mobile (CARROSSEL) -->
+          <div class="mobile-carousel mobile-only" id="kitsCarousel" aria-label="Carrossel de kits">
+            <article class="kit-card">
+              <div class="kit-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/kit-whey-900g-e-creatina-300g-dark-lab.png?v=1766760360&width=800"
+                  alt="Kit Força Total"
+                  loading="lazy"
+                />
+                <div class="kit-badge">Oferta</div>
+              </div>
+
+              <div class="kit-body">
+                <div class="kit-top">
+                  <h3>Kit Força Total</h3>
+                  <p class="kit-desc">Creatina + Whey para base diária e evolução consistente.</p>
+                </div>
+
+                <ul class="kit-list">
+                  <li>Creatina premium (300g)</li>
+                  <li>Whey protein (900g)</li>
+                  <li>Rotina diária simplificada</li>
+                </ul>
+
+                <div class="kit-price-row">
+                  <div class="kit-price">
+                    <span class="kit-old">R$ 299,00</span>
+                    <strong class="kit-new">R$ 249,00</strong>
+                    <span class="kit-off">-17%</span>
+                  </div>
+
+                  <div class="kit-actions">
+                    <button class="btn btn-primary kit-btn" type="button">Adicionar kit</button>
+                    <a class="btn btn-ghost kit-link" href="catalogo.html">Ver detalhes</a>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="kit-card kit-card--featured">
+              <div class="kit-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/6_96433a77-9711-4d5b-a92c-a658334857cf.png?v=1755530611&width=800"
+                  alt="Kit Massa e Recuperação"
+                  loading="lazy"
+                />
+                <div class="kit-badge kit-badge--hot">Mais vendido</div>
+              </div>
+
+              <div class="kit-body">
+                <div class="kit-top">
+                  <h3>Kit Massa e Recuperação</h3>
+                  <p class="kit-desc">Proteína + suporte para recuperação. Ideal para consistência.</p>
+                </div>
+
+                <ul class="kit-list">
+                  <li>Whey premium (900g)</li>
+                  <li>Aminoácidos (uso diário)</li>
+                  <li>Recuperação + constância</li>
+                </ul>
+
+                <div class="kit-price-row">
+                  <div class="kit-price">
+                    <span class="kit-old">R$ 339,00</span>
+                    <strong class="kit-new">R$ 279,00</strong>
+                    <span class="kit-off">-18%</span>
+                  </div>
+
+                  <div class="kit-actions">
+                    <button class="btn btn-primary kit-btn" type="button">Adicionar kit</button>
+                    <a class="btn btn-ghost kit-link" href="catalogo.html">Ver detalhes</a>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="kit-card">
+              <div class="kit-media">
+                <img
+                  src="https://darklabsuplementos.com.br/cdn/shop/files/6_550598e7-6d9e-4801-be5d-eb1d3281cdbb.png?v=1757104161&width=800"
+                  alt="Kit Energia e Foco"
+                  loading="lazy"
+                />
+                <div class="kit-badge">Oferta</div>
+              </div>
+
+              <div class="kit-body">
+                <div class="kit-top">
+                  <h3>Kit Energia e Foco</h3>
+                  <p class="kit-desc">Pré-treino + suporte para sessões intensas e alta entrega.</p>
+                </div>
+
+                <ul class="kit-list">
+                  <li>Pré-treino (foco e energia)</li>
+                  <li>Suporte diário (rotina)</li>
+                  <li>Treinos mais intensos</li>
+                </ul>
+
+                <div class="kit-price-row">
+                  <div class="kit-price">
+                    <span class="kit-old">R$ 269,00</span>
+                    <strong class="kit-new">R$ 219,00</strong>
+                    <span class="kit-off">-19%</span>
+                  </div>
+
+                  <div class="kit-actions">
+                    <button class="btn btn-primary kit-btn" type="button">Adicionar kit</button>
+                    <a class="btn btn-ghost kit-link" href="catalogo.html">Ver detalhes</a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- BLOG -->
+      <section class="section blog" id="blog" aria-label="Blog">
+        <div class="container">
+          <div class="section-head section-head--split">
+            <div>
+              <h2>Blog</h2>
+              <p>Conteúdo direto, prático e organizado para decisão de compra.</p>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="#">Ver todos</a>
+          </div>
+
+          <div class="blog-grid">
+            <article class="blog-card">
+              <img
+                src="https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1600&q=80"
+                alt="Guia de pré-treino"
+                loading="lazy"
+              />
+              <div class="blog-body">
+                <span class="blog-tag">Guia</span>
+                <h3>Como escolher pré-treino para rotina intensa</h3>
+                <p>Pontos-chave para comparar fórmulas e ajustar por tolerância.</p>
+                <a class="blog-link" href="#">Ler artigo</a>
+              </div>
+            </article>
+
+            <article class="blog-card">
+              <img
+                src="https://images.unsplash.com/photo-1595348020949-87cdfbb44174?auto=format&fit=crop&w=1600&q=80"
+                alt="Proteína e recuperação"
+                loading="lazy"
+              />
+              <div class="blog-body">
+                <span class="blog-tag">Performance</span>
+                <h3>Whey: base diária para recuperação e consistência</h3>
+                <p>Quando usar, como encaixar e como comparar opções com clareza.</p>
+                <a class="blog-link" href="#">Ler artigo</a>
+              </div>
+            </article>
+
+            <article class="blog-card">
+              <img
+                src="https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?auto=format&fit=crop&w=1600&q=80"
+                alt="Creatina"
+                loading="lazy"
+              />
+              <div class="blog-body">
+                <span class="blog-tag">Rotina</span>
+                <h3>Creatina: o que muda com uso diário</h3>
+                <p>Estratégia, consistência e como acompanhar evolução ao longo do tempo.</p>
+                <a class="blog-link" href="#">Ler artigo</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMENTÁRIOS -->
+      <section class="section reviews" aria-label="Comentários">
+        <div class="container">
+          <div class="section-head">
+            <h2>Comentários</h2>
+            <p>Avaliações reais sobre entrega, qualidade e experiência.</p>
+          </div>
+
+          <!-- Desktop -->
+          <div class="reviews-grid desktop-only" id="revGrid">
+            <article class="review-card">
+              <div class="review-top">
+                <strong>João Martins</strong>
+                <span class="stars">★★★★★</span>
+              </div>
+              <p>
+                Compra fluida e rápida. O pedido chegou bem embalado e a entrega foi ágil.
+              </p>
+              <span class="review-meta">Whey e creatina</span>
+            </article>
+
+            <article class="review-card">
+              <div class="review-top">
+                <strong>Ana Ribeiro</strong>
+                <span class="stars">★★★★★</span>
+              </div>
+              <p>
+                Gostei da organização da loja. Encontrei o que precisava e finalizei sem complicação.
+              </p>
+              <span class="review-meta">Pré-treino</span>
+            </article>
+
+            <article class="review-card">
+              <div class="review-top">
+                <strong>Lucas Fernandes</strong>
+                <span class="stars">★★★★★</span>
+              </div>
+              <p>
+                Vitrine bem montada e checkout simples. Experiência premium de verdade.
+              </p>
+              <span class="review-meta">Creatina</span>
+            </article>
+          </div>
+
+          <!-- Mobile (CARROSSEL) -->
+          <div class="mobile-carousel mobile-only" id="revCarousel" aria-label="Carrossel de comentários">
+            <article class="review-card">
+              <div class="review-top">
+                <strong>João Martins</strong>
+                <span class="stars">★★★★★</span>
+              </div>
+              <p>Compra fluida e rápida. O pedido chegou bem embalado e a entrega foi ágil.</p>
+              <span class="review-meta">Whey e creatina</span>
+            </article>
+
+            <article class="review-card">
+              <div class="review-top">
+                <strong>Ana Ribeiro</strong>
+                <span class="stars">★★★★★</span>
+              </div>
+              <p>Gostei da organização da loja. Encontrei o que precisava e finalizei sem complicação.</p>
+              <span class="review-meta">Pré-treino</span>
+            </article>
+
+            <article class="review-card">
+              <div class="review-top">
+                <strong>Lucas Fernandes</strong>
+                <span class="stars">★★★★★</span>
+              </div>
+              <p>Vitrine bem montada e checkout simples. Experiência premium de verdade.</p>
+              <span class="review-meta">Creatina</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- INSTAGRAM -->
+      <section class="section instagram" aria-label="Instagram">
+        <div class="container">
+          <div class="section-head section-head--split">
+            <div>
+              <h2>Instagram</h2>
+              <p>Visual de marca, rotina e lançamentos.</p>
+            </div>
+            <a
+              class="btn btn-primary btn-sm"
+              href="https://instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Ver perfil
+            </a>
+          </div>
+
+          <div class="ig-grid">
+            <a class="ig-card" href="#" aria-label="Post 1">
+              <img
+                src="https://images.unsplash.com/photo-1526401485004-2aa7c0c597d7?auto=format&fit=crop&w=1200&q=80"
+                alt="Post do Instagram"
+                loading="lazy"
+              />
+            </a>
+            <a class="ig-card" href="#" aria-label="Post 2">
+              <img
+                src="https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1200&q=80"
+                alt="Post do Instagram"
+                loading="lazy"
+              />
+            </a>
+            <a class="ig-card" href="#" aria-label="Post 3">
+              <img
+                src="https://images.unsplash.com/photo-1595348020949-87cdfbb44174?auto=format&fit=crop&w=1200&q=80"
+                alt="Post do Instagram"
+                loading="lazy"
+              />
+            </a>
+            <a class="ig-card" href="#" aria-label="Post 4">
+              <img
+                src="https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?auto=format&fit=crop&w=1200&q=80"
+                alt="Post do Instagram"
+                loading="lazy"
+              />
+            </a>
+            <a class="ig-card" href="#" aria-label="Post 5">
+              <img
+                src="https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=1200&q=80"
+                alt="Post do Instagram"
+                loading="lazy"
+              />
+            </a>
+            <a class="ig-card" href="#" aria-label="Post 6">
+              <img
+                src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1200&q=80"
+                alt="Post do Instagram"
+                loading="lazy"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOCIAL BAR -->
+      <section class="social-bar" aria-label="Destaques e suporte">
+        <div class="container social-bar-grid">
+          <div class="social-pill">
+            <strong>Suporte rápido</strong>
+            <span>WhatsApp para dúvidas e acompanhamento.</span>
+          </div>
+          <div class="social-pill">
+            <strong>Ofertas semanais</strong>
+            <span>Promoções e kits com melhor custo.</span>
+          </div>
+          <div class="social-pill">
+            <strong>Compra segura</strong>
+            <span>Checkout simplificado e estável.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEWSLETTER -->
+      <section class="section newsletter" aria-label="Newsletter">
+        <div class="container">
+          <div class="newsletter-box">
+            <div class="newsletter-left">
+              <h2>Cadastre-se em nossa newsletter</h2>
+              <p>Quer receber nossas ofertas? Cadastre-se e comece a recebê-las.</p>
+            </div>
+
+            <form class="newsletter-form" name="newsletter" method="POST" data-netlify="true">
+              <input type="hidden" name="form-name" value="newsletter" />
+
+              <label class="sr-only" for="nameNewsletter">Nome</label>
+              <input id="nameNewsletter" type="text" name="nome" placeholder="Nome" required />
+
+              <label class="sr-only" for="emailNewsletter">E-mail</label>
+              <input id="emailNewsletter" type="email" name="email" placeholder="E-mail" required />
+
+              <button class="btn btn-primary newsletter-btn" type="submit">
+                Cadastrar
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTATO -->
+      <section class="section contact" id="contato" aria-label="Contato">
+        <div class="container">
+          <div class="section-head">
+            <h2>Contato</h2>
+            <p>Envie uma mensagem. Resposta rápida no WhatsApp ou por e-mail.</p>
+          </div>
+
+          <div class="contact-grid">
+            <div class="contact-card">
+              <h3>Atendimento</h3>
+              <p class="muted">Horário comercial. Para urgências, use WhatsApp.</p>
+
+              <div class="contact-actions">
+                <a class="btn btn-primary" href="https://wa.me/5500000000000" target="_blank" rel="noreferrer">
+                  WhatsApp
+                </a>
+                <a class="btn btn-ghost" href="mailto:contato@forcelab.com">E-mail</a>
+              </div>
+
+              <div class="contact-mini">
+                <div>
+                  <strong>Despacho</strong>
+                  <span>Organizado e rápido</span>
+                </div>
+                <div>
+                  <strong>Pagamentos</strong>
+                  <span>Pix e cartão</span>
+                </div>
+              </div>
+            </div>
+
+            <form class="contact-form" name="contato" method="POST" data-netlify="true">
+              <input type="hidden" name="form-name" value="contato" />
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="nomeContato">Nome</label>
+                  <input id="nomeContato" name="nome" type="text" placeholder="Seu nome" required />
+                </div>
+
+                <div class="field">
+                  <label for="whatsContato">WhatsApp</label>
+                  <input id="whatsContato" name="whatsapp" type="text" placeholder="(00) 00000-0000" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="emailContato">E-mail</label>
+                <input id="emailContato" name="email" type="email" placeholder="voce@exemplo.com" required />
+              </div>
+
+              <div class="field">
+                <label for="msgContato">Mensagem</label>
+                <textarea id="msgContato" name="mensagem" placeholder="Escreva sua mensagem..." rows="5" required></textarea>
+              </div>
+
+              <button class="btn btn-primary full" type="submit">
+                Enviar mensagem
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="container footer-grid">
+          <div class="footer-col">
+            <h3>ForceLab Nutrition</h3>
+            <p class="muted">
+              Suplementos e performance. Loja com experiência premium e
+              navegação simples.
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h4>Seções</h4>
+            <div class="footer-links">
+              <a href="#produtos">Produtos</a>
+              <a href="#kits">Kits em oferta</a>
+              <a href="#contato">Contato</a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Pagamentos</h4>
+            <div class="pay-row" aria-label="Métodos de pagamento">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Pix_logo.svg" alt="Pix" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" loading="lazy" />
+            </div>
+            <p class="muted small">
+              Ícones ilustrativos. Você pode trocar pelos reais da operação.
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h4>Atendimento</h4>
+            <div class="footer-links">
+              <a href="https://wa.me/5500000000000" target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href="mailto:contato@forcelab.com">contato@forcelab.com</a>
+              <a href="#">Política de entrega</a>
+            </div>
+          </div>
         </div>
 
-        <div class="benefit">
-          🏋️
-          <h3>Alta Performance</h3>
-          <p>Produtos feitos para resultados reais.</p>
+        <div class="container footer-bottom">
+          <small>© 2026 ForceLab Nutrition — Todos os direitos reservados</small>
         </div>
+      </footer>
+    </main>
 
-        <div class="benefit">
-          ⭐
-          <h3>Qualidade Premium</h3>
-          <p>Suplementos testados e aprovados.</p>
-        </div>
-
-        <div class="benefit">
-          💬
-          <h3>Suporte WhatsApp</h3>
-          <p>Atendimento imediato.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="produtos" class="products">
-  <h2>Destaques da Semana</h2>
-
-  <!-- GRID AUTOMÁTICA -->
-  <div class="grid" id="productsGrid">
-    <p style="opacity:0.6;">Carregando produtos...</p>
-  </div>
-</section>
-
-<!-- Script automático -->
-<script type="module" src="js/products.js"></script>
-
-
-    <footer id="contato">
-      <h3>ForceLab Nutrition</h3>
-      <p>Suplementos e performance máxima.</p>
-    </footer>
-
-    <a class="whatsapp" href="https://wa.me/5500000000000" target="_blank"
-      >💬</a
-    >
+    <!-- WHATSAPP FLOAT -->
+    <a class="whatsapp-float" href="https://wa.me/5500000000000" target="_blank" rel="noreferrer">
+      WhatsApp
+    </a>
 
     <!-- MINI CART -->
-    <div id="miniCart" class="mini-cart">
+    <div id="miniCart" class="mini-cart" aria-label="Carrinho lateral">
       <div class="cart-header">
-        <h3>Seu Carrinho</h3>
-        <button class="close-cart" onclick="toggleCart()">✖</button>
+        <h3>Seu carrinho</h3>
+        <button class="close-cart" onclick="toggleCart()">Fechar</button>
       </div>
 
       <div id="miniCartItems" class="mini-items"></div>
 
       <div class="cart-footer">
-        <p>Total:</p>
+        <p>Total</p>
         <h2>R$ <span id="miniTotal">0</span></h2>
 
-        <a href="cart.html" class="btn-main full">Ver Carrinho</a>
-        <a href="checkout.html" class="btn-outline full">Finalizar Pedido</a>
+        <a href="cart.html" class="btn btn-primary full">Ver carrinho</a>
+        <a href="checkout.html" class="btn btn-ghost full">Finalizar pedido</a>
       </div>
     </div>
-    <section class="products" id="productsGrid"></section>
+<!-- MOBILE MENU (FORA DO HEADER - FIX iOS SAFARI) -->
+<div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu-inner" role="dialog" aria-label="Menu mobile">
+    <div class="mobile-menu-top">
+      <strong>Menu</strong>
+      <button class="mobile-close" type="button" aria-label="Fechar menu">✖</button>
+    </div>
 
-    
+    <!-- (opcional) Search mobile - seu JS suporta -->
+    <div class="mobile-search">
+      <input type="text" placeholder="Buscar produtos..." aria-label="Buscar produtos" />
+    </div>
+
+    <nav class="mobile-links" aria-label="Links do menu mobile">
+      <a href="catalogo.html">Categorias</a>
+      <a href="catalogo.html?tag=creatina">Creatina</a>
+      <a href="catalogo.html?tag=proteinas">Proteínas</a>
+      <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+      <a href="#kits">Kits</a>
+      <a href="#blog">Blog</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </div>
+</div>
+
+    <!-- Scripts -->
     <script type="module" src="js/products.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/header.js"></script>
   </body>
 </html>

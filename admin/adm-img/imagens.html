@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Uploads | ForceLab ADM</title>
+    <link rel="stylesheet" href="../admin.css" />
+    <link rel="stylesheet" href="../admin-ui.css" />
+  </head>
+  <body>
+    <script type="module" src="../protect.js"></script>
+
+    <div class="admin">
+      <div id="sidebar"></div>
+
+      <main class="main">
+        <header class="top">
+          <div>
+            <h2>Imagens (Cloudinary)</h2>
+            <div class="muted">
+              Envie e copie o link para usar nos produtos.
+            </div>
+          </div>
+        </header>
+
+        <section class="card" style="padding: 16px">
+          <button class="btn btn-primary" id="btnUpload" type="button">
+            Enviar imagem
+          </button>
+
+          <div style="margin-top: 14px">
+            <label class="label">URL gerada</label>
+            <div class="row" style="display: flex; gap: 10px; flex-wrap: wrap">
+              <input
+                class="input"
+                id="imgUrl"
+                placeholder="A URL vai aparecer aqui..."
+                readonly
+              />
+              <button class="btn btn-ghost" id="btnCopy" type="button">
+                Copiar
+              </button>
+            </div>
+            <small class="muted" id="msg"></small>
+          </div>
+
+          <div class="preview" style="margin-top: 14px">
+            <div class="preview-box" id="preview">🖼️</div>
+            <small class="muted">Preview</small>
+          </div>
+
+          <div style="margin-top: 14px">
+            <small class="muted">
+              Dica: use também URL otimizada:
+              <code>.../upload/f_auto,q_auto,w_900/...</code>
+            </small>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      fetch("../sidebar.html")
+        .then((r) => r.text())
+        .then((html) => {
+          document.getElementById("sidebar").innerHTML = html;
+        });
+    </script>
+
+    <!-- Cloudinary Upload Widget -->
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+    <script type="module" src="../protect.js"></script>
+    <script type="module" src="imagens.js"></script>
+  </body>
+</html>

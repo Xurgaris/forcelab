@@ -3,14 +3,14 @@ import { loadSidebar } from "./sidebar-loader.js";
 requireAuth();
 await loadSidebar("dashboard");
 
-import { db } from "../js/firebase.js";
+import { db } from "/js/firebase.js";
 import {
   collection,
   getDocs,
   orderBy,
   limit,
   query
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const totalPedidosEl = document.getElementById("totalPedidos");
 const totalVendasEl = document.getElementById("totalVendas");

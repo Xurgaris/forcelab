@@ -3,8 +3,8 @@ import { loadSidebar } from "./sidebar-loader.js";
 requireAuth();
 await loadSidebar("clientes");
 
-import { db } from "../js/firebase.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { db } from "/js/firebase.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const tbody = document.getElementById("clientsTbody");
 const searchInput = document.getElementById("clientsSearch");

@@ -3,7 +3,7 @@ import { loadSidebar } from "./sidebar-loader.js";
 requireAuth();
 await loadSidebar("pedidos");
 
-import { db } from "../js/firebase.js";
+import { db } from "/js/firebase.js";
 import {
   collection,
   getDocs,
@@ -11,7 +11,7 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const tbody = document.getElementById("ordersTbody");
 const searchInput = document.getElementById("ordersSearch");

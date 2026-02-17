@@ -1,11 +1,11 @@
 import { auth } from "../js/firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
 export async function loadSidebar(activeKey = "") {
   const mount = document.getElementById("sidebar");
   if (!mount) return;
 
-  const html = await fetch("sidebar.html").then(r => r.text());
+  const html = await fetch("/admin/sidebar.html").then(r => r.text());
   mount.innerHTML = html;
 
   // active link

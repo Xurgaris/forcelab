@@ -1,166 +1,271 @@
 <!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Produtos | ForceLab ADM</title>
-  <link rel="stylesheet" href="admin.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Produtos | ForceLab ADM</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
 
-<body>
-  <script type="module" src="protect.js"></script>
+  <body>
+    <script type="module" src="protect.js"></script>
 
-  <div class="admin">
-    <div id="sidebar"></div>
+    <div class="admin">
+      <div id="sidebar"></div>
 
-    <main class="main">
-      <header class="mobilebar">
-  <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
-  <div class="mobilebar-title">
-    <strong id="pageTitle">Painel</strong>
-    <small class="muted">ForceLab ADM</small>
-  </div>
-</header>
-
-<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
-
-      <header class="top">
-        <div>
-          <h2>Produtos</h2>
-          <div class="muted">Cadastre, edite e destaque produtos do catálogo.</div>
-        </div>
-
-        <div class="top-actions">
-          <div class="search">
-            <span style="color:#111;opacity:.7">🔎</span>
-            <input id="productsSearch" placeholder="Buscar por nome..." />
+      <main class="main">
+        <header class="mobilebar">
+          <button
+            class="micon"
+            id="openSidebar"
+            type="button"
+            aria-label="Abrir menu"
+          >
+            ☰
+          </button>
+          <div class="mobilebar-title">
+            <strong id="pageTitle">Painel</strong>
+            <small class="muted">ForceLab ADM</small>
           </div>
-          <button class="icon" id="btnNew" type="button" title="Novo produto">＋</button>
-          <button class="icon" id="btnRefresh" type="button" title="Atualizar">⟲</button>
-        </div>
-      </header>
+        </header>
 
-      <section class="products-toolbar">
-        <div class="pill">
-          <strong id="productsCount">0</strong>
-          <span>produtos</span>
-        </div>
+        <div
+          class="sidebar-backdrop"
+          id="sidebarBackdrop"
+          aria-hidden="true"
+        ></div>
 
-        <div class="filters">
-          <select id="filterFeatured">
-            <option value="all">Todos</option>
-            <option value="featured">Somente destaques</option>
-            <option value="not-featured">Sem destaque</option>
-          </select>
-
-          <select id="sortProducts">
-            <option value="name-asc">A–Z</option>
-            <option value="name-desc">Z–A</option>
-            <option value="price-asc">Menor preço</option>
-            <option value="price-desc">Maior preço</option>
-          </select>
-
-          <button class="btn btn-ghost" id="btnClear" type="button">Limpar</button>
-        </div>
-      </section>
-
-      <section class="table">
-        <div class="table-head">
-          <h3>Lista de produtos</h3>
-          <small class="muted">Clique em “Editar” para alterar dados</small>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Preço</th>
-                <th>Destaque</th>
-                <th style="width:220px">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="productsTbody">
-              <tr><td colspan="4" class="muted">Carregando...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- MODAL: NOVO/EDITAR -->
-  <div class="modal" id="productModal" aria-hidden="true">
-    <div class="modal-backdrop" data-close="1"></div>
-
-    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Produto">
-      <div class="modal-head">
-        <div>
-          <h3 id="pTitle">Novo produto</h3>
-          <small class="muted" id="pSub">Preencha os campos e salve</small>
-        </div>
-        <button class="icon" type="button" data-close="1" aria-label="Fechar">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <form id="productForm" class="form-grid">
-          <div class="form-col">
-            <label class="label" for="pName">Nome</label>
-            <input id="pName" class="input" required placeholder="Ex: Whey 900g" />
-
-            <label class="label" for="pPrice">Preço</label>
-            <input id="pPrice" class="input" type="number" step="0.01" required placeholder="Ex: 199.90" />
-
-            <label class="label" for="pOldPrice">Preço antigo (opcional)</label>
-            <input id="pOldPrice" class="input" type="number" step="0.01" placeholder="Ex: 249.90" />
-
-            <label class="label" for="pPixPrice">Preço Pix (opcional)</label>
-            <input id="pPixPrice" class="input" type="number" step="0.01" placeholder="Ex: 189.90" />
-
-            <label class="label" for="pInstallments">Parcelas (opcional)</label>
-            <input id="pInstallments" class="input" type="number" min="1" max="12" placeholder="Ex: 3" />
-
-            <label class="label" for="pFeatured">
-              <input id="pFeatured" type="checkbox" />
-              Marcar como destaque (featured)
-            </label>
+        <header class="top">
+          <div>
+            <h2>Produtos</h2>
+            <div class="muted">
+              Cadastre, edite e destaque produtos do catálogo.
+            </div>
           </div>
 
-          <div class="form-col">
-            <label class="label" for="pImage">Imagem (URL)</label>
-            <input id="pImage" class="input" required placeholder="https://..." />
+          <div class="top-actions">
+            <div class="search">
+              <span style="color: #111; opacity: 0.7">🔎</span>
+              <input id="productsSearch" placeholder="Buscar por nome..." />
+            </div>
+            <button class="icon" id="btnNew" type="button" title="Novo produto">
+              ＋
+            </button>
+            <button
+              class="icon"
+              id="btnRefresh"
+              type="button"
+              title="Atualizar"
+            >
+              ⟲
+            </button>
+          </div>
+        </header>
 
-            <div class="preview">
-              <div class="preview-box" id="pPreviewBox">🖼️</div>
-              <small class="muted">Preview da imagem</small>
+        <section class="products-toolbar">
+          <div class="pill">
+            <strong id="productsCount">0</strong>
+            <span>produtos</span>
+          </div>
+
+          <div class="filters">
+            <select id="filterFeatured">
+              <option value="all">Todos</option>
+              <option value="featured">Somente destaques</option>
+              <option value="not-featured">Sem destaque</option>
+            </select>
+
+            <select id="sortProducts">
+              <option value="name-asc">A–Z</option>
+              <option value="name-desc">Z–A</option>
+              <option value="price-asc">Menor preço</option>
+              <option value="price-desc">Maior preço</option>
+            </select>
+
+            <button class="btn btn-ghost" id="btnClear" type="button">
+              Limpar
+            </button>
+          </div>
+        </section>
+
+        <section class="table">
+          <div class="table-head">
+            <h3>Lista de produtos</h3>
+            <small class="muted">Clique em “Editar” para alterar dados</small>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Preço</th>
+                  <th>Destaque</th>
+                  <th style="width: 220px">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="productsTbody">
+                <tr>
+                  <td colspan="4" class="muted">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- MODAL: NOVO/EDITAR -->
+    <div class="modal" id="productModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="1"></div>
+
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Produto"
+      >
+        <div class="modal-head">
+          <div>
+            <h3 id="pTitle">Novo produto</h3>
+            <small class="muted" id="pSub">Preencha os campos e salve</small>
+          </div>
+          <button class="icon" type="button" data-close="1" aria-label="Fechar">
+            ✕
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form id="productForm" class="form-grid">
+            <div class="form-col">
+              <label class="label" for="pName">Nome</label>
+              <input
+                id="pName"
+                class="input"
+                required
+                placeholder="Ex: Whey 900g"
+              />
+
+              <label class="label" for="pPrice">Preço</label>
+              <input
+                id="pPrice"
+                class="input"
+                type="number"
+                step="0.01"
+                required
+                placeholder="Ex: 199.90"
+              />
+
+              <label class="label" for="pOldPrice"
+                >Preço antigo (opcional)</label
+              >
+              <input
+                id="pOldPrice"
+                class="input"
+                type="number"
+                step="0.01"
+                placeholder="Ex: 249.90"
+              />
+
+              <label class="label" for="pPixPrice">Preço Pix (opcional)</label>
+              <input
+                id="pPixPrice"
+                class="input"
+                type="number"
+                step="0.01"
+                placeholder="Ex: 189.90"
+              />
+
+              <label class="label" for="pInstallments"
+                >Parcelas (opcional)</label
+              >
+              <input
+                id="pInstallments"
+                class="input"
+                type="number"
+                min="1"
+                max="12"
+                placeholder="Ex: 3"
+              />
+
+              <label class="label" for="pFeatured">
+                <input id="pFeatured" type="checkbox" />
+                Marcar como destaque (featured)
+              </label>
             </div>
 
-            <label class="label" for="pCategory">Categoria (opcional)</label>
-            <input id="pCategory" class="input" placeholder="Ex: creatina / proteinas / pre-treino" />
+            <div class="form-col">
+              <label class="label" for="pImage">Imagem (URL)</label>
+              <input
+                id="pImage"
+                class="input"
+                required
+                placeholder="https://..."
+              />
 
-            <label class="label" for="pDescription">Descrição (opcional)</label>
-            <textarea id="pDescription" class="textarea" rows="5" placeholder="Detalhes do produto..."></textarea>
+              <label class="label" for="pImageFile"
+                >Ou escolher imagem do PC</label
+              >
+              <input
+                id="pImageFile"
+                class="input"
+                type="file"
+                accept="image/*"
+              />
 
-            <div class="form-actions">
-              <button class="btn btn-primary" id="btnSave" type="submit">Salvar</button>
-              <button class="btn btn-ghost" id="btnDelete" type="button">Excluir</button>
+              <div class="upload-row">
+                <button class="btn btn-ghost" id="btnUploadImg" type="button">
+                  Enviar imagem
+                </button>
+                <small class="muted" id="pUploadMsg"></small>
+              </div>
+
+              <div class="preview">
+                <div class="preview-box" id="pPreviewBox">🖼️</div>
+                <small class="muted">Preview da imagem</small>
+              </div>
+
+              <label class="label" for="pCategory">Categoria (opcional)</label>
+              <input
+                id="pCategory"
+                class="input"
+                placeholder="Ex: creatina / proteinas / pre-treino"
+              />
+
+              <label class="label" for="pDescription"
+                >Descrição (opcional)</label
+              >
+              <textarea
+                id="pDescription"
+                class="textarea"
+                rows="5"
+                placeholder="Detalhes do produto..."
+              ></textarea>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" id="btnSave" type="submit">
+                  Salvar
+                </button>
+                <button class="btn btn-ghost" id="btnDelete" type="button">
+                  Excluir
+                </button>
+              </div>
+
+              <small class="muted" id="pMsg"></small>
             </div>
-
-            <small class="muted" id="pMsg"></small>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    fetch("sidebar.html")
-      .then((r) => r.text())
-      .then((html) => {
-        document.getElementById("sidebar").innerHTML = html;
-      });
-  </script>
+    <script>
+      fetch("/admin/sidebar.html")
+        .then((r) => r.text())
+        .then((html) => {
+          document.getElementById("sidebar").innerHTML = html;
+        });
+    </script>
 
-  <script type="module" src="produtos.js"></script>
-</body>
+    <script type="module" src="produtos.js"></script>
+  </body>
 </html>

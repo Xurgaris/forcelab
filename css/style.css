@@ -156,8 +156,8 @@ button{font:inherit;}
 }
 .hero-glow{
   position:absolute;inset:-2px;
-  background:url("https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=2000&q=80") center/cover no-repeat;
-  opacity:.20;
+  background:url("../assets/banner-principal.png") center/cover no-repeat;
+  opacity:.30;
   z-index:-3;
 }
 .hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:46px;align-items:center;}
@@ -865,22 +865,8 @@ html, body { width: 100%; max-width: 100%; }
     right: 0; top: 0;
     height: 100%;
     width: min(92vw, 380px);
-
-    background:
-      radial-gradient(900px 420px at 18% 12%, rgba(255,0,0,.12), transparent 60%),
-      linear-gradient(180deg, rgba(14,14,14,.98), rgba(7,7,7,.98));
-
-    border-left: 1px solid rgba(255,255,255,.12);
-    box-shadow: -22px 0 70px rgba(0,0,0,.75), -6px 0 22px rgba(255,0,0,.10);
-    border-radius: 18px 0 0 18px;
-
-    padding: 16px;
-    transform: translateX(18px);
-    opacity: .96;
-    transition: transform .22s ease, opacity .22s ease;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
   }
+  
   .mobile-menu.open .mobile-menu-inner{
     transform: translateX(0);
     opacity: 1;
@@ -2673,4 +2659,50 @@ body{
   .checkout-box{
     padding-bottom: calc(14px + env(safe-area-inset-bottom));
   }
+}
+.info-grid{
+  display:grid;
+  gap:14px;
+  margin-top:14px;
+}
+
+.info-item{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.25);
+  border-radius:14px;
+  padding:14px 14px;
+}
+
+.info-title{
+  font-weight:800;
+  letter-spacing:.2px;
+  margin-bottom:8px;
+}
+
+.info-text{
+  font-size:14px;
+  color:rgba(255,255,255,.85);
+}
+
+.info-text .line{
+  display:flex;
+  gap:8px;
+  align-items:baseline;
+  line-height:1.35;
+  margin:6px 0;
+}
+
+.info-text .muted{
+  color:rgba(255,255,255,.60);
+}
+
+.info-highlight{
+  border-color:rgba(255,0,0,.25);
+  box-shadow:0 0 0 1px rgba(255,0,0,.12) inset;
+}
+
+/* Mobile: deixa mais compacto */
+@media (max-width: 900px){
+  .info-text{ font-size:13px; }
+  .info-item{ padding:12px; }
 }

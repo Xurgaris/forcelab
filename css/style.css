@@ -2587,4 +2587,39 @@ body::after{
   font-size: 12px;
   opacity: .95;
 }
+/* =========================
+   Footer: acesso ADM
+========================= */
+.footer-admin{
+  margin-top: 14px;
+  display:flex;
+  justify-content:center;
+}
+
+.admin-link{
+  font-weight: 900;
+  font-size: 12px;
+  opacity: .70;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  padding: 10px 12px;
+  border-radius: 999px;
+  transition: .18s;
+}
+
+.admin-link:hover{
+  opacity: 1;
+  border-color: rgba(255,0,0,.28);
+  background: rgba(255,0,0,.10);
+  transform: translateY(-1px);
+}
+
+/* se usar a opção B (btn) */
+.admin-btn{
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  opacity: .85;
+}
+.admin-btn:hover{ opacity: 1; }
 

@@ -10,6 +10,16 @@ import {
   doc,
   getDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "/admin/login.html";
+    return;
+  }
+  document.documentElement.classList.add("auth-ok");
+});
 
 // garante login + garante admin (admins/{uid})
 export function requireAuth() {

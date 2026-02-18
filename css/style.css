@@ -620,53 +620,98 @@ html, body { width: 100%; max-width: 100%; }
   word-break:break-word;
 }
 
-/* ===============================
-   16) NEWSLETTER
-================================ */
-.newsletter-box{
-  background: rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius: 26px;
-  padding: 26px;
-  box-shadow: var(--shadow-soft);
-  display:grid;
-  grid-template-columns: 1.1fr 1.4fr;
-  gap:16px;
-  align-items:center;
-}
-.newsletter-left h2{
-  font-size: 34px;
-  font-weight: 950;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-}
-.newsletter-left p{
-  margin-top:10px;
-  color:rgba(255,255,255,.75);
-  line-height:1.6;
-}
-.newsletter-form{
-  display:grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 12px;
-  align-items:center;
-}
-.newsletter-form input{
-  width: 100%;
-  height: 56px;
-  border-radius: 14px;
+/* =========================
+   NEWSLETTER — premium (texto + form alinhado)
+========================= */
+.newsletter .newsletter-box{
+  border-radius: 22px;
   border: 1px solid rgba(255,255,255,.10);
-  background: #fff;
-  color:#111;
-  padding: 0 16px;
+  background: rgba(255,255,255,.03);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr; /* texto | form */
+  gap: 18px;
+  align-items: center;
+}
+
+.newsletter .newsletter-left h2{
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 950;
+  letter-spacing: .2px;
+}
+
+.newsletter .newsletter-left p{
+  margin-top: 8px;
+  color: rgba(255,255,255,.75);
   font-weight: 800;
-  outline:none;
+  line-height: 1.45;
+  max-width: 52ch;
 }
-.newsletter-form input:focus{
-  border-color: rgba(255,0,0,.35);
-  box-shadow: 0 0 0 3px rgba(255,0,0,.12);
+
+/* ✅ trava o form pra não esticar */
+.newsletter .newsletter-form{
+  width: 100%;
+  max-width: 520px;
+  justify-self: end;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
 }
-.newsletter-btn{height:56px;padding:0 20px;border-radius:14px;}
+
+.newsletter .newsletter-form input{
+  height: 46px;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.92);
+  color: #111;
+  padding: 0 14px;
+  font-weight: 900;
+  outline: none;
+}
+
+.newsletter .newsletter-form input::placeholder{
+  color: rgba(0,0,0,.55);
+}
+
+.newsletter .newsletter-form input:focus{
+  border-color: rgba(255,0,0,.30);
+  box-shadow: 0 0 0 3px rgba(255,0,0,.10);
+}
+
+.newsletter .newsletter-btn{
+  height: 46px;
+  border-radius: 14px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+/* mensagem do JS */
+.newsletter .nl-msg{
+  grid-column: 1 / -1;
+  font-weight: 800;
+  font-size: 12px;
+  opacity: .9;
+  margin-top: 2px;
+}
+
+/* responsivo */
+@media (max-width: 980px){
+  .newsletter .newsletter-box{
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+  .newsletter .newsletter-form{
+    max-width: 100%;
+    justify-self: start;
+    grid-template-columns: 1fr;
+  }
+  .newsletter .newsletter-btn{
+    width: 100%;
+  }
+}
 
 /* ===============================
    17) CONTACT
@@ -1931,29 +1976,6 @@ main { width: 100%; }
   .social-pill strong{font-size: 15px;}
   .social-pill span{font-size: 13px;opacity: .9;}
 
-  /* NEWSLETTER */
-  .newsletter-box{
-    grid-template-columns: 1fr !important;
-    padding: 18px !important;
-    border-radius: 22px !important;
-  }
-  .newsletter-left h2{
-    font-size: 26px !important;
-    line-height: 1.08 !important;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-  .newsletter-form{
-    grid-template-columns: 1fr !important;
-    width: 100%;
-  }
-  .newsletter-form input{
-    height: 54px;
-    width: 100%;
-    min-width: 0;
-  }
-  .newsletter-btn{height:54px; width:100%;}
-
   /* CONTACT */
   .contact-card,.contact-form{padding:16px;}
   .field input,.field textarea{border-radius:14px;}
@@ -2622,4 +2644,3 @@ body::after{
   opacity: .85;
 }
 .admin-btn:hover{ opacity: 1; }
-

@@ -12,6 +12,10 @@
     msg.style.color = ok ? "rgba(255,255,255,.75)" : "#ff6b6b";
   };
 
+  const isLocal =
+    location.hostname === "127.0.0.1" ||
+    location.hostname === "localhost";
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -24,6 +28,17 @@
     btn.disabled = true;
     btn.style.opacity = ".85";
     show("Enviando...");
+
+    // ✅ No localhost não dá pra testar Netlify Forms (POST dá 405)
+    if (isLocal) {
+      setTimeout(() => {
+        show("Cadastro realizado!");
+        form.reset();
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      }, 500);
+      return;
+    }
 
     try {
       const data = new FormData(form);

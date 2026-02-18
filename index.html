@@ -262,10 +262,7 @@
                 class="objective-chips"
                 role="tablist"
                 aria-label="Filtros por objetivo"
-              >
-             
-               
-              </div>
+              ></div>
             </div>
           </header>
 
@@ -449,7 +446,10 @@
                     <button class="btn btn-primary kit-btn" type="button">
                       Adicionar kit
                     </button>
-                    <a class="btn btn-ghost kit-link" href="/kit.html?id=kit-forca-total">
+                    <a
+                      class="btn btn-ghost kit-link"
+                      href="/kit.html?id=kit-forca-total"
+                    >
                       Ver detalhes
                     </a>
                   </div>
@@ -457,7 +457,10 @@
               </div>
             </article>
 
-            <article class="kit-card kit-card--featured" data-kit="kit-massa-recuperacao">
+            <article
+              class="kit-card kit-card--featured"
+              data-kit="kit-massa-recuperacao"
+            >
               <div class="kit-media">
                 <img
                   src="assets/combo.png"
@@ -493,7 +496,10 @@
                     <button class="btn btn-primary kit-btn" type="button">
                       Adicionar kit
                     </button>
-                    <a class="btn btn-ghost kit-link" href="/kit.html?id=kit-massa-recuperacao">
+                    <a
+                      class="btn btn-ghost kit-link"
+                      href="/kit.html?id=kit-massa-recuperacao"
+                    >
                       Ver detalhes
                     </a>
                   </div>
@@ -536,7 +542,10 @@
                     <button class="btn btn-primary kit-btn" type="button">
                       Adicionar kit
                     </button>
-                    <a class="btn btn-ghost kit-link" href="/kit.html?id=kit-energia-foco">
+                    <a
+                      class="btn btn-ghost kit-link"
+                      href="/kit.html?id=kit-energia-foco"
+                    >
                       Ver detalhes
                     </a>
                   </div>
@@ -926,48 +935,61 @@
       </section>
 
       <!-- NEWSLETTER -->
-     <form
-  class="newsletter-form"
-  name="newsletter"
-  method="POST"
-  data-netlify="true"
-  netlify-honeypot="bot-field"
->
-  <input type="hidden" name="form-name" value="newsletter" />
+     <section class="section newsletter" id="newsletter" aria-label="Newsletter">
+  <div class="container">
+    <div class="newsletter-box">
+      <div class="newsletter-left">
+        <h2>Fique por dentro das ofertas</h2>
+        <p>
+          Receba cupons, lançamentos e promoções exclusivas direto no seu e-mail.
+          Sem spam.
+        </p>
+      </div>
 
-  <!-- anti-spam invisível -->
-  <p class="sr-only">
-    <label>Não preencha: <input name="bot-field" /></label>
-  </p>
+      <form
+        class="newsletter-form"
+        name="newsletter"
+        method="POST"
+        data-netlify="true"
+        netlify-honeyponeypot="bot-field"
+        netlify-honeypot="bot-field"
+      >
+        <input type="hidden" name="form-name" value="newsletter" />
 
-  <label class="sr-only" for="nameNewsletter">Nome</label>
-  <input
-    id="nameNewsletter"
-    type="text"
-    name="name"
-    placeholder="Nome"
-    autocomplete="name"
-    minlength="2"
-    required
-  />
+        <p class="sr-only">
+          <label>Não preencha: <input name="bot-field" /></label>
+        </p>
 
-  <label class="sr-only" for="emailNewsletter">E-mail</label>
-  <input
-    id="emailNewsletter"
-    type="email"
-    name="email"
-    placeholder="E-mail"
-    autocomplete="email"
-    required
-  />
+        <label class="sr-only" for="nameNewsletter">Nome</label>
+        <input
+          id="nameNewsletter"
+          type="text"
+          name="name"
+          placeholder="Seu nome"
+          autocomplete="name"
+          minlength="2"
+          required
+        />
 
-  <button class="btn btn-primary newsletter-btn" type="submit">
-    Cadastrar
-  </button>
+        <label class="sr-only" for="emailNewsletter">E-mail</label>
+        <input
+          id="emailNewsletter"
+          type="email"
+          name="email"
+          placeholder="Seu e-mail"
+          autocomplete="email"
+          required
+        />
 
-  <small class="nl-msg" id="nlMsg" aria-live="polite"></small>
-</form>
+        <button class="btn btn-primary newsletter-btn" type="submit">
+          Cadastrar
+        </button>
 
+        <small class="nl-msg" id="nlMsg" aria-live="polite"></small>
+      </form>
+    </div>
+  </div>
+</section>
 
       <!-- CONTATO -->
       <section class="section contact" id="contato" aria-label="Contato">
@@ -1099,9 +1121,10 @@
               <a href="#kits">Kits em oferta</a>
               <a href="#contato">Contato</a>
               <div class="footer-admin">
-  <a class="admin-link" href="/admin/login.html" rel="nofollow">Área administrativa</a>
-</div>
-
+                <a class="admin-link" href="/admin/login.html" rel="nofollow"
+                  >Área administrativa</a
+                >
+              </div>
             </div>
           </div>
 
@@ -1113,20 +1136,9 @@
                 alt="Visa"
                 loading="lazy"
               />
-              <img
-                src="img/credito.png"
-                alt="Mastercard"
-                loading="lazy"
-              />
-              <img
-                src="img/pix.png"
-                alt="Pix"
-                loading="lazy"
-              />
-              <img
-                src="img/mercadop.png" alt="PayPal"
-                loading="lazy"
-              />
+              <img src="img/credito.png" alt="Mastercard" loading="lazy" />
+              <img src="img/pix.png" alt="Pix" loading="lazy" />
+              <img src="img/mercadop.png" alt="PayPal" loading="lazy" />
             </div>
             <p class="muted small">
               Ícones ilustrativos. Você pode trocar pelos reais da operação.
@@ -1214,7 +1226,6 @@
           <a href="#kits">Kits</a>
           <a href="#blog">Blog</a>
           <a href="#contato">Contato</a>
-          
         </nav>
       </div>
     </div>
@@ -1227,8 +1238,5 @@
     <script type="module" src="./js/contato-firestore.js"></script>
     <script type="module" src="./js/kits-actions.js"></script>
     <script src="js/newsletter.js"></script>
-
-
-
   </body>
 </html>

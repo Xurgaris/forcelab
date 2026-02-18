@@ -1,4 +1,27 @@
+
 import { getKit } from "./kits-data.js";
+async function goToCart(){
+  const candidates = [
+    "/carrinho.html",
+    "/cart.html",
+    "/carrinho/index.html",
+    "/pages/carrinho.html",
+    "/checkout.html"
+  ];
+
+  for (const url of candidates){
+    try{
+      const res = await fetch(url, { method:"HEAD" });
+      if (res.ok){
+        window.location.href = url;
+        return;
+      }
+    }catch(e){}
+  }
+
+  // fallback: volta 1 página (evita tela de erro)
+  alert("Não encontrei a página do carrinho. Ajuste o caminho no goToCart().");
+}
 
 function brl(v){
   return Number(v||0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
@@ -111,7 +134,7 @@ if (!wrap){
       return;
     }
     window.addToCartQty(kit.name, kit.price, kit.image, 1, { type:"kit", id: kit.id });
-    window.location.href = "./cart.html";
+    goToCart();
   });
 
   buy.addEventListener("click", () => {

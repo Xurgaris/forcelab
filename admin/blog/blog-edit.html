@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ADM • Editar Post</title>
+  <link rel="stylesheet" href="/admin/admin.css"/>
+</head>
+<body class="admin">
+  <div id="sidebar"></div>
+
+  <main class="main">
+    <div class="top">
+      <div>
+        <h2 id="pageTitle">Novo post</h2>
+        <p class="muted">Markdown simples • Títulos, listas, parágrafos.</p>
+      </div>
+      <div class="top-actions">
+        <a class="btn btn-ghost" href="/admin/blog.html">Voltar</a>
+        <button class="btn btn-primary" id="btnSave" type="button">Salvar</button>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <section class="form-col">
+        <label class="label">Título</label>
+        <input class="input" id="title" placeholder="Ex: Creatina: o que muda com uso diário"/>
+
+        <label class="label">Slug (URL)</label>
+        <input class="input" id="slug" placeholder="creatina-uso-diario"/>
+
+        <label class="label">Resumo</label>
+        <textarea class="textarea" id="excerpt" rows="4" placeholder="Resumo curto do post..."></textarea>
+
+        <label class="label">Imagem de capa (URL)</label>
+        <input class="input" id="cover" placeholder="https://...jpg"/>
+
+        <div class="upload-row">
+          <label class="label" style="margin:0;">Status</label>
+          <select class="input" id="status">
+            <option value="draft">Rascunho</option>
+            <option value="published">Publicado</option>
+          </select>
+        </div>
+
+        <label class="label">Categoria</label>
+        <input class="input" id="category" placeholder="Rotina / Performance / Consistência"/>
+
+        <label class="label">Tags (separadas por vírgula)</label>
+        <input class="input" id="tags" placeholder="Creatina, Guia, Rotina"/>
+
+        <label class="label">Tempo de leitura (min)</label>
+        <input class="input" id="minutes" type="number" min="1" value="5"/>
+      </section>
+
+      <section class="form-col">
+        <label class="label">Conteúdo (Markdown)</label>
+        <textarea class="textarea" id="contentMd" rows="18"
+          placeholder="# Título&#10;&#10;## Subtítulo&#10;Texto..."></textarea>
+
+        <div class="divider"></div>
+
+        <label class="label">Preview</label>
+        <div class="panel" id="preview"></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="/admin/blog/blogEdit.js"></script>
+</body>
+</html>

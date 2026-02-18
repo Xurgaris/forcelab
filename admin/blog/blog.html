@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ADM • Blog</title>
+  <link rel="stylesheet" href="/admin/admin.css"/>
+</head>
+<body class="admin">
+  <!-- sua sidebar -->
+  <div id="sidebar"></div>
+
+  <main class="main">
+    <div class="top">
+      <div>
+        <h2>Blog</h2>
+        <p class="muted">Crie, edite e publique artigos no site.</p>
+      </div>
+      <div class="top-actions">
+        <a class="btn btn-primary" href="/admin/blog-edit.html">Novo post</a>
+      </div>
+    </div>
+
+    <section class="table">
+      <div class="table-head">
+        <div>
+          <h3>Posts</h3>
+          <small class="muted">Rascunhos e publicados</small>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Status</th>
+              <th>Categoria</th>
+              <th>Atualizado</th>
+              <th style="text-align:right;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="postsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/admin/blog/blogAdmin.js"></script>
+</body>
+</html>

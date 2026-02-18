@@ -694,7 +694,7 @@
                 Conteúdo direto, prático e organizado para decisão de compra.
               </p>
             </div>
-            <a class="btn btn-ghost btn-sm" href="#">Ver todos</a>
+            <a class="btn btn-ghost btn-sm" href="blog.html">Ver todos</a>
           </div>
 
           <div class="blog-grid">
@@ -926,49 +926,48 @@
       </section>
 
       <!-- NEWSLETTER -->
-      <section class="section newsletter" aria-label="Newsletter">
-        <div class="container">
-          <div class="newsletter-box">
-            <div class="newsletter-left">
-              <h2>Cadastre-se em nossa newsletter</h2>
-              <p>
-                Quer receber nossas ofertas? Cadastre-se e comece a recebê-las.
-              </p>
-            </div>
+     <form
+  class="newsletter-form"
+  name="newsletter"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+>
+  <input type="hidden" name="form-name" value="newsletter" />
 
-            <form
-              class="newsletter-form"
-              name="newsletter"
-              method="POST"
-              data-netlify="true"
-            >
-              <input type="hidden" name="form-name" value="newsletter" />
+  <!-- anti-spam invisível -->
+  <p class="sr-only">
+    <label>Não preencha: <input name="bot-field" /></label>
+  </p>
 
-              <label class="sr-only" for="nameNewsletter">Nome</label>
-              <input
-                id="nameNewsletter"
-                type="text"
-                name="nome"
-                placeholder="Nome"
-                required
-              />
+  <label class="sr-only" for="nameNewsletter">Nome</label>
+  <input
+    id="nameNewsletter"
+    type="text"
+    name="name"
+    placeholder="Nome"
+    autocomplete="name"
+    minlength="2"
+    required
+  />
 
-              <label class="sr-only" for="emailNewsletter">E-mail</label>
-              <input
-                id="emailNewsletter"
-                type="email"
-                name="email"
-                placeholder="E-mail"
-                required
-              />
+  <label class="sr-only" for="emailNewsletter">E-mail</label>
+  <input
+    id="emailNewsletter"
+    type="email"
+    name="email"
+    placeholder="E-mail"
+    autocomplete="email"
+    required
+  />
 
-              <button class="btn btn-primary newsletter-btn" type="submit">
-                Cadastrar
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
+  <button class="btn btn-primary newsletter-btn" type="submit">
+    Cadastrar
+  </button>
+
+  <small class="nl-msg" id="nlMsg" aria-live="polite"></small>
+</form>
+
 
       <!-- CONTATO -->
       <section class="section contact" id="contato" aria-label="Contato">
@@ -1222,6 +1221,8 @@
     <script type="module" src="./js/contato-firebase.js"></script>
     <script type="module" src="./js/contato-firestore.js"></script>
     <script type="module" src="./js/kits-actions.js"></script>
+    <script src="js/newsletter.js"></script>
+
 
 
   </body>

@@ -24,7 +24,6 @@ function normalizeCart() {
 
   saveCart();
 }
-
 /* ==========================
    ADD TO CART (1 unidade)
 ========================== */
@@ -34,8 +33,10 @@ function addToCart(name, price, image) {
 
 /* ==========================
    ADD TO CART (COM QTY) ✅
+   - compatível com produto antigo
+   - suporta kit com (type, id)
 ========================== */
-function addToCartQty(name, price, image, qty = 1) {
+function addToCartQty(name, price, image, qty = 1, meta = {}) {
   normalizeCart();
 
   const n = String(name || "Produto");
@@ -43,16 +44,36 @@ function addToCartQty(name, price, image, qty = 1) {
   const q = Math.max(1, Number(qty) || 1);
   const img = image || "https://via.placeholder.com/80";
 
-  let existing = cart.find((item) => item.name === n);
+  // NOVO: suporta tipo e id (kit/produto)
+  const type = meta.type || "product";
+  const id = meta.id || null;
+
+  // Chave de comparação:
+  // 1) se tiver type+id -> usa isso (melhor)
+  // 2) senão mantém o legado: usa name
+  let existing = cart.find((item) => {
+    if (id && item.id) return item.type === type && item.id === id;
+    return item.name === n;
+  });
 
   if (existing) {
     existing.qty += q;
-    // Se o item já existe mas veio uma imagem melhor, atualiza
+
+    // atualiza imagem se vier melhor
     if (img && img !== "https://via.placeholder.com/80") existing.image = img;
-    // Se o preço mudou, atualiza também (opcional)
+
+    // atualiza preço (opcional)
     existing.price = p;
+
+    // garante type/id se veio agora
+    if (id) {
+      existing.type = type;
+      existing.id = id;
+    }
   } else {
     cart.push({
+      type,
+      id,          // pode ser null em itens antigos
       name: n,
       price: p,
       image: img,
@@ -66,12 +87,33 @@ function addToCartQty(name, price, image, qty = 1) {
 
 /* ==========================
    REMOVE ITEM
+   - novo: removeItemKey(type, id)
+   - antigo: removeItem(name) ainda funciona
 ========================== */
-function removeItem(name) {
+function removeItem(nameOrType, maybeId) {
   normalizeCart();
+
+  // Se veio (type, id): remove por chave
+  if (typeof maybeId === "string" && maybeId.length) {
+    const type = nameOrType || "product";
+    const id = maybeId;
+
+    cart = cart.filter((item) => !(item.type === type && item.id === id));
+    saveCart();
+    updateCart();
+    return;
+  }
+
+  // Legado: remove por nome
+  const name = String(nameOrType || "");
   cart = cart.filter((item) => item.name !== name);
   saveCart();
   updateCart();
+}
+
+/* Helper opcional (se você quiser chamar direto) */
+function removeItemKey(type, id) {
+  return removeItem(type, id);
 }
 
 /* ==========================
@@ -194,3 +236,12 @@ window.addToCartQty = addToCartQty;
 window.removeItem = removeItem;
 window.changeQty = changeQty;
 window.toggleCart = toggleCart;
+
+// ==========================
+// EXPORTA FUNÇÕES PRO WINDOW
+// (necessário pq kit-detail.js é module)
+// ==========================
+window.addToCartQty = addToCartQty;
+window.addToCart = addToCart;
+window.removeItem = removeItem;
+

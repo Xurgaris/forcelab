@@ -263,25 +263,8 @@
                 role="tablist"
                 aria-label="Filtros por objetivo"
               >
-                <a
-                  class="chip chip--active"
-                  href="catalogo.html"
-                  role="tab"
-                  aria-selected="true"
-                  >Todos</a
-                >
-                <a class="chip" href="catalogo.html?tag=forca" role="tab"
-                  >Força</a
-                >
-                <a class="chip" href="catalogo.html?tag=energia" role="tab"
-                  >Energia</a
-                >
-                <a class="chip" href="catalogo.html?tag=massa" role="tab"
-                  >Massa</a
-                >
-                <a class="chip" href="catalogo.html?tag=saude" role="tab"
-                  >Saúde</a
-                >
+             
+               
               </div>
             </div>
           </header>
@@ -431,7 +414,7 @@
 
           <!-- Desktop -->
           <div class="kits-grid desktop-only" id="kitsGrid">
-            <article class="kit-card">
+            <article class="kit-card" data-kit="kit-forca-total">
               <div class="kit-media">
                 <img
                   src="assets/combo.png"
@@ -466,7 +449,7 @@
                     <button class="btn btn-primary kit-btn" type="button">
                       Adicionar kit
                     </button>
-                    <a class="btn btn-ghost kit-link" href="catalogo.html">
+                    <a class="btn btn-ghost kit-link" href="/kit.html?id=kit-forca-total">
                       Ver detalhes
                     </a>
                   </div>
@@ -474,7 +457,7 @@
               </div>
             </article>
 
-            <article class="kit-card kit-card--featured">
+            <article class="kit-card kit-card--featured" data-kit="kit-massa-recuperacao">
               <div class="kit-media">
                 <img
                   src="assets/combo.png"
@@ -510,7 +493,7 @@
                     <button class="btn btn-primary kit-btn" type="button">
                       Adicionar kit
                     </button>
-                    <a class="btn btn-ghost kit-link" href="catalogo.html">
+                    <a class="btn btn-ghost kit-link" href="/kit.html?id=kit-massa-recuperacao">
                       Ver detalhes
                     </a>
                   </div>
@@ -518,7 +501,7 @@
               </div>
             </article>
 
-            <article class="kit-card">
+            <article class="kit-card" data-kit="kit-energia-foco">
               <div class="kit-media">
                 <img
                   src="assets/combo.png"
@@ -553,7 +536,7 @@
                     <button class="btn btn-primary kit-btn" type="button">
                       Adicionar kit
                     </button>
-                    <a class="btn btn-ghost kit-link" href="catalogo.html">
+                    <a class="btn btn-ghost kit-link" href="/kit.html?id=kit-energia-foco">
                       Ver detalhes
                     </a>
                   </div>
@@ -1238,6 +1221,8 @@
     <script src="js/header.js"></script>
     <script type="module" src="./js/contato-firebase.js"></script>
     <script type="module" src="./js/contato-firestore.js"></script>
+    <script type="module" src="./js/kits-actions.js"></script>
+
 
   </body>
 </html>

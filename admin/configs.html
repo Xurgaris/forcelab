@@ -4,13 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Configurações | ForceLab ADM</title>
-  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="/admin/admin.css" />
 </head>
 <body>
-  <script type="module" src="protect.js"></script>
+  <script type="module" src="/admin/protect.js"></script>
 
   <div class="admin">
     <div id="sidebar"></div>
+<header class="mobilebar">
+  <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+
+  <div class="mobilebar-title">
+    <strong id="pageTitle">Clientes</strong>
+    <small class="muted">ForceLab ADM</small>
+  </div>
+</header>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
     <main class="main">
       <header class="top">
@@ -70,7 +80,7 @@
 
     </main>
   </div>
-
-  <script type="module" src="configs.js"></script>
+<script type="module" src="/admin/ui.js"></script>
+  <script type="module" src="/admin/configs.js"></script>
 </body>
 </html>

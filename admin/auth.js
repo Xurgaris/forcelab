@@ -3,13 +3,13 @@ import { auth } from "../js/firebase.js";
 import {
   onAuthStateChanged,
   signOut,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
 import { db } from "../js/firebase.js";
 import {
   doc,
   getDoc,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 // garante login + garante admin (admins/{uid})
 export function requireAuth() {

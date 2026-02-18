@@ -2,7 +2,7 @@ import { db } from "./firebase.js";
 import {
   collection,
   getDocs,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 async function carregarCatalogo() {
   const querySnapshot = await getDocs(collection(db, "produtos"));

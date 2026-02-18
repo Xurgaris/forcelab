@@ -3,73 +3,143 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Uploads | ForceLab ADM</title>
-    <link rel="stylesheet" href="../admin.css" />
-    <link rel="stylesheet" href="../admin-ui.css" />
+    <title>Imagens | ForceLab ADM</title>
+
+    <!-- IMPORTANTE: você está em /admin/adm-img/ -->
+    <link rel="stylesheet" href="/admin/admin.css" />
+    <!-- CSS só desta tela (opcional, mas recomendo) -->
+    <link rel="stylesheet" href="/admin/adm-img/imagens.css" />
   </head>
+
   <body>
-    <script type="module" src="../protect.js"></script>
+    <!-- Proteção do painel -->
+    <script type="module" src="/admin/protect.js"></script>
 
     <div class="admin">
       <div id="sidebar"></div>
 
       <main class="main">
+        <!-- topbar mobile (igual às outras páginas) -->
+        <header class="mobilebar">
+          <button
+            class="micon"
+            id="openSidebar"
+            type="button"
+            aria-label="Abrir menu"
+          >
+            ☰
+          </button>
+          <div class="mobilebar-title">
+            <strong>Imagens</strong>
+            <small class="muted">ForceLab ADM</small>
+          </div>
+        </header>
+
+        <div
+          class="sidebar-backdrop"
+          id="sidebarBackdrop"
+          aria-hidden="true"
+        ></div>
+
         <header class="top">
           <div>
             <h2>Imagens (Cloudinary)</h2>
             <div class="muted">
-              Envie e copie o link para usar nos produtos.
+              Envie uma imagem e copie a URL para usar nos produtos.
             </div>
+          </div>
+
+          <div class="top-actions">
+            <button class="btn btn-primary" id="btnPick" type="button">
+              Escolher imagem
+            </button>
+            <button class="btn btn-ghost" id="btnUpload" type="button" disabled>
+              Enviar imagem
+            </button>
           </div>
         </header>
 
-        <section class="card" style="padding: 16px">
-          <button class="btn btn-primary" id="btnUpload" type="button">
-            Enviar imagem
-          </button>
+        <!-- Card principal -->
+        <section class="card panel-card">
+          <!-- Input file escondido (disparado pelo botão "Escolher imagem") -->
+          <input id="fileInput" type="file" accept="image/*" hidden />
 
-          <div style="margin-top: 14px">
-            <label class="label">URL gerada</label>
-            <div class="row" style="display: flex; gap: 10px; flex-wrap: wrap">
-              <input
-                class="input"
-                id="imgUrl"
-                placeholder="A URL vai aparecer aqui..."
-                readonly
-              />
-              <button class="btn btn-ghost" id="btnCopy" type="button">
-                Copiar
-              </button>
+          <div class="grid-2">
+            <!-- COLUNA ESQUERDA -->
+            <div>
+              <div class="field">
+                <label class="label">URL gerada</label>
+                <input
+                  id="urlOut"
+                  class="input"
+                  type="text"
+                  placeholder="A URL vai aparecer aqui..."
+                  readonly
+                />
+              </div>
+
+              <div class="row-actions">
+                <button
+                  class="btn btn-ghost"
+                  id="btnCopy"
+                  type="button"
+                  disabled
+                >
+                  Copiar
+                </button>
+
+                <button class="btn btn-ghost" id="btnClearAll" type="button">
+                  Limpar
+                </button>
+
+                <small class="muted" id="statusMsg"></small>
+              </div>
+
+              <div class="tip">
+                <small class="muted">
+                  Dica: você pode usar URL otimizada:
+                  <span class="mono" id="optHint"
+                    >.../upload/f_auto,q_auto,w_900/...</span
+                  >
+                </small>
+              </div>
             </div>
-            <small class="muted" id="msg"></small>
-          </div>
 
-          <div class="preview" style="margin-top: 14px">
-            <div class="preview-box" id="preview">🖼️</div>
-            <small class="muted">Preview</small>
-          </div>
+            <!-- COLUNA DIREITA -->
+            <div>
+              <div class="preview-wrap">
+                <div class="preview-head">
+                  <strong>Preview</strong>
+                  <small class="muted" id="fileInfo"
+                    >Nenhuma imagem selecionada</small
+                  >
+                </div>
 
-          <div style="margin-top: 14px">
-            <small class="muted">
-              Dica: use também URL otimizada:
-              <code>.../upload/f_auto,q_auto,w_900/...</code>
-            </small>
+                <div
+                  class="preview-box"
+                  id="previewBox"
+                  aria-label="Preview da imagem"
+                >
+                  <span class="muted">🖼️</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </main>
     </div>
 
+    <!-- sidebar -->
     <script>
       fetch("../sidebar.html")
         .then((r) => r.text())
-        .then((html) => {
-          document.getElementById("sidebar").innerHTML = html;
-        });
+        .then((html) => (document.getElementById("sidebar").innerHTML = html));
     </script>
+    <script type="module" src="/admin/ui.js"></script>
+    <!-- JS desta página -->
+    <script type="module" src="/admin/sidebar-loader.js"></script>
 
-    <!-- Cloudinary Upload Widget -->
     <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
-    <script type="module" src="../protect.js"></script>
     <script type="module" src="imagens.js"></script>
   </body>
 </html>

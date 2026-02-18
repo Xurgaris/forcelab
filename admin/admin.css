@@ -746,3 +746,730 @@ small{color:var(--muted);}
   object-fit: contain;
   display:block;
 }
+/* ===== Mensagens (Chat-like) ===== */
+.messages-layout{
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap:16px;
+  align-items:stretch;
+}
+
+.messages-list, .messages-view{
+  background: rgba(255, 255, 255, 0.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.messages-head{
+  padding:14px 14px;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(218, 209, 209, 0.08);
+}
+
+.msg-items{
+  max-height: calc(100vh - 220px);
+  overflow:auto;
+}
+
+.msg-item{
+  width:100%;
+  text-align:left;
+  padding:12px 14px;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  cursor:pointer;
+  transition: background .15s ease, transform .15s ease;
+}
+.msg-item strong, .msg-item span{
+color: #fff;}
+.msg-item:hover{ background: rgba(255,255,255,.04); }
+.msg-item.active{ background: rgba(255,255,255,.06); }
+.msg-item.unread strong::after{
+  content:" •";
+  color:#6cf2c2;
+  font-weight:900;
+}
+
+
+.msg-top{ display:flex; justify-content:space-between; gap:10px; }
+.msg-sub{ font-size:.85rem; margin-top:2px; }
+.msg-snippet{ margin-top:6px; opacity:.92; font-size:.92rem; }
+
+.msg-empty{
+  padding:22px;
+}
+.msg-card{
+  padding:16px;
+}
+.msg-card-head{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.msg-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.msg-body{ padding-top:14px; }
+
+.bubble{
+  background: rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:14px;
+}
+.bubble-label{ font-size:.85rem; margin-bottom:8px; }
+/* ===== MENSAGENS (VIEW) ===== */
+.messages-layout{
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+}
+
+.messages-view{
+  min-height: 520px;
+}
+
+.msg-card{
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.msg-body{
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* “Bolha” da mensagem */
+.bubble{
+  background: rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 14px 14px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* label (Mensagem) */
+.bubble-label{
+  font-size: 12px;
+  opacity: .75;
+  margin-bottom: 10px;
+}
+
+/* texto real */
+#vText{
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* quando tiver texto, deixa com mais “presença” */
+.bubble.has-text{
+  background: rgba(0,0,0,.32);
+}
+
+/* mobile */
+@media (max-width: 900px){
+  .messages-layout{
+    grid-template-columns: 1fr;
+  }
+  .messages-view{
+    min-height: auto;
+  }
+  .bubble{
+    min-height: 180px;
+  }
+}
+
+/* mobile */
+@media (max-width: 980px){
+  .messages-layout{ grid-template-columns: 1fr; }
+  .msg-items{ max-height: 360px; }
+}
+.msg-card{
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.msg-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.msg-meta{ margin-top:6px; }
+.msg-body{
+  margin-top:10px;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+/* BOTÕES À DIREITA: não quebrar no desktop */
+.msg-actions{
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;     /* impede quebrar linha */
+  white-space: nowrap;   /* garante */
+}
+
+/* se o container for pequeno, deixa rolar pro lado ao invés de quebrar */
+.msg-actions{
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;       /* firefox */
+}
+.msg-actions::-webkit-scrollbar{ display:none; } /* chrome */
+
+/* MOBILE: aí sim pode quebrar */
+@media (max-width: 700px){
+  .msg-actions{
+    flex-wrap: wrap;     /* permite quebrar no mobile */
+    overflow-x: visible;
+  }
+}
+/* ===========================
+   IMAGENS (CLOUDINARY) - ADM
+   deixa igual o resto do painel
+=========================== */
+
+.img-panel{
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+}
+
+.img-actions{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.img-preview{
+  display: grid;
+  gap: 8px;
+}
+
+.img-preview-box{
+  width: 100%;
+  min-height: 220px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.35);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.img-preview-box img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Mobile */
+@media (max-width: 768px){
+  .img-preview-box{ min-height: 180px; }
+}
+
+/* ===============================
+   ADM RESPONSIVE FIX PACK (FINAL)
+   cole no FINAL do admin.css
+================================ */
+
+/* Anti-estouro global */
+html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+* { box-sizing: border-box; min-width: 0; }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+
+/* Container do painel */
+.admin{
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr; /* sidebar + main */
+}
+
+/* Sidebar padrão (desktop) */
+#sidebar{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-right: 1px solid rgba(255,255,255,.10);
+}
+
+/* Área principal */
+.main{
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Header/topbar não estoura */
+.top, .mobilebar{
+  min-width: 0;
+}
+.top-actions{
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;        /* quebra bonitinho */
+  gap: 10px;
+  align-items: center;
+}
+.top-actions .search{
+  flex: 1 1 260px;        /* cresce e quebra */
+  min-width: 220px;
+}
+.top-actions select,
+.top-actions button{
+  flex: 0 0 auto;
+}
+
+/* Qualquer lista/tabela grande: scroll quando precisar */
+.table-wrap, .list-wrap, .panel-card{
+  min-width: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+table{ width: 100%; border-collapse: collapse; }
+td, th{ max-width: 100%; }
+
+/* Cards e grids não vazam */
+.card, .panel-card, .messages-layout, .grid-2{
+  min-width: 0;
+}
+.grid-2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Backdrop do mobile (se já existe no HTML) */
+.sidebar-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: .2s ease;
+  z-index: 9998;
+}
+.sidebar-backdrop.open{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===============================
+   MOBILE / TABLET
+================================ */
+@media (max-width: 980px){
+  .admin{
+    grid-template-columns: 1fr; /* tira sidebar fixa */
+  }
+
+  /* Sidebar vira drawer */
+  #sidebar{
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: min(86vw, 320px);
+    height: 100vh;
+    z-index: 9999;
+
+    transform: translateX(-110%);
+    transition: transform .22s ease;
+    box-shadow: 18px 0 60px rgba(0,0,0,.65);
+    border-right: 1px solid rgba(255,255,255,.10);
+  }
+
+  /* quando abrir */
+  body.sidebar-open #sidebar{
+    transform: translateX(0);
+  }
+  body.sidebar-open .sidebar-backdrop{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Main ocupa tudo */
+  .main{
+    width: 100%;
+  }
+
+  /* Top actions mais empilhado */
+  .top-actions{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .top-actions .search,
+  .top-actions select,
+  .top-actions button{
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* grids viram 1 coluna */
+  .grid-2{
+    grid-template-columns: 1fr;
+  }
+
+  /* mensagens layout (se tiver) */
+  .messages-layout{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* EXTRA: telas bem pequenas */
+@media (max-width: 420px){
+  .main{ padding-bottom: 14px; }
+  .btn, button, select, input{ max-width: 100%; }
+}
+/* Sidebar nav (não conflita com .nav do site) */
+.sidebar .side-nav{
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar .side-nav a{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  font-weight: 900;
+  color: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.10);
+  transition: .18s;
+  white-space: nowrap;
+}
+
+.sidebar .side-nav a:hover{
+  background: rgba(120,0,0,.18);
+  border-color: rgba(255,0,0,.22);
+  color: #fff;
+}
+
+.sidebar .side-nav a.active{
+  background: rgba(120,0,0,.22);
+  border-color: rgba(255,0,0,.28);
+  color: #fff;
+}
+/* garante que os links do menu aparecem */
+.sidebar .nav { display: grid !important; gap: 8px; }
+.sidebar .nav a { display: block !important; }
+/* ===== FIX DEFINITIVO SIDEBAR (wrapper x panel) ===== */
+
+/* o conteúdo REAL do menu é o aside #sidebarPanel */
+#sidebarPanel{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative; /* para sidebar-foot absolute */
+}
+
+/* mobile drawer baseado no .open (mais simples) */
+@media (max-width: 1100px){
+  #sidebarPanel{
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: min(92vw, 360px);
+    transform: translateX(-110%);
+    transition: transform .22s ease;
+    z-index: 9999;
+  }
+  #sidebarPanel.open{
+    transform: translateX(0);
+  }
+}
+
+/* garante que links não somem */
+#sidebarPanel .nav{ display: grid; gap: 10px; }
+#sidebarPanel .nav a{ display: flex; }
+/* ===============================
+   FIX DEFINITIVO — SIDEBAR ADM
+   (compatível com ui.js: body.sidebar-open)
+   Cole no FINAL do admin.css
+================================ */
+
+/* o wrapper #sidebar só segura o HTML carregado */
+#sidebar { min-width: 0; }
+
+/* o painel real é o aside carregado */
+#sidebarPanel{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative; /* necessário pro .sidebar-foot absolute */
+}
+
+/* MOBILE/TABLET: vira drawer */
+@media (max-width: 1100px){
+  .admin{ grid-template-columns: 1fr; }
+
+  #sidebarPanel{
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: min(92vw, 360px);
+    height: 100vh;
+    transform: translateX(-110%);
+    transition: transform .22s ease;
+    z-index: 9999;
+    box-shadow: 18px 0 60px rgba(0,0,0,.65);
+  }
+
+  body.sidebar-open #sidebarPanel{
+    transform: translateX(0);
+  }
+}
+
+/* garante que o nav aparece SEMPRE */
+#sidebarPanel .nav{ display: grid !important; gap: 10px; }
+#sidebarPanel .nav a{ display: flex !important; }
+/* ===============================
+   FIX: SEARCH não virar “bolão”
+   (cole no FINAL do admin.css)
+================================ */
+
+/* trava altura + impede esticar verticalmente */
+.search{
+  width: 100%;
+  max-width: 560px;      /* limite no desktop */
+  height: 46px;          /* altura fixa */
+  min-height: 46px;
+  align-self: flex-start; /* não deixa o grid esticar */
+  border-radius: 14px;   /* menos “pílula”, fica premium */
+  padding: 0 14px;
+}
+
+/* garante input alinhado */
+.search input{
+  height: 100%;
+  line-height: 46px;
+}
+
+/* no mobile, ocupa tudo */
+@media (max-width: 760px){
+  .search{
+    max-width: 100%;
+    border-radius: 16px;
+  }
+}
+/* ===============================
+   FIX DEFINITIVO: search não vira círculo no mobile
+================================ */
+
+/* padrão: search nunca deve esticar verticalmente */
+.top-actions .search{
+  flex: 0 0 auto;
+  height: 46px;
+  min-height: 46px;
+  border-radius: 14px; /* pode trocar por 999px se quiser pill */
+  align-self: flex-start;
+}
+
+/* input alinhado na altura */
+.top-actions .search input{
+  height: 100%;
+  line-height: 46px;
+}
+
+/* mobile/tablet: garante que não volta a esticar */
+@media (max-width: 980px){
+  .top-actions .search{
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    align-self: stretch;
+  }
+}
+/* ===============================
+   MENSAGENS — FIX FINAL (MOBILE)
+   cola no FINAL do admin.css
+================================ */
+
+/* Header do card (onde fica nome + ações) */
+.msg-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;            /* ✅ no mobile os botões descem */
+}
+
+/* Garante que o lado do texto pode crescer */
+.msg-card-head > :first-child{
+  flex:1 1 220px;
+  min-width:0;
+}
+
+/* Texto do cliente não fica espremido */
+.msg-card-head strong,
+.msg-card-head small,
+.msg-card-head p,
+.msg-card-head div{
+  min-width:0;
+}
+
+/* Ações: no desktop pode rolar, no mobile quebra linha */
+.msg-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  max-width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+  white-space:nowrap;
+  padding-bottom:2px;
+}
+.msg-actions::-webkit-scrollbar{ display:none; }
+
+/* Mobile: melhor quebrar em 2 linhas do que esmagar o texto */
+@media (max-width: 700px){
+  .msg-actions{
+    flex-wrap:wrap;
+    overflow-x:visible;
+    white-space:normal;
+  }
+}
+/* ===============================
+   DASHBOARD — Status não encolher
+   cole no FINAL do admin.css
+================================ */
+
+.status-list{
+  min-width: 0;
+}
+
+.status-list .row,
+.status-list .status-row,
+.status-list > div{
+  min-width: 0;
+}
+
+/* Se cada linha do status for flex */
+.status-list .row,
+.status-list .status-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+/* Texto do status pode quebrar, badge/valor não */
+.status-list .label,
+.status-list .name,
+.status-list .left{
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Número / badge NÃO pode encolher */
+.status-list .value,
+.status-list .count,
+.status-list .badge{
+  flex: 0 0 auto;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+/* Se for badge pequeno demais, dá presença */
+.status-list .badge{
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1;
+}
+/* ===============================
+   DASHBOARD — Status não encolher
+   (cole no FINAL do admin.css)
+================================ */
+
+/* 1) GARANTE que badges nunca “amassem” */
+.badge{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  min-width: fit-content;
+}
+
+/* 2) STATUS-LIST: cada linha fica “texto + badge” certinho
+   (mesmo se o JS gerar divs simples) */
+#statusList{
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Se o JS cria linhas tipo: <div>Pago <span class="badge">12</span></div> */
+#statusList > div{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.20);
+}
+
+/* O texto pode cortar, o badge não */
+#statusList > div > :first-child{
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Se o segundo filho for badge/valor, não encolhe */
+#statusList > div > :last-child{
+  flex: 0 0 auto;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+/* 3) TABELA: Coluna “Status” não quebra nem encolhe */
+#lastOrders td:nth-child(4),
+#lastOrders th:nth-child(4){
+  white-space: nowrap;
+}

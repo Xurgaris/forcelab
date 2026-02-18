@@ -1,6 +1,6 @@
 // /admin/login.js
 import { auth } from "../js/firebase.js";
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
 const form = document.querySelector("#loginForm");
 const msg = document.querySelector("#loginMsg");

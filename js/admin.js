@@ -3,14 +3,14 @@ import { auth, db } from "../js/firebase.js";
 import {
   signOut,
   onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
 import {
   collection,
   onSnapshot,
   doc,
   updateDoc,
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 /* ================================
    PROTEÇÃO

@@ -4,7 +4,7 @@ requireAuth();
 await loadSidebar("configs");
 
 import { db } from "../js/firebase.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const storeName = document.getElementById("storeName");
 const storeWhats = document.getElementById("storeWhats");

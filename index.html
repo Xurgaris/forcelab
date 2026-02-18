@@ -362,7 +362,7 @@
             >
               <img
                 class="objective-img"
-                src="https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=2000&q=80"
+                src="assets/massa.png"
                 alt="Massa"
                 loading="lazy"
               />
@@ -382,7 +382,7 @@
             >
               <img
                 class="objective-img"
-                src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=2000&q=80"
+                src="assets/performance.png"
                 alt="Força"
                 loading="lazy"
               />
@@ -402,7 +402,7 @@
             >
               <img
                 class="objective-img"
-                src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=2000&q=80"
+                src="assets/energia.png"
                 alt="Energia"
                 loading="lazy"
               />
@@ -1022,10 +1022,6 @@
                   </div>
                 </div>
 
-            
-
-               
-
                 <div class="info-item">
                   <div class="info-title">Central de Distribuição</div>
                   <div class="info-text">
@@ -1041,6 +1037,7 @@
 
             <form
               class="contact-form"
+              id="contactForm"
               name="contato"
               method="POST"
               data-netlify="true"
@@ -1093,9 +1090,10 @@
                 ></textarea>
               </div>
 
-              <button class="btn btn-primary full" type="submit">
+              <button class="btn btn-primary full" id="btnSend" type="submit">
                 Enviar mensagem
               </button>
+              <small class="muted" id="formMsg"></small>
             </form>
           </div>
         </div>
@@ -1130,18 +1128,17 @@
                 loading="lazy"
               />
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                src="img/credito.png"
                 alt="Mastercard"
                 loading="lazy"
               />
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Pix_logo.svg"
+                src="img/pix.png"
                 alt="Pix"
                 loading="lazy"
               />
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                alt="PayPal"
+                src="img/mercadop.png" alt="PayPal"
                 loading="lazy"
               />
             </div>
@@ -1239,5 +1236,8 @@
     <script type="module" src="js/products.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/header.js"></script>
+    <script type="module" src="./js/contato-firebase.js"></script>
+    <script type="module" src="./js/contato-firestore.js"></script>
+
   </body>
 </html>

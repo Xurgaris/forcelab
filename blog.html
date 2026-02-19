@@ -1,194 +1,290 @@
 <!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Blog | ForceLab</title>
-  <meta name="description" content="Conteúdo direto, prático e organizado para decisão de compra." />
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blog | ForceLab</title>
+    <meta
+      name="description"
+      content="Conteúdo direto, prático e organizado para decisão de compra."
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- (opcional) header do seu site -->
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <!-- Brand -->
+        <a class="brand" href="index.html">
+          <div class="logo">
+            <h1>FORCE<span>LAB</span></h1>
+            <small>Nutrition</small>
+          </div>
+        </a>
 
-  <!-- (opcional) header do seu site -->
-<header class="topbar">
-  <div class="container topbar-inner">
-    <!-- Brand -->
-    <a class="brand" href="index.html">
-      <div class="logo">
-        <h1>FORCE<span>LAB</span></h1>
-        <small>Nutrition</small>
-      </div>
-    </a>
+        <!-- Main nav (desktop) -->
+        <nav class="nav" aria-label="Menu principal">
+          <div class="nav-dd">
+            <button
+              class="nav-dd-btn"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Categorias
+              <svg
+                class="chev"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 9l6 6 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
 
-    <!-- Main nav (desktop) -->
-    <nav class="nav" aria-label="Menu principal">
-      <div class="nav-dd">
-        <button
-          class="nav-dd-btn"
-          type="button"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          Categorias
-          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M6 9l6 6 6-6"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-        </button>
+            <div class="nav-dd-menu" role="menu" aria-label="Categorias">
+              <a role="menuitem" href="catalogo.html?tag=forca">Força</a>
+              <a role="menuitem" href="catalogo.html?tag=energia">Energia</a>
+              <a role="menuitem" href="catalogo.html?tag=massa">Massa</a>
+              <a role="menuitem" href="catalogo.html?tag=saude">Saúde</a>
+              <div class="sep"></div>
+              <a role="menuitem" href="catalogo.html">Ver catálogo completo</a>
+            </div>
+          </div>
 
-        <div class="nav-dd-menu" role="menu" aria-label="Categorias">
-          <a role="menuitem" href="catalogo.html?tag=forca">Força</a>
-          <a role="menuitem" href="catalogo.html?tag=energia">Energia</a>
-          <a role="menuitem" href="catalogo.html?tag=massa">Massa</a>
-          <a role="menuitem" href="catalogo.html?tag=saude">Saúde</a>
-          <div class="sep"></div>
-          <a role="menuitem" href="catalogo.html">Ver catálogo completo</a>
+          <a href="catalogo.html?tag=creatina">Creatina</a>
+          <a href="catalogo.html?tag=proteinas">Proteínas</a>
+          <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+
+          <!-- no blog: kits volta pra home -->
+          <a href="index.html#kits">Kits</a>
+
+          <!-- blog ativo -->
+          <a href="blog.html" class="active">Blog</a>
+        </nav>
+
+        <!-- Actions -->
+        <div class="topbar-actions">
+          <!-- Menu (mobile) -->
+          <button
+            class="menu-btn"
+            id="menuBtn"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="mobileMenu"
+            aria-expanded="false"
+          >
+            <span class="sr-only">Abrir menu</span>
+          </button>
+
+          <!-- Cart (mantém seu toggleCart) -->
+          <button
+            class="cart-ico-btn"
+            type="button"
+            onclick="toggleCart()"
+            aria-label="Abrir carrinho"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M6 6h15l-2 9H7L6 6z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M6 6L5 3H2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+
+            <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
+          </button>
         </div>
       </div>
 
-      <a href="catalogo.html?tag=creatina">Creatina</a>
-      <a href="catalogo.html?tag=proteinas">Proteínas</a>
-      <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+      <!-- MOBILE MENU (overlay + painel) -->
+      <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <div class="mobile-menu-overlay" data-close="menu"></div>
 
-      <!-- no blog: kits volta pra home -->
-      <a href="index.html#kits">Kits</a>
+        <div class="mobile-menu-panel" role="dialog" aria-label="Menu">
+          <div class="mobile-menu-head">
+            <strong>Menu</strong>
+            <button class="btn-mini ghost" type="button" data-close="menu">
+              Fechar
+            </button>
+          </div>
 
-      <!-- blog ativo -->
-      <a href="blog.html" class="active">Blog</a>
-    </nav>
+          <div class="mobile-menu-links">
+            <a href="catalogo.html">Catálogo</a>
+            <a href="catalogo.html?tag=creatina">Creatina</a>
+            <a href="catalogo.html?tag=proteinas">Proteínas</a>
+            <a href="catalogo.html?tag=pre-treino">Pré-treino</a>
+            <a href="index.html#kits">Kits</a>
+            <a href="blog.html" class="active">Blog</a>
+          </div>
 
-    <!-- Actions -->
-    <div class="topbar-actions">
-      <!-- Menu (mobile) -->
-      <button
-        class="menu-btn"
-        id="menuBtn"
-        type="button"
-        aria-label="Abrir menu"
-        aria-controls="mobileMenu"
-        aria-expanded="false"
-      >
-        <span class="sr-only">Abrir menu</span>
+          <div class="mobile-menu-foot">
+            <a class="btn btn-primary" href="catalogo.html">Ver produtos</a>
+            <a class="btn btn-ghost" href="cart.html">Ir para o carrinho</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container" style="padding: 28px 0">
+      <section class="blog-hero">
+        <div>
+          <h1>Blog</h1>
+          <p class="muted">
+            Conteúdo direto, prático e organizado para decisão de compra.
+          </p>
+        </div>
+        <a class="btn btn-ghost" href="#allPosts">Ver todos</a>
+      </section>
+
+      <section class="blog-controls" aria-label="Busca e filtros">
+        <div class="blog-search">
+          <span aria-hidden="true">🔎</span>
+          <input
+            id="blogSearch"
+            type="search"
+            placeholder="Buscar por assunto, produto ou objetivo..."
+          />
+        </div>
+
+        <div class="blog-filters">
+          <select id="blogCategory">
+            <option value="all">Todas categorias</option>
+          </select>
+
+          <select id="blogSort">
+            <option value="new">Mais recentes</option>
+            <option value="hot">Mais populares</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="blog-featured" aria-label="Post em destaque">
+        <div id="featuredWrap"></div>
+      </section>
+
+      <section id="allPosts" class="blog-grid-wrap">
+        <div class="blog-grid-head">
+          <h2>Últimos artigos</h2>
+          <p class="muted">Guias rápidos, estratégias e comparativos.</p>
+        </div>
+
+        <div class="blog-grid" id="blogGrid">
+          <!-- cards entram aqui -->
+          <article class="blog-card">
+            <a class="blog-media" href="artigo.html?slug=creatina-como-tomar">
+              <img
+                src="assets/blog/creatina.jpg"
+                alt="Creatina: como tomar"
+                loading="lazy"
+              />
+              <span class="blog-tag">Guia</span>
+            </a>
+
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span>Creatina</span><span class="dot">•</span><span>5 min</span
+                ><span class="dot">•</span>
+                <time datetime="2026-02-18">18 Fev 2026</time>
+              </div>
+
+              <h3 class="blog-title">
+                <a href="artigo.html?slug=creatina-como-tomar">
+                  Creatina: como tomar do jeito certo (sem enrolação)
+                </a>
+              </h3>
+
+              <p class="blog-excerpt">
+                Entenda dose, horário, consistência e os erros mais comuns que
+                atrapalham seus resultados.
+              </p>
+
+              <div class="blog-actions">
+                <a
+                  class="btn btn-ghost"
+                  href="artigo.html?slug=creatina-como-tomar"
+                  >Ler artigo</a
+                >
+                <a class="btn btn-primary" href="catalogo.html?tag=creatina"
+                  >Ver creatinas</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- duplica mais aqui -->
+        </div>
+
+        <div class="blog-pagination" id="blogPager"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <small class="muted">© ForceLab Nutrition — Blog</small>
+      </div>
+    </footer>
+
+    <script src="/js/ui.js"></script>
+    <script type="module" src="/js/blog.js"></script>
+    <script type="module" src="/js/cart.js"></script>
+    <!-- CART DRAWER (global) -->
+<div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+  <div class="cart-overlay" data-close="cart"></div>
+
+  <aside class="cart-panel" role="dialog" aria-label="Carrinho">
+    <header class="cart-head">
+      <strong>Seu carrinho</strong>
+      <button class="btn-mini ghost" type="button" data-close="cart">Fechar</button>
+    </header>
+
+    <div class="cart-body">
+      <div class="cart-items" id="cartItems"></div>
+
+      <div class="divider"></div>
+
+      <div class="cart-summary">
+        <div class="kv">
+          <span>Subtotal</span>
+          <strong id="cartSubtotal">R$ 0,00</strong>
+        </div>
+        <div class="kv total">
+          <span>Total</span>
+          <strong id="cartTotal">R$ 0,00</strong>
+        </div>
+      </div>
+    </div>
+
+    <footer class="cart-foot">
+      <a class="btn btn-ghost" href="cart.html">Ver carrinho</a>
+      <button class="btn btn-primary" type="button" id="btnCheckout">
+        Finalizar no WhatsApp
       </button>
+    </footer>
+  </aside>
+</div>
 
-      <!-- Cart (mantém seu toggleCart) -->
-      <button
-        class="cart-ico-btn"
-        type="button"
-        onclick="toggleCart()"
-        aria-label="Abrir carrinho"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M6 6h15l-2 9H7L6 6z"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M6 6L5 3H2"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-          <path
-            d="M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          />
-        </svg>
-
-        <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- MOBILE MENU (overlay + painel) -->
-  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-    <div class="mobile-menu-overlay" data-close="menu"></div>
-
-    <div class="mobile-menu-panel" role="dialog" aria-label="Menu">
-      <div class="mobile-menu-head">
-        <strong>Menu</strong>
-        <button class="btn-mini ghost" type="button" data-close="menu">Fechar</button>
-      </div>
-
-      <div class="mobile-menu-links">
-        <a href="catalogo.html">Catálogo</a>
-        <a href="catalogo.html?tag=creatina">Creatina</a>
-        <a href="catalogo.html?tag=proteinas">Proteínas</a>
-        <a href="catalogo.html?tag=pre-treino">Pré-treino</a>
-        <a href="index.html#kits">Kits</a>
-        <a href="blog.html" class="active">Blog</a>
-      </div>
-
-      <div class="mobile-menu-foot">
-        <a class="btn btn-primary" href="catalogo.html">Ver produtos</a>
-        <a class="btn btn-ghost" href="cart.html">Ir para o carrinho</a>
-      </div>
-    </div>
-  </div>
-</header>
-
-
-
-  <main class="container" style="padding: 28px 0;">
-    <section class="blog-hero">
-      <div>
-        <h1>Blog</h1>
-        <p class="muted">Conteúdo direto, prático e organizado para decisão de compra.</p>
-      </div>
-      <a class="btn btn-ghost" href="#allPosts">Ver todos</a>
-    </section>
-
-    <section class="blog-controls" aria-label="Busca e filtros">
-      <div class="blog-search">
-        <span aria-hidden="true">🔎</span>
-        <input id="blogSearch" type="search" placeholder="Buscar por assunto, produto ou objetivo..." />
-      </div>
-
-      <div class="blog-filters">
-        <select id="blogCategory">
-          <option value="all">Todas categorias</option>
-        </select>
-
-        <select id="blogSort">
-          <option value="new">Mais recentes</option>
-          <option value="hot">Mais populares</option>
-        </select>
-      </div>
-    </section>
-
-    <section class="blog-featured" aria-label="Post em destaque">
-      <div id="featuredWrap"></div>
-    </section>
-
-    <section id="allPosts" class="blog-grid-wrap">
-      <div class="blog-grid-head">
-        <h2>Últimos artigos</h2>
-        <p class="muted">Guias rápidos, estratégias e comparativos.</p>
-      </div>
-
-      <div class="blog-grid" id="blogGrid"></div>
-
-      <div class="blog-pagination" id="blogPager"></div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <small class="muted">© ForceLab Nutrition — Blog</small>
-    </div>
-  </footer>
-
-  <script type="module" src="/js/blog.js"></script>
-</body>
+  </body>
 </html>

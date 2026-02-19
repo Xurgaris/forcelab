@@ -1,77 +1,96 @@
-import { POSTS, getPostById } from "./blogData.js";
+// /js/posts.js
+export const POSTS = [
+  {
+    slug: "creatina-como-tomar",
+    title: "Creatina: como tomar do jeito certo (sem enrolação)",
+    excerpt:
+      "Entenda dose, horário, consistência e os erros mais comuns que atrapalham seus resultados.",
+    category: "Creatina",
+    tag: "Guia",
+    readTime: "5 min",
+    dateISO: "2026-02-18",
+    dateLabel: "18 Fev 2026",
+    image: "assets/blog/creatina.jpg",
+    hot: false,
+    content: [
+      {
+        h2: "O que é creatina (em 10 segundos)",
+        p: "Creatina é um composto que ajuda na reposição de energia rápida (ATP), melhorando desempenho em treinos de força e volume."
+      },
+      {
+        h2: "Dose recomendada",
+        p: "A base mais comum é 3g a 5g por dia. O mais importante é consistência (todo dia), não o horário."
+      },
+      {
+        h2: "Erros que mais atrapalham",
+        list: [
+          "Tomar só nos dias de treino",
+          "Parar e voltar toda hora",
+          "Achar que precisa de “ciclar” sem motivo",
+          "Não beber água o suficiente"
+        ]
+      },
+      {
+        h2: "Como encaixar na rotina",
+        p: "Escolha um horário fixo (pós-almoço, café da manhã, pós-treino) e mantenha. Simples e eficiente."
+      }
+    ],
+  },
 
-const wrap = document.getElementById("postWrap");
-const related = document.getElementById("relatedGrid");
+  {
+    slug: "whey-antes-ou-depois",
+    title: "Whey: antes ou depois do treino? O que faz diferença",
+    excerpt:
+      "Quando tomar whey realmente importa? Veja a forma simples de encaixar na rotina sem paranoia.",
+    category: "Proteínas",
+    tag: "Popular",
+    readTime: "6 min",
+    dateISO: "2026-02-17",
+    dateLabel: "17 Fev 2026",
+    image: "assets/blog/whey.jpg",
+    hot: true,
+    content: [
+      { h2: "O que importa de verdade", p: "No fim, o total de proteína do dia pesa mais do que o minuto exato." },
+      { h2: "Melhor horário", p: "O melhor horário é o que você consegue manter. Pós-treino é prático, mas não é obrigatório." },
+      { h2: "Dica prática", list: ["Meta diária de proteína", "Dividir em 3–5 refeições", "Usar whey para facilitar"] }
+    ],
+  },
 
-const id = new URLSearchParams(location.search).get("id");
-const post = getPostById(id);
+  {
+    slug: "pre-treino-como-usar",
+    title: "Pré-treino: dose, horário e como não passar mal",
+    excerpt:
+      "Guia direto pra você sentir o efeito sem exagero: tolerância, cafeína e dicas de segurança.",
+    category: "Pré-treino",
+    tag: "Treino",
+    readTime: "4 min",
+    dateISO: "2026-02-15",
+    dateLabel: "15 Fev 2026",
+    image: "assets/blog/pretreino.jpg",
+    hot: false,
+    content: [
+      { h2: "Comece baixo", p: "Se tem cafeína, comece com meia dose para ver tolerância." },
+      { h2: "Evite tarde", p: "Se atrapalha o sono, corta o desempenho e recuperação no dia seguinte." },
+      { h2: "Checklist", list: ["Água", "Dose baixa", "Sono em dia", "Sem misturar estimulantes"] }
+    ],
+  },
 
-function sectionHTML(block){
-  if (block.h2) return `<h2>${block.h2}</h2><p>${block.p || ""}</p>`;
-  return `<p>${block.p || ""}</p>`;
-}
-
-function card(p){
-  return `
-    <article class="blog-card">
-      <a class="blog-card-media" href="/artigo.html?id=${encodeURIComponent(p.id)}">
-        <img src="${p.cover}" alt="${p.title}" loading="lazy" />
-        <span class="blog-pill">${p.tag || "Artigo"}</span>
-      </a>
-      <div class="blog-card-body">
-        <h3>${p.title}</h3>
-        <p class="muted">${p.excerpt}</p>
-        <div class="blog-card-foot">
-          <span class="muted">${p.category || ""}</span>
-          <a class="blog-link" href="/artigo.html?id=${encodeURIComponent(p.id)}">Ler artigo</a>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
-if (!wrap){
-  console.warn("postWrap não encontrado");
-} else if (!post){
-  wrap.innerHTML = `<p class="muted">Artigo não encontrado.</p>`;
-} else {
-  document.title = `${post.title} | Blog`;
-
-  wrap.innerHTML = `
-    <article class="post">
-      <header class="post-head">
-        <span class="post-tag">${post.tag || "Artigo"}</span>
-        <h1>${post.title}</h1>
-        <p class="muted">${post.excerpt}</p>
-        <div class="post-meta">
-          <span class="muted">${post.category || ""}</span>
-          <span class="muted">${post.readingMinutes || 5} min</span>
-        </div>
-      </header>
-
-      <div class="post-cover">
-        <img src="${post.cover}" alt="${post.title}" />
-      </div>
-
-      <div class="post-body">
-        ${(post.content || []).map(sectionHTML).join("")}
-      </div>
-
-      <div class="post-cta">
-        <div>
-          <strong>Quer uma rotina pronta?</strong>
-          <p class="muted">Veja os kits em oferta e monte sua compra em poucos cliques.</p>
-        </div>
-        <a class="btn btn-primary" href="/#kits">Ver kits</a>
-      </div>
-    </article>
-  `;
-
-  const rel = POSTS
-    .filter(p => p.id !== post.id)
-    .filter(p => p.category === post.category)
-    .sort((a,b)=> (b.views||0) - (a.views||0))
-    .slice(0, 3);
-
-  related.innerHTML = rel.map(card).join("");
-}
+  {
+    slug: "hipertrofia-base",
+    title: "Hipertrofia: 3 pilares que valem mais que “produto mágico”",
+    excerpt:
+      "Treino consistente, proteína diária e sono. O resto é ajuste fino — aqui vai o mapa.",
+    category: "Massa",
+    tag: "Estratégia",
+    readTime: "7 min",
+    dateISO: "2026-02-12",
+    dateLabel: "12 Fev 2026",
+    image: "assets/blog/hipertrofia.jpg",
+    hot: false,
+    content: [
+      { h2: "Treino", p: "Progressão e consistência. Faça o básico bem feito por meses." },
+      { h2: "Nutrição", p: "Proteína diária + calorias suficientes. Sem isso, o corpo não constrói." },
+      { h2: "Sono", p: "Recuperação é onde a mágica acontece. Sono ruim = resultado ruim." }
+    ],
+  },
+];

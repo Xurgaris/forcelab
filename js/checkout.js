@@ -172,4 +172,6 @@ form?.addEventListener("submit", async (e) => {
       btn.textContent = oldBtnText || "ENVIAR PEDIDO 🚀";
     }
   }
+  const mp = new MercadoPago("SUA_PUBLIC_KEY_AQUI", { locale: "pt-BR" });
+
 });

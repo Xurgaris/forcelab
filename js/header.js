@@ -33,8 +33,7 @@
       const value = (q || "").trim();
       sessionStorage.setItem("q", value);
 
-      // DEBUG (pra você ver no console se está disparando)
-      console.log("[SEARCH] q =", value);
+     
 
       location.hash = "#produtos";
       window.dispatchEvent(new Event("productSearch"));
@@ -53,7 +52,7 @@
     }
 
     // --- Search Desktop ---
-    if (searchInput) {
+    /*if (searchInput) {
       const qSaved = sessionStorage.getItem("q");
       if (qSaved) searchInput.value = qSaved;
 
@@ -65,7 +64,7 @@
       });
     } else {
       console.warn("[SEARCH] Não achei .search input no header.");
-    }
+    }*/
 
     // --- Mobile Menu ---
     menuBtn?.addEventListener("click", () => openMobile(true));
@@ -73,7 +72,7 @@
     mobileMenu?.addEventListener("click", (e) => e.target === mobileMenu && openMobile(false));
 
     // --- Search Mobile ---
-    if (mobileSearch) {
+   /* if (mobileSearch) {
       const qSaved = sessionStorage.getItem("q");
       if (qSaved) mobileSearch.value = qSaved;
 
@@ -84,7 +83,7 @@
           openMobile(false);
         }
       });
-    }
+    }*/
   }
 
   if (document.readyState === "loading") {

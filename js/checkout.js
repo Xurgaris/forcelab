@@ -123,7 +123,7 @@ document.getElementById("pixCopyBtn")?.addEventListener("click", async () => {
 
 // ========= Mercado Pago Brick =========
 // ⚠️ Você precisa ter o <script src="https://sdk.mercadopago.com/js/v2"></script> no checkout.html
-const MP_PUBLIC_KEY = "SUA_PUBLIC_KEY_AQUI"; // ok ficar no front
+const MP_PUBLIC_KEY = "APP_USR-552b9b15-749f-4aad-b174-f57fe8e2f0eb"; // ok ficar no front
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 

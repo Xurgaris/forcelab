@@ -1,12 +1,15 @@
 // /admin/protect.js
 import { auth, db } from "/js/firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import {
+  doc,
+  getDoc,
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 function allow() {
   // libera compatível com os 2 jeitos:
   document.documentElement.classList.add("auth-ok"); // <html>
-  document.body.classList.add("auth-ok");            // <body>
+  document.body.classList.add("auth-ok"); // <body>
 }
 
 function deny() {

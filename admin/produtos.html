@@ -2,22 +2,11 @@
 <html lang="pt-br">
   <head>
     <style>
-      /* sem flash e sem travar a página inteira */
-      .admin-page {
-        display: none;
+      html {
+        visibility: hidden;
       }
-      body.auth-ok .admin-page {
-        display: block;
-      }
-      body.auth-ok .admin-loading {
-        display: none;
-      }
-
-      .admin-loading {
-        min-height: 70vh;
-        display: grid;
-        place-items: center;
-        color: #fff;
+      html.auth-ok {
+        visibility: visible;
       }
     </style>
 
@@ -32,12 +21,7 @@
   <body>
     <!-- ✅ sempre absoluto -->
     <script type="module" src="/admin/protect.js"></script>
-    <div class="admin-loading">
-      <div>
-        <strong>Carregando painel…</strong><br />
-        <small class="muted">Validando acesso</small>
-      </div>
-    </div>
+
     <div class="admin">
       <div id="sidebar"></div>
 

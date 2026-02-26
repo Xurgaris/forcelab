@@ -16,7 +16,7 @@ onAuthStateChanged(auth, (user) => {
     window.location.href = "/admin/login.html";
     return;
   }
-  document.documentElement.classList.add("auth-ok");
+  document.body.classList.add("auth-ok");
   initPage();
 });
 

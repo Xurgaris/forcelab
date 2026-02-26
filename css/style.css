@@ -3947,3 +3947,156 @@ body::after {
 @media (max-width: 760px){
   .blog-card{ grid-column: span 12; }
 }
+/* =========================
+   PIX MODAL
+========================= */
+.pix-modal{
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 99999;
+}
+.pix-modal.open{ display:block; }
+
+.pix-overlay{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(8px);
+}
+
+.pix-card{
+  position:absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 520px);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(900px 420px at 18% 12%, rgba(255,0,0,.10), transparent 60%),
+    rgba(10,10,10,.96);
+  box-shadow: 0 30px 90px rgba(0,0,0,.65);
+  overflow:hidden;
+}
+
+.pix-head{
+  padding: 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.22);
+}
+
+.pix-body{ padding: 14px; }
+
+.pix-qr-wrap{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.25);
+  border-radius: 16px;
+  padding: 12px;
+  display:grid;
+  place-items:center;
+  min-height: 240px;
+}
+
+.pix-qr-wrap img{
+  width: 240px;
+  height: 240px;
+  max-width: 70vw;
+  object-fit: contain;
+}
+
+.pix-copy{
+  margin-top: 12px;
+  display:grid;
+  gap: 10px;
+}
+
+.pix-copy textarea{
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.25);
+  color:#fff;
+  padding: 12px;
+  font-weight: 800;
+  outline:none;
+  resize: none;
+}/* =========================
+   PAY STEPS OVERLAY
+========================= */
+.pay-steps{
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 100000;
+  background: rgba(0,0,0,.70);
+  backdrop-filter: blur(10px);
+}
+.pay-steps.open{ display:grid; place-items:center; }
+
+.pay-steps-card{
+  width: min(92vw, 520px);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(900px 420px at 18% 12%, rgba(255,0,0,.12), transparent 60%),
+    rgba(10,10,10,.96);
+  box-shadow: 0 30px 90px rgba(0,0,0,.65);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  animation: popIn .18s ease-out;
+}
+
+@keyframes popIn{
+  from{ transform: translateY(8px); opacity: 0; }
+  to{ transform: translateY(0); opacity: 1; }
+}
+
+.pay-spinner{
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 3px solid rgba(255,255,255,.12);
+  border-top-color: rgba(255,0,0,.70);
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+.pay-steps-text strong{
+  display:block;
+  font-weight: 950;
+  font-size: 18px;
+  letter-spacing: .2px;
+}
+.pay-steps-text p{
+  margin: 6px 0 0;
+}
+
+.pay-progress{
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,.10);
+}
+.pay-bar{
+  height: 100%;
+  width: 8%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,0,0,.55), rgba(255,0,0,.18));
+  box-shadow: 0 0 30px rgba(255,0,0,.18);
+  transition: width .35s ease;
+}
+
+.pay-steps.done .pay-spinner{
+  border-top-color: rgba(0,255,140,.75);
+}
+.pay-steps.done .pay-bar{
+  width: 100% !important;
+  background: linear-gradient(90deg, rgba(0,255,140,.45), rgba(0,255,140,.18));
+}

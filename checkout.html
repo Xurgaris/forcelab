@@ -129,12 +129,24 @@
   </div>
 </main>
 
+<!-- PAY STATUS OVERLAY -->
+<div class="pay-steps" id="paySteps" aria-hidden="true">
+  <div class="pay-steps-card">
+    <div class="pay-spinner" aria-hidden="true"></div>
+    <div class="pay-steps-text">
+      <strong id="payStepsTitle">Confirmando pagamento…</strong>
+      <p class="muted" id="payStepsSub">Aguarde um instante.</p>
+    </div>
+
+    <div class="pay-progress">
+      <div class="pay-bar" id="payBar"></div>
+    </div>
+
+    <small class="muted" id="payHint">Não feche esta página.</small>
+  </div>
+</div>
 <script src="js/cart.js"></script>
 <script src="js/checkoutSummary.js"></script>
-
-<!-- (opcional) seu checkout.js continua -->
-<script type="module" src="js/checkout.js"></script>
-
 <!-- Render de itens no checkout -->
 <script>
 (function(){
@@ -173,7 +185,6 @@
   renderItems();
 })();
 </script>
-
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script type="module" src="/js/checkout.js"></script>
 

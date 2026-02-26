@@ -2,8 +2,10 @@
 <html lang="pt-br">
   <head>
     <style>
-  html{  visibility: visible !important; }
-</style>
+      html {
+        visibility: visible !important;
+      }
+    </style>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -13,20 +15,31 @@
 
   <body>
     <script type="module" src="/admin/protect.js"></script>
-
+    <div class="admin-page"></div>
     <div class="admin">
       <div id="sidebar"></div>
 
       <main class="main">
         <header class="mobilebar">
-          <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+          <button
+            class="micon"
+            id="openSidebar"
+            type="button"
+            aria-label="Abrir menu"
+          >
+            ☰
+          </button>
           <div class="mobilebar-title">
             <strong>Mensagens</strong>
             <small class="muted">ForceLab ADM</small>
           </div>
         </header>
 
-        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+        <div
+          class="sidebar-backdrop"
+          id="sidebarBackdrop"
+          aria-hidden="true"
+        ></div>
 
         <header class="top">
           <div>
@@ -36,8 +49,11 @@
 
           <div class="top-actions">
             <div class="search">
-              <span style="color:#111;opacity:.7">🔎</span>
-              <input id="msgSearch" placeholder="Buscar por nome, email ou WhatsApp..." />
+              <span style="color: #111; opacity: 0.7">🔎</span>
+              <input
+                id="msgSearch"
+                placeholder="Buscar por nome, email ou WhatsApp..."
+              />
             </div>
 
             <select id="msgFilter">
@@ -46,7 +62,9 @@
               <option value="lido">Somente lidas</option>
             </select>
 
-            <button class="btn btn-ghost" id="btnClear" type="button">Limpar</button>
+            <button class="btn btn-ghost" id="btnClear" type="button">
+              Limpar
+            </button>
           </div>
         </header>
 
@@ -54,17 +72,21 @@
           <aside class="messages-list">
             <div class="messages-head">
               <strong>Caixa de entrada</strong>
-              <small class="muted"><span id="msgCount">0</span> mensagens</small>
+              <small class="muted"
+                ><span id="msgCount">0</span> mensagens</small
+              >
             </div>
             <div id="msgList" class="msg-items">
-              <div class="muted" style="padding:14px">Carregando...</div>
+              <div class="muted" style="padding: 14px">Carregando...</div>
             </div>
           </aside>
 
           <section class="messages-view">
             <div class="msg-empty" id="msgEmpty">
               <h3>Selecione uma mensagem</h3>
-              <p class="muted">Clique em um item à esquerda para ver os detalhes.</p>
+              <p class="muted">
+                Clique em um item à esquerda para ver os detalhes.
+              </p>
             </div>
 
             <div class="msg-card" id="msgCard" hidden>
@@ -75,9 +97,25 @@
                 </div>
 
                 <div class="msg-actions">
-                  <button class="btn btn-ghost" id="btnMarkRead" type="button">Marcar como lida</button>
-                  <a class="btn btn-ghost" id="btnWhats" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
-                  <a class="btn btn-ghost" id="btnMail" href="#" target="_blank" rel="noreferrer">E-mail</a>
+                  <button class="btn btn-ghost" id="btnMarkRead" type="button">
+                    Marcar como lida
+                  </button>
+                  <a
+                    class="btn btn-ghost"
+                    id="btnWhats"
+                    href="#"
+                    target="_blank"
+                    rel="noreferrer"
+                    >WhatsApp</a
+                  >
+                  <a
+                    class="btn btn-ghost"
+                    id="btnMail"
+                    href="#"
+                    target="_blank"
+                    rel="noreferrer"
+                    >E-mail</a
+                  >
                 </div>
               </div>
 
@@ -91,13 +129,13 @@
         </section>
       </main>
     </div>
-
+     <div class="modal" id="productModal" aria-hidden="true"></div>
     <script>
       fetch("sidebar.html")
-        .then(r => r.text())
-        .then(html => (document.getElementById("sidebar").innerHTML = html));
+        .then((r) => r.text())
+        .then((html) => (document.getElementById("sidebar").innerHTML = html));
     </script>
-<script type="module" src="/admin/ui.js"></script>
+    <script type="module" src="/admin/ui.js"></script>
     <script type="module" src="/admin/mensagens.js"></script>
   </body>
 </html>

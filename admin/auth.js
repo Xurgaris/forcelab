@@ -17,6 +17,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
   document.documentElement.classList.add("auth-ok");
+  initPage();
 });
 
 // garante login + garante admin (admins/{uid})

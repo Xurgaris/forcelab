@@ -222,9 +222,16 @@ window.dispatchEvent(new CustomEvent("cartUpdated", {
 /* ==========================
    TOGGLE CART SIDEBAR
 ========================== */
-function toggleCart() {
-  const el = document.getElementById("miniCart");
-  if (el) el.classList.toggle("active");
+function toggleCart(force) {
+  const drawer = document.getElementById("cartDrawer");
+  if (!drawer) return;
+
+  const shouldOpen =
+    typeof force === "boolean" ? force : !drawer.classList.contains("open");
+
+  drawer.classList.toggle("open", shouldOpen);
+  drawer.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
+  document.body.classList.toggle("no-scroll", shouldOpen);
 }
 
 /* INIT */
@@ -245,3 +252,32 @@ window.addToCartQty = addToCartQty;
 window.addToCart = addToCart;
 window.removeItem = removeItem;
 
+function bindCartDrawer() {
+  // fecha clicando overlay/fechar
+  document.addEventListener("click", (e) => {
+    const closeEl = e.target.closest('[data-close="cart"]');
+    if (closeEl) toggleCart(false);
+  });
+
+  // abre clicando no ícone do carrinho (mesmo sem onclick)
+  const btn = document.querySelector(".cart-ico-btn");
+  if (btn) {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      toggleCart();
+    });
+  }
+
+  // fecha no ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") toggleCart(false);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateCart();
+  bindCartDrawer();
+});
+
+// mantém global pro onclick funcionar
+window.toggleCart = toggleCart;

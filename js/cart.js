@@ -234,6 +234,8 @@ function toggleCart(force) {
   document.body.classList.toggle("no-scroll", shouldOpen);
 }
 
+window.toggleCart = toggleCart;
+
 /* INIT */
 updateCart();
 
@@ -251,33 +253,33 @@ window.toggleCart = toggleCart;
 window.addToCartQty = addToCartQty;
 window.addToCart = addToCart;
 window.removeItem = removeItem;
-
 function bindCartDrawer() {
-  // fecha clicando overlay/fechar
-  document.addEventListener("click", (e) => {
-    const closeEl = e.target.closest('[data-close="cart"]');
-    if (closeEl) toggleCart(false);
-  });
-
-  // abre clicando no ícone do carrinho (mesmo sem onclick)
+  // abre pelo botão do header
   const btn = document.querySelector(".cart-ico-btn");
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      toggleCart();
+      toggleCart(true);
     });
   }
 
-  // fecha no ESC
+  // fecha clicando overlay ou botão com data-close="cart"
+  document.addEventListener("click", (e) => {
+    if (e.target.closest('[data-close="cart"]')) toggleCart(false);
+  });
+
+  // ESC fecha
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") toggleCart(false);
   });
 }
 
+// INIT
 document.addEventListener("DOMContentLoaded", () => {
   updateCart();
   bindCartDrawer();
 });
 
-// mantém global pro onclick funcionar
+// deixa compatível com onclick="toggleCart()"
 window.toggleCart = toggleCart;
+

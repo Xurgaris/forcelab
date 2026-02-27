@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Minha conta | ForceLab</title>
+  <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Minha conta</h1>
+      <p class="muted" id="status">Verificando acesso...</p>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+        <a class="btn" href="/cliente/pedidos/" style="text-decoration:none; display:inline-block;">Meus pedidos</a>
+        <button class="btn" id="btnLogout" type="button">Sair</button>
+      </div>
+
+      <a class="link" href="/" style="margin-top:16px;">← Voltar para a loja</a>
+    </section>
+  </main>
+
+  <script type="module">
+    import { watchAuth, logout } from "../_shared/auth.js";
+
+    const status = document.getElementById("status");
+    const btnLogout = document.getElementById("btnLogout");
+
+    watchAuth((user) => {
+      if (user) {
+        status.textContent = `Logado como: ${user.email}`;
+      } else {
+        // se não estiver logado, manda pro login
+        window.location.href = "/cliente/login/";
+      }
+    });
+
+    btnLogout.addEventListener("click", async () => {
+      await logout();
+      window.location.href = "/";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Entrar | ForceLab</title>
+  <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Entrar</h1>
+      <p class="muted">Digite seu email para receber um link de acesso.</p>
+
+      <form id="form" class="form">
+        <label>
+          <span>Email</span>
+          <input id="email" type="email" placeholder="seuemail@exemplo.com" required />
+        </label>
+
+        <button class="btn" type="submit" id="btnSend">Enviar link</button>
+      </form>
+
+      <div id="msg" class="msg" style="display:none;"></div>
+
+      <p class="small muted">
+        Ao continuar, você concorda em receber um email de verificação para acessar sua conta.
+      </p>
+
+      <a class="link" href="/">← Voltar para a loja</a>
+    </section>
+  </main>
+
+  <script type="module" src="/cliente/_shared/auth.js"></script>
+  <script type="module" src="./login.js"></script>
+</body>
+</html>

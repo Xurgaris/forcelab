@@ -4,7 +4,9 @@
             > Páginas (Catálogo/Produto/Checkout/Admin) > Helpers
             > Responsivo (geral > mobile) > Efeitos finais
 ========================================================= */
-
+body.no-scroll { overflow: hidden; }
+.cart-drawer { display:none; }
+.cart-drawer.open { display:block; }
 /* ===============================
    1) IMPORTS
 ================================ */

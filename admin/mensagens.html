@@ -1,141 +1,138 @@
 <!doctype html>
 <html lang="pt-br">
   <head>
-    <style>
-      html {
-        visibility: visible !important;
-      }
-    </style>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Mensagens | ForceLab ADM</title>
+
+    <!-- sempre absoluto -->
     <link rel="stylesheet" href="/admin/admin.css" />
+
+    <!-- Anti-flash (sem mexer em html visibility) -->
+    <style>
+      .admin-page { display: none; }
+      body.auth-ok .admin-page { display: block; }
+      body.auth-ok .admin-loading { display: none; }
+
+      .admin-loading{
+        min-height: 70vh;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        color: #fff;
+      }
+
+      /* Se você adotou auth-lock no protect.js */
+      .auth-lock .admin-page{ display:none !important; }
+      .auth-lock .admin-loading{ display:grid !important; }
+    </style>
   </head>
 
   <body>
+    <!-- Proteção -->
     <script type="module" src="/admin/protect.js"></script>
-    <div class="admin-page"></div>
-    <div class="admin">
-      <div id="sidebar"></div>
 
-      <main class="main">
-        <header class="mobilebar">
-          <button
-            class="micon"
-            id="openSidebar"
-            type="button"
-            aria-label="Abrir menu"
-          >
-            ☰
-          </button>
-          <div class="mobilebar-title">
-            <strong>Mensagens</strong>
-            <small class="muted">ForceLab ADM</small>
-          </div>
-        </header>
-
-        <div
-          class="sidebar-backdrop"
-          id="sidebarBackdrop"
-          aria-hidden="true"
-        ></div>
-
-        <header class="top">
-          <div>
-            <h2></h2>
-            <div class="muted">Mensagens enviadas pelo formulário do site.</div>
-          </div>
-
-          <div class="top-actions">
-            <div class="search">
-              <span style="color: #111; opacity: 0.7">🔎</span>
-              <input
-                id="msgSearch"
-                placeholder="Buscar por nome, email ou WhatsApp..."
-              />
-            </div>
-
-            <select id="msgFilter">
-              <option value="all">Todas</option>
-              <option value="novo">Somente novas</option>
-              <option value="lido">Somente lidas</option>
-            </select>
-
-            <button class="btn btn-ghost" id="btnClear" type="button">
-              Limpar
-            </button>
-          </div>
-        </header>
-
-        <section class="messages-layout">
-          <aside class="messages-list">
-            <div class="messages-head">
-              <strong>Caixa de entrada</strong>
-              <small class="muted"
-                ><span id="msgCount">0</span> mensagens</small
-              >
-            </div>
-            <div id="msgList" class="msg-items">
-              <div class="muted" style="padding: 14px">Carregando...</div>
-            </div>
-          </aside>
-
-          <section class="messages-view">
-            <div class="msg-empty" id="msgEmpty">
-              <h3>Selecione uma mensagem</h3>
-              <p class="muted">
-                Clique em um item à esquerda para ver os detalhes.
-              </p>
-            </div>
-
-            <div class="msg-card" id="msgCard" hidden>
-              <div class="msg-card-head">
-                <div>
-                  <h3 id="vName">—</h3>
-                  <div class="muted" id="vMeta">—</div>
-                </div>
-
-                <div class="msg-actions">
-                  <button class="btn btn-ghost" id="btnMarkRead" type="button">
-                    Marcar como lida
-                  </button>
-                  <a
-                    class="btn btn-ghost"
-                    id="btnWhats"
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    >WhatsApp</a
-                  >
-                  <a
-                    class="btn btn-ghost"
-                    id="btnMail"
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    >E-mail</a
-                  >
-                </div>
-              </div>
-
-              <div class="msg-body">
-                <div class="bubble">
-                  <p id="vText"></p>
-                </div>
-              </div>
-            </div>
-          </section>
-        </section>
-      </main>
+    <!-- Loader -->
+    <div class="admin-loading">
+      <div>
+        <strong>Carregando painel…</strong><br />
+        <small class="muted">Validando acesso</small>
+      </div>
     </div>
-     <div class="modal" id="productModal" aria-hidden="true"></div>
-    <script>
-      fetch("sidebar.html")
-        .then((r) => r.text())
-        .then((html) => (document.getElementById("sidebar").innerHTML = html));
-    </script>
-    <script type="module" src="/admin/ui.js"></script>
-    <script type="module" src="/admin/mensagens.js"></script>
+
+    <!-- Conteúdo real (só aparece com auth-ok) -->
+    <div class="admin-page">
+      <div class="admin">
+        <div id="sidebar"></div>
+
+        <main class="main">
+          <header class="mobilebar">
+            <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+            <div class="mobilebar-title">
+              <strong>Mensagens</strong>
+              <small class="muted">ForceLab ADM</small>
+            </div>
+          </header>
+
+          <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+          <header class="top">
+            <div>
+              <h2>Mensagens</h2>
+              <div class="muted">Mensagens enviadas pelo formulário do site.</div>
+            </div>
+
+            <div class="top-actions">
+              <div class="search">
+                <span style="color:#111;opacity:.7">🔎</span>
+                <input id="msgSearch" placeholder="Buscar por nome, email ou WhatsApp..." />
+              </div>
+
+              <select id="msgFilter">
+                <option value="all">Todas</option>
+                <option value="novo">Somente novas</option>
+                <option value="lido">Somente lidas</option>
+              </select>
+
+              <button class="btn btn-ghost" id="btnClear" type="button">Limpar</button>
+            </div>
+          </header>
+
+          <section class="messages-layout">
+            <aside class="messages-list">
+              <div class="messages-head">
+                <strong>Caixa de entrada</strong>
+                <small class="muted"><span id="msgCount">0</span> mensagens</small>
+              </div>
+
+              <div id="msgList" class="msg-items">
+                <div class="muted" style="padding: 14px">Carregando...</div>
+              </div>
+            </aside>
+
+            <section class="messages-view">
+              <div class="msg-empty" id="msgEmpty">
+                <h3>Selecione uma mensagem</h3>
+                <p class="muted">Clique em um item à esquerda para ver os detalhes.</p>
+              </div>
+
+              <div class="msg-card" id="msgCard" hidden>
+                <div class="msg-card-head">
+                  <div>
+                    <h3 id="vName">—</h3>
+                    <div class="muted" id="vMeta">—</div>
+                  </div>
+
+                  <div class="msg-actions">
+                    <button class="btn btn-ghost" id="btnMarkRead" type="button">Marcar como lida</button>
+                    <a class="btn btn-ghost" id="btnWhats" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
+                    <a class="btn btn-ghost" id="btnMail" href="#" target="_blank" rel="noreferrer">E-mail</a>
+                  </div>
+                </div>
+
+                <div class="msg-body">
+                  <div class="bubble">
+                    <p id="vText"></p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+        </main>
+      </div>
+
+      <!-- Sidebar + scripts (ordem correta, sem duplicar ui.js) -->
+      <script type="module">
+        const mount = document.getElementById("sidebar");
+
+        // 1) injeta sidebar (sempre absoluto)
+        const html = await fetch("/admin/sidebar.html").then(r => r.text());
+        mount.innerHTML = html;
+
+        // 2) scripts dependentes do sidebar
+        await import("/admin/ui.js");
+        await import("/admin/mensagens.js");
+      </script>
+    </div>
   </body>
 </html>

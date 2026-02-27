@@ -1,130 +1,168 @@
 <!doctype html>
 <html lang="pt-br">
-<head>
-  <style>
-  html{  visibility: visible !important; }
-</style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Dashboard | ForceLab ADM</title>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Dashboard | ForceLab ADM</title>
-  <link rel="stylesheet" href="/admin/admin.css" />
-</head>
+    <link rel="stylesheet" href="/admin/admin.css" />
 
-<body>
-  <!-- Proteção -->
-  <script type="module" src="/admin/protect.js"></script>
+    <style>
+      /* Anti-flash padrão */
+      .admin-page { display: none; }
+      body.auth-ok .admin-page { display: block; }
+      body.auth-ok .admin-loading { display: none; }
 
-  <div class="admin">
-    <div id="sidebar"></div>
+      .admin-loading{
+        min-height: 70vh;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        color: #fff;
+      }
 
-    <main class="main">
-      <header class="mobilebar">
-  <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
-  <div class="mobilebar-title">
-    <strong id="pageTitle">Painel</strong>
-    <small class="muted">ForceLab ADM</small>
-  </div>
-</header>
+      /* Se você adotou auth-lock no protect.js */
+      .auth-lock .admin-page{ display:none !important; }
+      .auth-lock .admin-loading{ display:grid !important; }
+    </style>
+  </head>
 
-<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+  <body>
+    <!-- Proteção -->
+    <script type="module" src="/admin/protect.js"></script>
 
-      <header class="top">
-        <div>
-          <h2>Dashboard</h2>
-          <div class="muted">Visão geral dos pedidos e vendas</div>
-        </div>
+    <!-- Loader -->
+    <div class="admin-loading">
+      <div>
+        <strong>Carregando painel…</strong><br />
+        <small class="muted">Validando acesso</small>
+      </div>
+    </div>
 
-        <div class="top-actions">
-          <div class="search">
-            <span style="color:#111;opacity:.7">🔎</span>
-            <input id="dashSearch" placeholder="Buscar pedido/cliente..." />
-          </div>
-          <button class="icon" id="refreshDash" type="button" title="Atualizar">⟲</button>
-        </div>
-      </header>
+    <!-- Conteúdo real (só aparece com auth-ok) -->
+    <div class="admin-page">
+      <div class="admin">
+        <div id="sidebar"></div>
 
-      <!-- KPIs -->
-      <section class="dash-kpis">
-        <div class="kpi">
-          <div class="kpi-top">
-            <span class="muted">Total de pedidos</span>
-            <span class="badge wait" id="kpiOrdersHint">hoje</span>
-          </div>
-          <strong id="totalPedidos">0</strong>
-          <div class="hint">Todos os pedidos no Firestore</div>
-        </div>
+        <main class="main">
+          <header class="mobilebar">
+            <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+            <div class="mobilebar-title">
+              <strong id="pageTitle">Painel</strong>
+              <small class="muted">ForceLab ADM</small>
+            </div>
+          </header>
 
-        <div class="kpi">
-          <div class="kpi-top">
-            <span class="muted">Total vendido</span>
-            <span class="badge ok" id="kpiSalesHint">geral</span>
-          </div>
-          <strong id="totalVendas">R$ 0,00</strong>
-          <div class="hint">Somatório do campo <code>total</code></div>
-        </div>
+          <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
-        <div class="kpi">
-          <div class="kpi-top">
-            <span class="muted">Ticket médio</span>
-            <span class="badge" id="kpiTicketHint">estimado</span>
-          </div>
-          <strong id="ticketMedio">R$ 0,00</strong>
-          <div class="hint">Total vendido ÷ total de pedidos</div>
-        </div>
+          <header class="top">
+            <div>
+              <h2>Dashboard</h2>
+              <div class="muted">Visão geral dos pedidos e vendas</div>
+            </div>
 
-        <div class="kpi">
-          <div class="kpi-top">
-            <span class="muted">Status</span>
-            <span class="badge ok">Online</span>
-          </div>
-          <strong>OK</strong>
-          <div class="hint">Auth + Rules</div>
-        </div>
-      </section>
+            <div class="top-actions">
+              <div class="search">
+                <span style="color:#111;opacity:.7">🔎</span>
+                <input id="dashSearch" placeholder="Buscar pedido/cliente..." />
+              </div>
+              <button class="icon" id="refreshDash" type="button" title="Atualizar">⟲</button>
+            </div>
+          </header>
 
-      <!-- Grids -->
-      <section class="dash-grid">
-        <!-- Últimos pedidos -->
-        <div class="table">
-          <div class="table-head">
-            <h3>Últimos pedidos</h3>
-            <small class="muted">Mais recentes (com busca)</small>
-          </div>
+          <!-- KPIs -->
+          <section class="dash-kpis">
+            <div class="kpi">
+              <div class="kpi-top">
+                <span class="muted">Total de pedidos</span>
+                <span class="badge wait" id="kpiOrdersHint">hoje</span>
+              </div>
+              <strong id="totalPedidos">0</strong>
+              <div class="hint">Todos os pedidos no Firestore</div>
+            </div>
 
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Cliente</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Data</th>
-                </tr>
-              </thead>
-              <tbody id="lastOrders">
-                <tr><td colspan="5" class="muted">Carregando...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+            <div class="kpi">
+              <div class="kpi-top">
+                <span class="muted">Total vendido</span>
+                <span class="badge ok" id="kpiSalesHint">geral</span>
+              </div>
+              <strong id="totalVendas">R$ 0,00</strong>
+              <div class="hint">Somatório do campo <code>total</code></div>
+            </div>
 
-        <!-- Status breakdown -->
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Status dos pedidos</h3>
-            <small class="muted">Distribuição rápida</small>
-          </div>
+            <div class="kpi">
+              <div class="kpi-top">
+                <span class="muted">Ticket médio</span>
+                <span class="badge" id="kpiTicketHint">estimado</span>
+              </div>
+              <strong id="ticketMedio">R$ 0,00</strong>
+              <div class="hint">Total vendido ÷ total de pedidos</div>
+            </div>
 
-          <div class="status-list" id="statusList">
-            <div class="muted">Carregando...</div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-<script type="module" src="/admin/ui.js"></script>
-  <script type="module" src="/admin/dashboard.js"></script>
-</body>
+            <div class="kpi">
+              <div class="kpi-top">
+                <span class="muted">Status</span>
+                <span class="badge ok">Online</span>
+              </div>
+              <strong>OK</strong>
+              <div class="hint">Auth + Rules</div>
+            </div>
+          </section>
+
+          <!-- Grids -->
+          <section class="dash-grid">
+            <!-- Últimos pedidos -->
+            <div class="table">
+              <div class="table-head">
+                <h3>Últimos pedidos</h3>
+                <small class="muted">Mais recentes (com busca)</small>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Cliente</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lastOrders">
+                    <tr><td colspan="5" class="muted">Carregando...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Status breakdown -->
+            <div class="panel">
+              <div class="panel-head">
+                <h3>Status dos pedidos</h3>
+                <small class="muted">Distribuição rápida</small>
+              </div>
+
+              <div class="status-list" id="statusList">
+                <div class="muted">Carregando...</div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- Sidebar + scripts (ordem correta) -->
+      <script type="module">
+        const mount = document.getElementById("sidebar");
+
+        // 1) injeta sidebar
+        const html = await fetch("/admin/sidebar.html").then((r) => r.text());
+        mount.innerHTML = html;
+
+        // 2) scripts que dependem do sidebar
+        await import("/admin/ui.js");
+        await import("/admin/dashboard.js");
+      </script>
+    </div>
+  </body>
 </html>

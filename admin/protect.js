@@ -1,19 +1,20 @@
 // /admin/protect.js
 import { auth, db } from "/js/firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+/* ✅ trava IMEDIATO pra evitar flash */
+document.documentElement.classList.add("auth-lock");
+document.body.classList.add("auth-lock");
 
 function allow() {
-  // libera compatível com os 2 jeitos:
-  document.documentElement.classList.add("auth-ok"); // <html>
-  document.body.classList.add("auth-ok"); // <body>
+  document.documentElement.classList.remove("auth-lock");
+  document.body.classList.remove("auth-lock");
+  document.documentElement.classList.add("auth-ok");
+  document.body.classList.add("auth-ok");
 }
 
 function deny() {
-  // remove pra evitar “estado bugado”
   document.documentElement.classList.remove("auth-ok");
   document.body.classList.remove("auth-ok");
   location.replace("/admin/login.html");

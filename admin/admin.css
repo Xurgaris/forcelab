@@ -1260,3 +1260,10 @@ small{color:var(--muted);}
     line-height: 1.15;
   }
 }
+/* trava tudo até validar */
+.auth-lock .admin-page { display:none !important; }
+.auth-lock .admin-loading { display:grid !important; }
+
+/* após validar */
+.auth-ok .admin-page { display:block !important; }
+.auth-ok .admin-loading { display:none !important; }

@@ -5,141 +5,133 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Imagens | ForceLab ADM</title>
 
-    <!-- IMPORTANTE: você está em /admin/adm-img/ -->
     <link rel="stylesheet" href="/admin/admin.css" />
-    <!-- CSS só desta tela (opcional, mas recomendo) -->
     <link rel="stylesheet" href="/admin/adm-img/imagens.css" />
+
+    <style>
+      /* Anti-flash padrão */
+      .admin-page { display: none; }
+      body.auth-ok .admin-page { display: block; }
+      body.auth-ok .admin-loading { display: none; }
+
+      .admin-loading{
+        min-height: 70vh;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        color: #fff;
+      }
+
+      /* Se você adotou auth-lock no protect.js */
+      .auth-lock .admin-page{ display:none !important; }
+      .auth-lock .admin-loading{ display:grid !important; }
+    </style>
   </head>
 
   <body>
-    <!-- Proteção do painel -->
+    <!-- Proteção -->
     <script type="module" src="/admin/protect.js"></script>
 
-    <div class="admin">
-      <div id="sidebar"></div>
-
-      <main class="main">
-        <!-- topbar mobile (igual às outras páginas) -->
-        <header class="mobilebar">
-          <button
-            class="micon"
-            id="openSidebar"
-            type="button"
-            aria-label="Abrir menu"
-          >
-            ☰
-          </button>
-          <div class="mobilebar-title">
-            <strong>Imagens</strong>
-            <small class="muted">ForceLab ADM</small>
-          </div>
-        </header>
-
-        <div
-          class="sidebar-backdrop"
-          id="sidebarBackdrop"
-          aria-hidden="true"
-        ></div>
-
-        <header class="top">
-          <div>
-            <h2>Imagens (Cloudinary)</h2>
-            <div class="muted">
-              Envie uma imagem e copie a URL para usar nos produtos.
-            </div>
-          </div>
-
-          <div class="top-actions">
-            <button class="btn btn-primary" id="btnPick" type="button">
-              Escolher imagem
-            </button>
-            <button class="btn btn-ghost" id="btnUpload" type="button" disabled>
-              Enviar imagem
-            </button>
-          </div>
-        </header>
-
-        <!-- Card principal -->
-        <section class="card panel-card">
-          <!-- Input file escondido (disparado pelo botão "Escolher imagem") -->
-          <input id="fileInput" type="file" accept="image/*" hidden />
-
-          <div class="grid-2">
-            <!-- COLUNA ESQUERDA -->
-            <div>
-              <div class="field">
-                <label class="label">URL gerada</label>
-                <input
-                  id="urlOut"
-                  class="input"
-                  type="text"
-                  placeholder="A URL vai aparecer aqui..."
-                  readonly
-                />
-              </div>
-
-              <div class="row-actions">
-                <button
-                  class="btn btn-ghost"
-                  id="btnCopy"
-                  type="button"
-                  disabled
-                >
-                  Copiar
-                </button>
-
-                <button class="btn btn-ghost" id="btnClearAll" type="button">
-                  Limpar
-                </button>
-
-                <small class="muted" id="statusMsg"></small>
-              </div>
-
-              <div class="tip">
-                <small class="muted">
-                  Dica: você pode usar URL otimizada:
-                  <span class="mono" id="optHint"
-                    >.../upload/f_auto,q_auto,w_900/...</span
-                  >
-                </small>
-              </div>
-            </div>
-
-            <!-- COLUNA DIREITA -->
-            <div>
-              <div class="preview-wrap">
-                <div class="preview-head">
-                  <strong>Preview</strong>
-                  <small class="muted" id="fileInfo"
-                    >Nenhuma imagem selecionada</small
-                  >
-                </div>
-
-                <div
-                  class="preview-box"
-                  id="previewBox"
-                  aria-label="Preview da imagem"
-                >
-                  <span class="muted">🖼️</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+    <!-- Loader -->
+    <div class="admin-loading">
+      <div>
+        <strong>Carregando painel…</strong><br />
+        <small class="muted">Validando acesso</small>
+      </div>
     </div>
 
-    <!-- sidebar -->
-    <script>
-      fetch("../sidebar.html")
-        .then((r) => r.text())
-        .then((html) => (document.getElementById("sidebar").innerHTML = html));
-    </script>
-    <script type="module" src="/admin/ui.js"></script>
-    <!-- JS desta página -->
-    <script type="module" src="/admin/sidebar-loader.js"></script>
+    <!-- Conteúdo real -->
+    <div class="admin-page">
+      <div class="admin">
+        <div id="sidebar"></div>
 
-    <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
-    <script type="module" src="imagens.js"></script>
+        <main class="main">
+          <header class="mobilebar">
+            <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+            <div class="mobilebar-title">
+              <strong>Imagens</strong>
+              <small class="muted">ForceLab ADM</small>
+            </div>
+          </header>
+
+          <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+          <header class="top">
+            <div>
+              <h2>Imagens (Cloudinary)</h2>
+              <div class="muted">Envie uma imagem e copie a URL para usar nos produtos.</div>
+            </div>
+
+            <div class="top-actions">
+              <button class="btn btn-primary" id="btnPick" type="button">Escolher imagem</button>
+              <button class="btn btn-ghost" id="btnUpload" type="button" disabled>Enviar imagem</button>
+            </div>
+          </header>
+
+          <section class="card panel-card">
+            <input id="fileInput" type="file" accept="image/*" hidden />
+
+            <div class="grid-2">
+              <div>
+                <div class="field">
+                  <label class="label">URL gerada</label>
+                  <input
+                    id="urlOut"
+                    class="input"
+                    type="text"
+                    placeholder="A URL vai aparecer aqui..."
+                    readonly
+                  />
+                </div>
+
+                <div class="row-actions">
+                  <button class="btn btn-ghost" id="btnCopy" type="button" disabled>Copiar</button>
+                  <button class="btn btn-ghost" id="btnClearAll" type="button">Limpar</button>
+                  <small class="muted" id="statusMsg"></small>
+                </div>
+
+                <div class="tip">
+                  <small class="muted">
+                    Dica: você pode usar URL otimizada:
+                    <span class="mono" id="optHint">.../upload/f_auto,q_auto,w_900/...</span>
+                  </small>
+                </div>
+              </div>
+
+              <div>
+                <div class="preview-wrap">
+                  <div class="preview-head">
+                    <strong>Preview</strong>
+                    <small class="muted" id="fileInfo">Nenhuma imagem selecionada</small>
+                  </div>
+
+                  <div class="preview-box" id="previewBox" aria-label="Preview da imagem">
+                    <span class="muted">🖼️</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- Cloudinary (global) -->
+      <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+
+      <!-- Sidebar + scripts (ordem correta) -->
+      <script type="module">
+        const mount = document.getElementById("sidebar");
+
+        // ✅ aqui é ABSOLUTO, não depende do nível da pasta
+        const html = await fetch("/admin/sidebar.html").then((r) => r.text());
+        mount.innerHTML = html;
+
+        // depois: UI (menu mobile/sidebar)
+        await import("/admin/ui.js");
+
+        // por último: script específico da tela
+        await import("/admin/adm-img/imagens.js");
+      </script>
+    </div>
   </body>
 </html>

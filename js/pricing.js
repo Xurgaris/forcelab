@@ -69,7 +69,7 @@ function calcShipping(cep, subtotal) {
  * maxDiscount: teto (opcional)
  */
 const COUPONS = {
-  FORCE10: { type: "percent", value: 10, min: 99, label: "10% OFF" },
+  FORCE10: { type: "percent", value: 100, min: 99, label: "10% OFF" },
   PIX7: { type: "percent", value: 7, min: 50, label: "7% OFF (Pix)" },
   OFF25: { type: "fixed", value: 25, min: 199, label: "R$ 25 OFF" },
 };

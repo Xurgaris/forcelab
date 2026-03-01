@@ -1,10 +1,17 @@
+// ==========================
+// CART (ForceLab) - CLEAN
+// ==========================
+
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 /* ==========================
    HELPERS
 ========================== */
 function brl(value) {
-  return Number(value || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return Number(value || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }
 
 function saveCart() {
@@ -19,11 +26,18 @@ function normalizeCart() {
       qty: Math.max(1, Number(item?.qty) || 1),
       name: String(item?.name || "Produto"),
       image: item?.image || "https://via.placeholder.com/80",
+      type: item?.type || "product",
+      id: item?.id ?? null,
     }))
     .filter((item) => item.qty > 0);
 
   saveCart();
 }
+
+function escapeForInlineJs(str) {
+  return String(str ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
 /* ==========================
    ADD TO CART (1 unidade)
 ========================== */
@@ -32,7 +46,7 @@ function addToCart(name, price, image) {
 }
 
 /* ==========================
-   ADD TO CART (COM QTY) ✅
+   ADD TO CART (COM QTY)
    - compatível com produto antigo
    - suporta kit com (type, id)
 ========================== */
@@ -44,28 +58,20 @@ function addToCartQty(name, price, image, qty = 1, meta = {}) {
   const q = Math.max(1, Number(qty) || 1);
   const img = image || "https://via.placeholder.com/80";
 
-  // NOVO: suporta tipo e id (kit/produto)
   const type = meta.type || "product";
   const id = meta.id || null;
 
-  // Chave de comparação:
-  // 1) se tiver type+id -> usa isso (melhor)
-  // 2) senão mantém o legado: usa name
-  let existing = cart.find((item) => {
+  const existing = cart.find((item) => {
     if (id && item.id) return item.type === type && item.id === id;
-    return item.name === n;
+    return item.name === n; // legado
   });
 
   if (existing) {
     existing.qty += q;
 
-    // atualiza imagem se vier melhor
     if (img && img !== "https://via.placeholder.com/80") existing.image = img;
-
-    // atualiza preço (opcional)
     existing.price = p;
 
-    // garante type/id se veio agora
     if (id) {
       existing.type = type;
       existing.id = id;
@@ -73,7 +79,7 @@ function addToCartQty(name, price, image, qty = 1, meta = {}) {
   } else {
     cart.push({
       type,
-      id,          // pode ser null em itens antigos
+      id,
       name: n,
       price: p,
       image: img,
@@ -87,13 +93,13 @@ function addToCartQty(name, price, image, qty = 1, meta = {}) {
 
 /* ==========================
    REMOVE ITEM
-   - novo: removeItemKey(type, id)
-   - antigo: removeItem(name) ainda funciona
+   - novo: removeItem(type, id)
+   - antigo: removeItem(name)
 ========================== */
 function removeItem(nameOrType, maybeId) {
   normalizeCart();
 
-  // Se veio (type, id): remove por chave
+  // Remoção por chave (type,id)
   if (typeof maybeId === "string" && maybeId.length) {
     const type = nameOrType || "product";
     const id = maybeId;
@@ -111,13 +117,8 @@ function removeItem(nameOrType, maybeId) {
   updateCart();
 }
 
-/* Helper opcional (se você quiser chamar direto) */
-function removeItemKey(type, id) {
-  return removeItem(type, id);
-}
-
 /* ==========================
-   CHANGE QUANTITY
+   CHANGE QUANTITY (legado por nome)
 ========================== */
 function changeQty(name, action) {
   normalizeCart();
@@ -139,12 +140,12 @@ function changeQty(name, action) {
 function updateCart() {
   normalizeCart();
 
-  /* CART COUNT */
+  // COUNT
   const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
   const cartCount = document.getElementById("cartCount");
   if (cartCount) cartCount.innerText = count;
 
-  /* MINI CART */
+  // MINI CART
   const miniItems = document.getElementById("miniCartItems");
   const miniTotal = document.getElementById("miniTotal");
 
@@ -154,7 +155,7 @@ function updateCart() {
 
     cart.forEach((item) => {
       total += item.price * item.qty;
-      const safeName = String(item.name).replace(/'/g, "\\'");
+      const safeName = escapeForInlineJs(item.name);
 
       miniItems.innerHTML += `
         <div class="mini-item">
@@ -171,7 +172,7 @@ function updateCart() {
     miniTotal.innerText = brl(total);
   }
 
-  /* CART PAGE */
+  // CART PAGE
   const cartItems = document.getElementById("cartItems");
   const cartTotal = document.getElementById("cartTotal");
 
@@ -181,7 +182,7 @@ function updateCart() {
 
     cart.forEach((item) => {
       total += item.price * item.qty;
-      const safeName = String(item.name).replace(/'/g, "\\'");
+      const safeName = escapeForInlineJs(item.name);
 
       cartItems.innerHTML += `
         <div class="cart-row">
@@ -204,26 +205,25 @@ function updateCart() {
           <button class="remove" onclick="removeItem('${safeName}')" aria-label="Remover">✖</button>
         </div>
       `;
-      // ... no FINAL do updateCart()
-window.dispatchEvent(new CustomEvent("cartUpdated", {
-  detail: { cart }
-}));
-
     });
 
     cartTotal.innerText = brl(total);
   }
 
-  // ✅ dispara UMA vez, depois de atualizar tudo
-  window.dispatchEvent(new Event("cartUpdated"));
+  // ✅ dispara UMA vez, ao final
+  window.dispatchEvent(
+    new CustomEvent("cartUpdated", {
+      detail: { cart },
+    })
+  );
 }
-
 
 /* ==========================
    TOGGLE CART SIDEBAR
 ========================== */
 function toggleCart(force) {
-  const drawer = document.getElementById("cartDrawer");
+  const drawer = document.getElementById("miniCart");
+  const overlay = document.getElementById("cartOverlay");
   if (!drawer) return;
 
   const shouldOpen =
@@ -231,55 +231,49 @@ function toggleCart(force) {
 
   drawer.classList.toggle("open", shouldOpen);
   drawer.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
+
+  if (overlay) {
+    overlay.classList.toggle("open", shouldOpen);
+    overlay.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
+  }
+
   document.body.classList.toggle("no-scroll", shouldOpen);
 }
 
 window.toggleCart = toggleCart;
 
-/* INIT */
-updateCart();
+/* ==========================
+   BIND CART DRAWER
+========================== */
+function bindCartDrawer() {
+  const btn = document.querySelector(".cart-ico-btn");
+  btn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    toggleCart(true);
+  });
 
-/* GLOBAIS */
+  document.addEventListener("click", (e) => {
+    if (e.target.closest('[data-close="cart"]')) toggleCart(false);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") toggleCart(false);
+  });
+}
+
+/* ==========================
+   EXPORT GLOBALS (1x)
+========================== */
 window.addToCart = addToCart;
 window.addToCartQty = addToCartQty;
 window.removeItem = removeItem;
 window.changeQty = changeQty;
 window.toggleCart = toggleCart;
 
-// ==========================
-// EXPORTA FUNÇÕES PRO WINDOW
-// (necessário pq kit-detail.js é module)
-// ==========================
-window.addToCartQty = addToCartQty;
-window.addToCart = addToCart;
-window.removeItem = removeItem;
-function bindCartDrawer() {
-  // abre pelo botão do header
-  const btn = document.querySelector(".cart-ico-btn");
-  if (btn) {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      toggleCart(true);
-    });
-  }
-
-  // fecha clicando overlay ou botão com data-close="cart"
-  document.addEventListener("click", (e) => {
-    if (e.target.closest('[data-close="cart"]')) toggleCart(false);
-  });
-
-  // ESC fecha
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") toggleCart(false);
-  });
-}
-
-// INIT
+/* ==========================
+   INIT
+========================== */
 document.addEventListener("DOMContentLoaded", () => {
   updateCart();
   bindCartDrawer();
 });
-
-// deixa compatível com onclick="toggleCart()"
-window.toggleCart = toggleCart;
-

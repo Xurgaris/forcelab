@@ -1379,7 +1379,161 @@ body {
   border: 1px solid rgba(255, 0, 0, 0.25);
   box-shadow: 0 0 42px rgba(255, 0, 0, 0.22);
 }
+.cart-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: .2s;
+  z-index: 9998;
+}
 
+.cart-overlay.open{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ACCOUNT DRAWER */
+.acc-drawer{
+  position: fixed;
+  inset: 0;
+  z-index: 99950;
+  pointer-events: none;
+}
+.acc-drawer.open{ pointer-events:auto; }
+
+.acc-overlay{
+  position:absolute; inset:0;
+  background: rgba(0,0,0,.55);
+  opacity:0;
+  transition:.2s;
+}
+.acc-drawer.open .acc-overlay{ opacity:1; }
+
+.acc-panel{
+  position:absolute; top:0; right:0;
+  width:min(420px, 92vw);
+  height:100%;
+  background:#0b0b0b;
+  border-left:1px solid rgba(255,255,255,.10);
+  transform: translateX(110%);
+  transition:.2s;
+  display:flex;
+  flex-direction:column;
+}
+
+.acc-drawer.open .acc-panel{ transform: translateX(0); }
+
+.acc-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.acc-user{ display:flex; gap:12px; align-items:center; }
+.acc-avatar{
+  width:42px; height:42px;
+  border-radius:14px;
+  display:grid; place-items:center;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+}
+
+.acc-body{ padding:14px 16px; overflow:auto; }
+
+.acc-menu{
+  display:flex; flex-direction:column;
+  gap:10px;
+}
+
+.acc-link{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 12px;
+  border-radius:14px;
+  background: rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  text-decoration:none;
+  color:#fff;
+}
+
+.acc-link small{ color: rgba(255,255,255,.65); }
+.acc-actions{ margin-top:12px; display:flex; gap:10px; }
+/* seu mini-cart já está com z-index 9999, perfeito */
+
+
+/* =========================
+   ACCOUNT BUTTON (HEADER)
+========================= */
+.nav-account{
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 0, 0, 0.28);
+
+  /* “glass” + vermelho translúcido */
+  background: rgba(255, 0, 0, 0.10);
+  box-shadow:
+    0 16px 36px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.05) inset;
+
+  color: rgba(255,255,255,.92);
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.nav-account:hover{
+  background: rgba(255, 0, 0, 0.16);
+  border-color: rgba(255, 0, 0, 0.45);
+  box-shadow:
+    0 18px 44px rgba(0,0,0,.42),
+    0 0 40px rgba(255,0,0,.18);
+  transform: translateY(-1px);
+}
+
+.nav-account:active{
+  transform: translateY(0);
+}
+
+.nav-account:focus-visible{
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(255,0,0,.20),
+    0 18px 44px rgba(0,0,0,.42);
+}
+
+.acc-ico{ display:block; }
+
+/* Badge (opcional) */
+.acc-badge{
+  position:absolute;
+  transform: translate(14px, -14px);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 900;
+
+  background: rgba(255,0,0,.95);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,.45);
+}
+
+/* garante que o badge posicione certo */
+.nav-account{ position: relative; }
 /* ===============================
    20) MINI CART
 ================================ */
@@ -1395,6 +1549,7 @@ body {
   transition: 0.3s;
   z-index: 9999;
 }
+.mini-cart.open,
 .mini-cart.active {
   right: 0;
 }
@@ -4262,4 +4417,29 @@ body.no-scroll{
 
 .cart-foot .btn{
   flex: 1;
+}
+/* trava scroll quando carrinho abre */
+.no-scroll { overflow: hidden; }
+
+/* MINI CART base */
+.mini-cart{
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(420px, 92vw);
+  height: 100vh;
+  z-index: 99999;
+
+  transform: translateX(110%);
+  opacity: 0;
+  pointer-events: none;
+
+  transition: transform .22s ease, opacity .22s ease;
+}
+
+/* quando abre */
+.mini-cart.open{
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }

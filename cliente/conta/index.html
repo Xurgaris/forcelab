@@ -6,11 +6,12 @@
   <title>Minha conta | ForceLab</title>
   <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
 </head>
+
 <body>
   <main class="wrap">
     <section class="card">
       <h1>Minha conta</h1>
-      <p class="muted" id="status">Verificando acesso...</p>
+      <p class="muted" id="status">Verificando login...</p>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
         <a class="btn" href="/cliente/pedidos/" style="text-decoration:none; display:inline-block;">Meus pedidos</a>
@@ -31,7 +32,6 @@
       if (user) {
         status.textContent = `Logado como: ${user.email}`;
       } else {
-        // se não estiver logado, manda pro login
         window.location.href = "/cliente/login/";
       }
     });

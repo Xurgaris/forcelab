@@ -11,7 +11,7 @@
   <main class="wrap">
     <section class="card">
       <h1>Entrar</h1>
-      <p class="muted">Digite seu email para receber um link de acesso.</p>
+      <p class="muted">Acesse com email e senha para ver seus pedidos.</p>
 
       <form id="form" class="form">
         <label>
@@ -19,14 +19,23 @@
           <input id="email" type="email" placeholder="seuemail@exemplo.com" required />
         </label>
 
-        <button class="btn" type="submit" id="btnSend">Enviar link</button>
+        <label>
+          <span>Senha</span>
+          <input id="pass" type="password" placeholder="••••••••" required />
+        </label>
+
+        <button class="btn" type="submit" id="btnLogin">Entrar</button>
+
+        <button class="btn" type="button" id="btnRegister" style="opacity:.92;">
+          Criar conta
+        </button>
+
+        <button class="btn" type="button" id="btnReset" style="opacity:.85;">
+          Esqueci minha senha
+        </button>
       </form>
 
       <div id="msg" class="msg" style="display:none;"></div>
-
-      <p class="small muted">
-        Ao continuar, você concorda em receber um email de verificação para acessar sua conta.
-      </p>
 
       <a class="link" href="/">← Voltar para a loja</a>
     </section>

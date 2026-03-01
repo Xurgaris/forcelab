@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Meus pedidos | ForceLab</title>
+  <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div>
+          <h1 style="margin:0;">Meus pedidos</h1>
+          <p class="muted" id="sub" style="margin:6px 0 0;">Carregando...</p>
+        </div>
+        <a class="btn" href="/cliente/conta/" style="text-decoration:none; display:inline-block;">Minha conta</a>
+      </div>
+
+      <div id="list" style="margin-top:14px; display:flex; flex-direction:column; gap:12px;"></div>
+
+      <a class="link" href="/" style="margin-top:16px;">← Voltar para a loja</a>
+    </section>
+  </main>
+
+  <script type="module" src="/cliente/_shared/auth.js"></script>
+  <script type="module" src="./pedidos.js"></script>
+</body>
+</html>

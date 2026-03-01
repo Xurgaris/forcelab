@@ -70,7 +70,15 @@
           <a href="#kits">Kits</a>
           <a href="#blog">Blog</a>
         </nav>
-<a class="nav-login" href="/cliente/login/">Entrar</a>
+<button id="accountBtn" class="nav-account" type="button" aria-label="Conta" aria-haspopup="true">
+  <svg class="acc-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2-8 4.5V21h16v-2.5C20 16 16.42 14 12 14Z"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- badge opcional (ex: pedidos pendentes). pode deixar escondida por padrão -->
+  <span id="accBadge" class="acc-badge" aria-hidden="true" style="display:none;">!</span>
+</button>
         <!-- Actions -->
         <div class="topbar-actions">
           <!-- Menu (mobile) -->
@@ -89,7 +97,6 @@
           <button
             class="cart-ico-btn"
             type="button"
-            onclick="toggleCart()"
             aria-label="Abrir carrinho"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
@@ -1179,12 +1186,12 @@
     >
       WhatsApp
     </a>
-
+<div id="cartOverlay" class="cart-overlay" aria-hidden="true" onclick="toggleCart(false)"></div>
     <!-- MINI CART -->
     <div id="miniCart" class="mini-cart" aria-label="Carrinho lateral">
       <div class="cart-header">
         <h3>Seu carrinho</h3>
-        <button class="close-cart" onclick="toggleCart()">Fechar</button>
+        <button class="close-cart" onclick="toggleCart(false)">Fechar</button>
       </div>
 
       <div id="miniCartItems" class="mini-items"></div>
@@ -1228,6 +1235,26 @@
       </div>
     </div>
 
+  <div id="accountDrawer" class="acc-drawer" aria-hidden="true">
+  <div class="acc-overlay" data-close="account" aria-hidden="true"></div>
+
+  <aside class="acc-panel" role="dialog" aria-label="Conta">
+    <header class="acc-head">
+      <div class="acc-user">
+        <div class="acc-avatar" aria-hidden="true">👤</div>
+        <div>
+          <strong id="accTitle">Minha conta</strong>
+          <small id="accSub" class="muted">Entrar para acompanhar pedidos</small>
+        </div>
+      </div>
+
+      <button class="btn-mini ghost" type="button" data-close="account">Fechar</button>
+    </header>
+
+    <div class="acc-body" id="accBody"></div>
+  </aside>
+</div>
+
     <!-- Scripts -->
     <script type="module" src="js/products.js"></script>
     <script src="js/cart.js"></script>
@@ -1236,5 +1263,7 @@
     <script type="module" src="./js/contato-firestore.js"></script>
     <script type="module" src="./js/kits-actions.js"></script>
     <script src="js/newsletter.js"></script>
+    <script type="module" src="/cliente/_shared/account-drawer.js"></script>
+    
   </body>
 </html>

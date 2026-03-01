@@ -124,6 +124,17 @@
             <small class="summary-help" id="shipMsg"></small>
           </div>
         </div>
+        <!-- PAGAMENTO (MERCADO PAGO BRICK) -->
+<div class="checkout-box" style="margin-top:14px;">
+  <div class="summary-head" style="margin-bottom:8px;">
+    <h3>Pagamento</h3>
+    <span class="summary-badge">Seguro</span>
+  </div>
+
+  <div id="paymentBrick_container"></div>
+
+  <small id="payMsg" class="muted" style="display:block; margin-top:10px;"></small>
+</div>
       </aside>
     </div>
   </div>
@@ -187,6 +198,7 @@
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script type="module" src="/js/checkout.js"></script>
+<script type="module" src="/cliente/_shared/account-drawer.js"></script>
 
 </body>
 </html>

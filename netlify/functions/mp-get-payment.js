@@ -1,7 +1,6 @@
 // netlify/functions/mp-create-payment.js
-// Node 18+ no Netlify já tem fetch global
 
-export async function handler(event) {
+exports.handler = async (event) => {
   try {
     if (event.httpMethod !== "POST") {
       return { statusCode: 405, body: "Method Not Allowed" };
@@ -25,46 +24,38 @@ export async function handler(event) {
       };
     }
 
-    // Brick normalmente manda token / payment_method_id / installments etc.
+    // Campos que normalmente vêm do Brick
     const token = formData.token;
     const payment_method_id = formData.payment_method_id;
     const installments = Number(formData.installments || 1);
 
-    // Pagador: em teste pode ser um email fixo, mas o ideal é salvar email do usuário no cadastro.
-    const payerEmail =
-      customer?.email ||
-      "test_user_123456@testuser.com"; // ✅ sandbox ok (melhor ainda: use email real do usuário logado)
+    const payerEmail = (customer && customer.email) ? customer.email : "test_user_123456@testuser.com";
 
-    // Monta o pagamento
-    const mpBody = {
-      transaction_amount: Number(Number(amount).toFixed(2)),
-      token,
-      description: `Pedido ${orderId}`,
-      installments,
-      payment_method_id,
-      payer: {
-        email: payerEmail,
-      },
-      external_reference: String(orderId),
-      notification_url: process.env.MP_WEBHOOK_URL || undefined, // opcional
-    };
-
-    // Alguns pagamentos (Pix) não usam token igual cartão; dependendo do Brick, pode vir diferente.
-    // Se o Brick te entregar um payload diferente, eu ajusto com base no seu console.log.
-    if (!mpBody.payment_method_id) {
+    if (!payment_method_id) {
       return {
         statusCode: 400,
         body: JSON.stringify({ ok: false, error: "formData.payment_method_id não veio do Brick." }),
       };
     }
 
-    // Cartão geralmente exige token
-    if (!mpBody.token && mpBody.payment_method_id !== "pix") {
+    // cartão geralmente exige token
+    if (!token && payment_method_id !== "pix") {
       return {
         statusCode: 400,
         body: JSON.stringify({ ok: false, error: "formData.token não veio do Brick (cartão)." }),
       };
     }
+
+    const mpBody = {
+      transaction_amount: Number(Number(amount).toFixed(2)),
+      token: token || undefined,
+      description: `Pedido ${orderId}`,
+      installments,
+      payment_method_id,
+      payer: { email: payerEmail },
+      external_reference: String(orderId),
+      notification_url: process.env.MP_WEBHOOK_URL || undefined,
+    };
 
     const res = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
@@ -88,20 +79,16 @@ export async function handler(event) {
       };
     }
 
-    // Se for Pix, o MP costuma devolver QR em point_of_interaction
-    const pix =
-      data?.point_of_interaction?.transaction_data?.qr_code_base64
-        ? {
-            qr_code_base64: data.point_of_interaction.transaction_data.qr_code_base64,
-            qr_code: data.point_of_interaction.transaction_data.qr_code,
-          }
-        : null;
+    const pixData = data?.point_of_interaction?.transaction_data;
+    const pix = pixData?.qr_code_base64
+      ? { qr_code_base64: pixData.qr_code_base64, qr_code: pixData.qr_code }
+      : null;
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         ok: true,
-        paymentId: data.id,          // ✅ padronizado
+        paymentId: data.id,
         status: data.status,
         paymentMethod: data.payment_method_id,
         pix,
@@ -114,4 +101,4 @@ export async function handler(event) {
       body: JSON.stringify({ ok: false, error: String(err?.message || err) }),
     };
   }
-}
+};

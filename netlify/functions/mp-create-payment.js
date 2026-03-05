@@ -48,8 +48,19 @@ exports.handler = async (event) => {
 
     const payerEmail =
       customer?.email && String(customer.email).includes("@")
-        ? customer.email
-        : "test_user_123456@testuser.com";
+        ? String(customer.email).trim()
+        : "test@testuser.com";
+
+    const isTest = String(ACCESS_TOKEN || "").startsWith("TEST-");
+    if (isTest && !payerEmail.endsWith("@testuser.com")) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          ok: false,
+          error: "Email de teste inválido. Use test@testuser.com",
+        }),
+      };
+    }
 
     const isPixLike =
       payment_type_id === "bank_transfer" ||

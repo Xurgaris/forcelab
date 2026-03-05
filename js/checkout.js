@@ -181,7 +181,7 @@ async function initPaymentBrick() {
         creditCard: "all",
         debitCard: "all",
         bankTransfer: "all", // pix cai aqui
-        ticket: "none",
+       // ticket: "none",
       },
     },
     callbacks: {

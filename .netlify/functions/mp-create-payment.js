@@ -1,5 +1,5 @@
 // /admin/auth.js
-import { auth, db } from "../js/firebase.js";
+import { auth, db } from "..  /js/firebase.js";
 import {
   onAuthStateChanged,
   signOut,

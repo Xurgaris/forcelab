@@ -1,4 +1,3 @@
-
 // /js/checkout.js
 import { db } from "./firebase.js";
 import {
@@ -15,7 +14,10 @@ import { requireAuth } from "/cliente/_shared/auth.js";
    HELPERS
 ========================== */
 function brl(n) {
-  return Number(n || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return Number(n || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }
 
 function normalizeCart(raw) {
@@ -33,7 +35,10 @@ function normalizeCart(raw) {
 }
 
 function getPricingState() {
-  const s = sessionStorage.getItem("pricingState") || localStorage.getItem("pricingState") || "{}";
+  const s =
+    sessionStorage.getItem("pricingState") ||
+    localStorage.getItem("pricingState") ||
+    "{}";
   try {
     const p = JSON.parse(s);
     return {
@@ -72,7 +77,8 @@ function renderSummary() {
   let subtotal = 0;
 
   if (!cart.length) {
-    if (itemsWrap) itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
+    if (itemsWrap)
+      itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
   } else {
     for (const i of cart) {
       subtotal += i.price * i.qty;
@@ -101,7 +107,9 @@ function renderSummary() {
   if (sumTotal) sumTotal.textContent = brl(total);
 
   if (sumETA) {
-    sumETA.textContent = pricing.eta ? pricing.eta : "Calcule o frete informando seu CEP.";
+    sumETA.textContent = pricing.eta
+      ? pricing.eta
+      : "Calcule o frete informando seu CEP.";
   }
   if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
 
@@ -134,7 +142,8 @@ function closePaySteps() {
 function setStep(title, sub, progress = null) {
   if (stepsTitle) stepsTitle.textContent = title;
   if (stepsSub) stepsSub.textContent = sub;
-  if (payBar && typeof progress === "number") payBar.style.width = `${progress}%`;
+  if (payBar && typeof progress === "number")
+    payBar.style.width = `${progress}%`;
 }
 
 /* ==========================
@@ -166,7 +175,7 @@ if (!user) {
 /* ==========================
    MERCADO PAGO BRICK
 ========================== */
-const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f";
+const MP_PUBLIC_KEY = "ocultado";
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
@@ -209,7 +218,8 @@ async function initPaymentBrick() {
 
       onError: (err) => {
         console.error("Brick onError:", err);
-        if (payMsg) payMsg.textContent = "Erro ao carregar pagamento. Veja o console.";
+        if (payMsg)
+          payMsg.textContent = "Erro ao carregar pagamento. Veja o console.";
       },
 
       onSubmit: ({ formData }) => {
@@ -250,7 +260,11 @@ async function initPaymentBrick() {
 
             // 3) cria order no Firestore
             openPaySteps();
-            setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
+            setStep(
+              "Criando pedido…",
+              "Salvando informações do seu pedido.",
+              20,
+            );
 
             const orderDoc = {
               uid: user.uid,
@@ -284,7 +298,11 @@ async function initPaymentBrick() {
             const ref = await addDoc(collection(db, "orders"), orderDoc);
             const orderId = ref.id;
 
-            setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 55);
+            setStep(
+              "Criando pagamento…",
+              "Enviando dados ao Mercado Pago.",
+              55,
+            );
 
             // 4) backend MP
             const res = await fetch("/.netlify/functions/mp-create-payment", {
@@ -303,7 +321,9 @@ async function initPaymentBrick() {
 
             if (!res.ok || !data?.ok) {
               closePaySteps();
-              return reject(new Error(data?.error || "Falha ao criar pagamento"));
+              return reject(
+                new Error(data?.error || "Falha ao criar pagamento"),
+              );
             }
 
             // 5) salva retorno MP no pedido
@@ -323,17 +343,24 @@ async function initPaymentBrick() {
             if (data.pix?.qr_code_base64) {
               setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 90);
               closePaySteps();
-              openPixModal({ qr_code_base64: data.pix.qr_code_base64, qr_code: data.pix.qr_code });
+              openPixModal({
+                qr_code_base64: data.pix.qr_code_base64,
+                qr_code: data.pix.qr_code,
+              });
               return resolve();
             }
 
             // 7) cartão -> segue fluxo (webhook/poll depois)
+            // 7) cartão -> decide pelo status
             setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
 
-            localStorage.setItem("cart", "[]");
-            window.dispatchEvent(new Event("cartUpdated"));
-
-            location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+            if (data.status === "approved") {
+              localStorage.setItem("cart", "[]");
+              window.dispatchEvent(new Event("cartUpdated"));
+              location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+            } else {
+              location.href = `pending.html?id=${encodeURIComponent(orderId)}`;
+            }
             return resolve();
           } catch (err) {
             console.error("onSubmit error:", err);

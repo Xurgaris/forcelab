@@ -4448,10 +4448,12 @@ body.no-scroll{
   margin-top: 10px;
 }
 
-/* opcional: dá um respiro no Brick */
-#paymentBrick_container{
-  min-height: 320px;
-}
+/* Evita CSS global quebrar o SVG interno do Mercado Pago */
+#paymentBrick_container svg {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+} 
 
 /* Deixa a coluna direita mais “grudada” e confortável */
 .checkout-right{

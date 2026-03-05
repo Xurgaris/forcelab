@@ -155,4 +155,18 @@ export async function handler(event) {
     console.error("Function crash:", e);
     return { statusCode: 500, body: JSON.stringify({ ok: false, error: e.message }) };
   }
+}const isPix = payment_method_id === "pix";
+const token = formData.token || formData.card_token;
+
+if (!isPix) {
+  if (!token) {
+    return { statusCode: 400, body: JSON.stringify({ ok:false, error:"Cartão: token ausente (formData.token)" }) };
+  }
+  if (!formData.installments) {
+    return { statusCode: 400, body: JSON.stringify({ ok:false, error:"Cartão: installments ausente" }) };
+  }
+  // issuer_id às vezes vem vazio e causa recusa
+  if (!formData.issuer_id) {
+    return { statusCode: 400, body: JSON.stringify({ ok:false, error:"Cartão: issuer_id ausente" }) };
+  }
 }

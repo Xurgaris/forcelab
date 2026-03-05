@@ -316,11 +316,22 @@ async function initPaymentBrick() {
               }),
             });
 
-            const data = await res.json().catch(() => ({}));
+            const raw = await res.text();
+            let data = {};
+            try {
+              data = JSON.parse(raw);
+            } catch {
+              data = { raw };
+            }
+
             console.log("MP function response:", data, "status:", res.status);
 
             if (!res.ok || !data?.ok) {
               closePaySteps();
+              console.error("MP ERROR FULL:", data);
+              alert(
+                `Falha ao criar pagamento: ${data?.error || data?.raw || "erro desconhecido"}`,
+              );
               return reject(
                 new Error(data?.error || "Falha ao criar pagamento"),
               );

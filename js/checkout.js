@@ -175,7 +175,7 @@ if (!user) {
 /* ==========================
    MERCADO PAGO BRICK
 ========================== */
-const MP_PUBLIC_KEY = "ocultado";
+const MP_PUBLIC_KEY = "APP_USR-e746dbd7-36bc-487d-b738-348aa3593fb6";
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 

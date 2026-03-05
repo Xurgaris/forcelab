@@ -304,18 +304,16 @@ async function initPaymentBrick() {
 
         setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45);
 
-        // 4) chama backend (Netlify Function) pra criar pagamento
         const res = await fetch("/.netlify/functions/mp-create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             orderId,
             amount: Number(totalReal.toFixed(2)),
-            formData, // token/método/etc do Brick
-            customer: { nome, whatsapp },
+            formData, // vem do Brick
+            customer: { nome, whatsapp, email: fd.get("email") || "" },
           }),
         });
-
         const data = await res.json();
 
         if (!data?.ok) {

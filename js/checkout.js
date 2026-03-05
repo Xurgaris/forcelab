@@ -98,9 +98,8 @@ function renderSummary() {
     });
   }
 
-  const pricing = getPricingState();
-  const discount = Math.min(Number(pricing.discount || 0), subtotal);
-  const shipping = Number(pricing.shipping || 0);
+  const discount = Math.min(Number(s2.pricing?.discount || 0), subtotal);
+  const shipping = Number(s2.pricing?.shipping || 0);
   const total = Math.max(0, subtotal - discount + shipping);
 
   if (sumSubtotal) sumSubtotal.textContent = brl(subtotal);
@@ -252,7 +251,10 @@ async function initPaymentBrick() {
           const s2 = renderSummary();
           const cart = s2.cart;
           const subtotal = calcSubtotal(cart);
-          const discount = Math.min(Number(s2.pricing?.discount || 0), subtotal);
+          const discount = Math.min(
+            Number(s2.pricing?.discount || 0),
+            subtotal,
+          );
           const shipping = Number(s2.pricing?.shipping || 0);
           const totalReal = Math.max(0, subtotal - discount + shipping);
 
@@ -268,7 +270,11 @@ async function initPaymentBrick() {
           const orderDoc = {
             uid: user.uid,
             status: "aguardando_pagamento",
-            customer: { nome, whatsapp, email: String(fd.get("email") || "").trim() || null },
+            customer: {
+              nome,
+              whatsapp,
+              email: String(fd.get("email") || "").trim() || null,
+            },
             shipping: { endereco },
             notes: obs || null,
 
@@ -310,7 +316,11 @@ async function initPaymentBrick() {
               orderId,
               amount: Number(totalReal.toFixed(2)),
               formData,
-              customer: { nome, whatsapp, email: String(fd.get("email") || "").trim() },
+              customer: {
+                nome,
+                whatsapp,
+                email: String(fd.get("email") || "").trim(),
+              },
             }),
           });
 
@@ -337,7 +347,10 @@ async function initPaymentBrick() {
           if (data.pix?.qr_code_base64) {
             setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 80);
             closePaySteps(); // ✅ não trava a tela
-            openPixModal({ qr_code_base64: data.pix.qr_code_base64, qr_code: data.pix.qr_code });
+            openPixModal({
+              qr_code_base64: data.pix.qr_code_base64,
+              qr_code: data.pix.qr_code,
+            });
             return;
           }
 
@@ -366,6 +379,9 @@ async function initPaymentBrick() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initPaymentBrick);
+} else {
   initPaymentBrick();
-});
+}
+

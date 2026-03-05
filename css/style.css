@@ -4450,7 +4450,7 @@ body.no-scroll{
 
 /* opcional: dá um respiro no Brick */
 #paymentBrick_container{
-  margin-top: 10px;
+  min-height: 320px;
 }
 
 /* Deixa a coluna direita mais “grudada” e confortável */

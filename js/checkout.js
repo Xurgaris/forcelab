@@ -204,15 +204,15 @@ const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f";
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
+let brickMounted = false;
+
 async function initPaymentBrick() {
   if (brickMounted) return;
   brickMounted = true;
 
   const container = document.getElementById("paymentBrick_container");
   if (!container) return;
-  container.innerHTML = ""; // evita re-render bugado
-
-  // ... aqui continua seu bricksBuilder.create(...)
+  container.innerHTML = "";
 
   const state = renderSummary();
   if (!state.total || state.total <= 0) {
@@ -241,12 +241,67 @@ async function initPaymentBrick() {
           const nome = String(fd.get("nome") || "").trim();
           const whatsapp = String(fd.get("whatsapp") || "").trim();
           const endereco = String(fd.get("endereco") || "").trim();
-          const pagamento = String(fd.get("pagamento") || "").trim();
           const obs = String(fd.get("obs") || "").trim();
+
           if (!nome || !whatsapp || !endereco) {
             alert("Preencha nome, WhatsApp e endereço.");
-            return;
-          } // 2) recalcula valores reais const s2 = renderSummary(); const cart = s2.cart; const subtotal = calcSubtotal(cart); const discount = Math.min(Number(s2.discount || 0), subtotal); const shipping = Number(s2.shipping || 0); const totalReal = Math.max(0, subtotal - discount + shipping); if (!cart.length || totalReal <= 0) { alert("Carrinho vazio."); return; } // 3) cria pedido em orders (cliente) openPaySteps(); setStep("Criando pedido…", "Salvando informações do seu pedido.", 20); const orderDoc = { uid: user.uid, status: "aguardando_pagamento", customer: { nome, whatsapp }, shipping: { endereco }, payment: { metodo: pagamento || "Brick" }, notes: obs || null, items: cart.map((i) => ({ type: i.type || "product", id: i.id ?? null, name: i.name, price: i.price, qty: i.qty, image: i.image, subtotal: i.price * i.qty, })), pricing: { subtotal, discount, shipping, total: totalReal, couponCode: s2.pricing?.couponCode || "", cep: s2.pricing?.cep || "", eta: s2.pricing?.eta || "", }, createdAt: serverTimestamp(), createdAtClient: new Date().toISOString(), mp: { paymentId: null, status: null, method: null, }, }; const ref = await addDoc(collection(db, "orders"), orderDoc); const orderId = ref.id; setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45); const idemKey = globalThis.crypto?.randomUUID?.() || `idem_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+            throw new Error("Dados do cliente incompletos.");
+          }
+
+          // 2) recalcula valores reais
+          const s2 = renderSummary();
+          const cart = s2.cart;
+          const subtotal = calcSubtotal(cart);
+          const discount = Math.min(Number(s2.pricing?.discount || 0), subtotal);
+          const shipping = Number(s2.pricing?.shipping || 0);
+          const totalReal = Math.max(0, subtotal - discount + shipping);
+
+          if (!cart.length || totalReal <= 0) {
+            alert("Carrinho vazio.");
+            throw new Error("Carrinho vazio.");
+          }
+
+          // 3) cria pedido em orders
+          openPaySteps();
+          setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
+
+          const orderDoc = {
+            uid: user.uid,
+            status: "aguardando_pagamento",
+            customer: { nome, whatsapp, email: String(fd.get("email") || "").trim() || null },
+            shipping: { endereco },
+            notes: obs || null,
+
+            items: cart.map((i) => ({
+              type: i.type || "product",
+              id: i.id ?? null,
+              name: i.name,
+              price: i.price,
+              qty: i.qty,
+              image: i.image,
+              subtotal: i.price * i.qty,
+            })),
+
+            pricing: {
+              subtotal,
+              discount,
+              shipping,
+              total: totalReal,
+              couponCode: s2.pricing?.couponCode || "",
+              cep: s2.pricing?.cep || "",
+              eta: s2.pricing?.eta || "",
+            },
+
+            createdAt: serverTimestamp(),
+            createdAtClient: new Date().toISOString(),
+
+            mp: { paymentId: null, status: null, method: null },
+          };
+
+          const ref = await addDoc(collection(db, "orders"), orderDoc);
+          const orderId = ref.id;
+
+          setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45);
 
           const res = await fetch("/.netlify/functions/mp-create-payment", {
             method: "POST",
@@ -255,7 +310,7 @@ async function initPaymentBrick() {
               orderId,
               amount: Number(totalReal.toFixed(2)),
               formData,
-              customer: { nome, whatsapp, email: fd.get("email") || "" },
+              customer: { nome, whatsapp, email: String(fd.get("email") || "").trim() },
             }),
           });
 
@@ -265,7 +320,7 @@ async function initPaymentBrick() {
             throw new Error(data?.error || "Falha ao criar pagamento.");
           }
 
-          // atualiza order com mp infos (não pode travar o fluxo)
+          // 4) salva infos mp no pedido
           if (data?.paymentId) {
             try {
               await updateDoc(doc(db, "orders", orderId), {
@@ -278,33 +333,30 @@ async function initPaymentBrick() {
             }
           }
 
-          // Pix: abre modal e encerra o submit
+          // 5) Pix: mostra QR
           if (data.pix?.qr_code_base64) {
             setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 80);
-            if (payMsg) payMsg.textContent = "Pix gerado! Escaneie o QR Code.";
-            openPixModal({
-              qr_code_base64: data.pix.qr_code_base64,
-              qr_code: data.pix.qr_code,
-            });
-            return; // ✅ libera o Brick
+            closePaySteps(); // ✅ não trava a tela
+            openPixModal({ qr_code_base64: data.pix.qr_code_base64, qr_code: data.pix.qr_code });
+            return;
           }
 
-          // Cartão: redireciona e encerra
+          // 6) Cartão: finaliza
           setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
+
           localStorage.setItem("cart", "[]");
           window.dispatchEvent(new Event("cartUpdated"));
 
           location.href = `success.html?id=${encodeURIComponent(orderId)}`;
-          return; // ✅ libera o Brick
-
+          return;
         } catch (err) {
           console.error("onSubmit error:", err);
           setStep("Erro no pagamento", err?.message || "Tente novamente.", 0);
           closePaySteps();
-          // ✅ MUITO IMPORTANTE: lançar o erro faz o Brick parar o loading
-          throw err;
+          throw err; // ✅ faz o Brick parar de carregar
         }
       },
+
       onError: (err) => {
         console.error(err);
         alert("Erro no pagamento. Tente novamente.");

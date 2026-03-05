@@ -250,6 +250,58 @@
         renderItems();
       })();
     </script>
+    <script>
+  (function () {
+    // 1) Bloqueia setAttribute width/height vazios em SVG (mais abrangente: Element, não só SVGElement)
+    const _setAttribute = Element.prototype.setAttribute;
+    const _setAttributeNS = Element.prototype.setAttributeNS;
+
+    function isBadSizeAttr(el, name, value) {
+      return (
+        el instanceof SVGElement &&
+        (name === "width" || name === "height") &&
+        (value === "" || value === null || value === undefined)
+      );
+    }
+
+    Element.prototype.setAttribute = function (name, value) {
+      if (isBadSizeAttr(this, name, value)) return;
+      return _setAttribute.call(this, name, value);
+    };
+
+    Element.prototype.setAttributeNS = function (ns, name, value) {
+      if (isBadSizeAttr(this, name, value)) return;
+      return _setAttributeNS.call(this, ns, name, value);
+    };
+
+    // 2) Sanitiza HTML injetado com width="" height="" (quando vem em string)
+    const badSvgAttrRegex = /(<svg\b[^>]*?)\s(width|height)=""/gi;
+
+    function sanitizeSvgMarkup(html) {
+      if (!html || typeof html !== "string") return html;
+      // remove width="" e height="" apenas de tags <svg ...>
+      return html.replace(badSvgAttrRegex, "$1");
+    }
+
+    const desc = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML");
+    if (desc && desc.set) {
+      Object.defineProperty(Element.prototype, "innerHTML", {
+        get: desc.get,
+        set: function (v) {
+          return desc.set.call(this, sanitizeSvgMarkup(v));
+        },
+      });
+    }
+
+    const _insertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+    Element.prototype.insertAdjacentHTML = function (position, text) {
+      return _insertAdjacentHTML.call(this, position, sanitizeSvgMarkup(text));
+    };
+
+    // Debug (pra você ter certeza que esse patch está rodando ANTES do MP)
+    console.log("[MP FIX] SVG width/height empty sanitizer ativo");
+  })();
+</script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script type="module" src="/js/checkout.js"></script>
     <script type="module" src="/cliente/_shared/account-drawer.js"></script>

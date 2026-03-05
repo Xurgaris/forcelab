@@ -1,83 +1,151 @@
-// /admin/auth.js
-import { auth, db } from "..  /js/firebase.js";
-import {
-  onAuthStateChanged,
-  signOut,
-} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+// netlify/functions/mp-create-payment.js
+const { randomUUID } = require("crypto");
 
-import {
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+exports.handler = async (event) => {
+  try {
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
+    }
 
-// Marca o HTML quando o usuário estiver logado (opcional)
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "/admin/login.html";
-    return;
-  }
-  document.body.classList.add("auth-ok");
-  initPage();
-});
+    const ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+    if (!ACCESS_TOKEN) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ ok: false, error: "MP_ACCESS_TOKEN não configurado no Netlify." }),
+      };
+    }
 
-// garante login + garante admin (admins/{uid})
-export function requireAuth() {
-  return new Promise((resolve) => {
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "/admin/login.html";
-        return;
-      }
+    const payload = JSON.parse(event.body || "{}");
+    const { orderId, amount, formData, customer } = payload || {};
 
-      try {
-        // checa se é admin (precisa existir admins/{uid})
-        const ref = doc(db, "admins", user.uid);
-        const snap = await getDoc(ref);
+    if (!orderId || !amount || !formData) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ ok: false, error: "Payload inválido: precisa de orderId, amount e formData." }),
+      };
+    }
 
-        if (!snap.exists()) {
-          document.body.innerHTML = `
-            <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0b0b;color:#fff;font-family:Inter,system-ui">
-              <div style="max-width:520px;padding:24px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.04)">
-                <h2 style="margin:0 0 8px;font-weight:900">Sem permissão</h2>
-                <p style="margin:0;color:rgba(255,255,255,.75);line-height:1.6">
-                  Seu usuário está autenticado, mas não está cadastrado como admin no Firestore.
-                  Crie o documento <b>admins/${user.uid}</b>.
-                </p>
-                <button id="logoutBtn" style="margin-top:14px;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:transparent;color:#fff;font-weight:800;cursor:pointer">
-                  Sair
-                </button>
-              </div>
-            </div>
-          `;
-          document.getElementById("logoutBtn")?.addEventListener("click", () => signOut(auth));
-          return;
+    // ===== dados do Brick =====
+    const payment_method_id = formData.payment_method_id || null; // ex: master, visa, pix
+    const payment_type_id = formData.payment_type_id || null;     // ex: credit_card, bank_transfer
+    const token = formData.token || null;
+    const issuer_id = formData.issuer_id ? String(formData.issuer_id) : undefined;
+    const installments = Math.max(1, Number(formData.installments || 1));
+
+    const payerEmail =
+      (formData?.payer?.email && String(formData.payer.email).includes("@"))
+        ? String(formData.payer.email).trim()
+        : (customer?.email && String(customer.email).includes("@"))
+          ? String(customer.email).trim()
+          : "test@testuser.com";
+
+    const identificationFromBrick = formData?.payer?.identification?.number
+      ? {
+          type: String(formData.payer.identification.type || "CPF"),
+          number: String(formData.payer.identification.number).replace(/\D/g, ""),
         }
+      : null;
 
-        resolve(user);
-      } catch (err) {
-        console.error("Erro checando admin:", err);
-        document.body.innerHTML = `
-          <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0b0b;color:#fff;font-family:Inter,system-ui">
-            <div style="max-width:520px;padding:24px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.04)">
-              <h2 style="margin:0 0 8px;font-weight:900">Erro</h2>
-              <p style="margin:0;color:rgba(255,255,255,.75);line-height:1.6">
-                Não foi possível validar sua permissão de admin. Veja o console para detalhes.
-              </p>
-              <button id="logoutBtn" style="margin-top:14px;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:transparent;color:#fff;font-weight:800;cursor:pointer">
-                Sair
-              </button>
-            </div>
-          </div>
-        `;
-        document.getElementById("logoutBtn")?.addEventListener("click", () => signOut(auth));
-      }
+    const identificationFromCustomer = customer?.cpf
+      ? { type: "CPF", number: String(customer.cpf).replace(/\D/g, "") }
+      : null;
+
+    const identification = identificationFromBrick || identificationFromCustomer || undefined;
+
+    if (!payment_method_id) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ ok: false, error: "formData.payment_method_id não veio do Brick." }),
+      };
+    }
+
+    const isPixLike =
+      payment_type_id === "bank_transfer" ||
+      payment_method_id === "pix" ||
+      String(payment_method_id).toLowerCase().includes("pix");
+
+    // cartão/débito precisa token
+    if (!isPixLike && !token) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ ok: false, error: "formData.token não veio do Brick (cartão)." }),
+      };
+    }
+
+    // ===== body MP =====
+    const mpBody = {
+      transaction_amount: Number(Number(amount).toFixed(2)),
+      description: `Pedido ${orderId}`,
+      payment_method_id,
+      payer: {
+        email: payerEmail,
+        ...(identification ? { identification } : {}),
+      },
+      external_reference: String(orderId),
+      notification_url: process.env.MP_WEBHOOK_URL || undefined,
+    };
+
+    if (!isPixLike) {
+      mpBody.token = token;
+      mpBody.installments = installments;
+      if (issuer_id) mpBody.issuer_id = issuer_id;
+    }
+
+    const idemKey = randomUUID();
+
+    console.log("MP request safe:", {
+      ...mpBody,
+      token: mpBody.token ? "[hidden]" : undefined,
     });
-  });
-}
 
-export function bindLogout(selector = "[data-logout]") {
-  document.querySelector(selector)?.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "/admin/login.html";
-  });
-}
+    const res = await fetch("https://api.mercadopago.com/v1/payments", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+        "X-Idempotency-Key": idemKey,
+      },
+      body: JSON.stringify(mpBody),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    const xRequestId = res.headers.get("x-request-id") || null;
+
+    console.log("MP status:", res.status, "x-request-id:", xRequestId, "resp:", data);
+
+    if (!res.ok) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          ok: false,
+          error: data?.message || "Mercado Pago error",
+          mp_status: res.status,
+          x_request_id: xRequestId,
+          details: data,
+        }),
+      };
+    }
+
+    const pixData = data?.point_of_interaction?.transaction_data;
+    const pix = pixData?.qr_code_base64
+      ? { qr_code_base64: pixData.qr_code_base64, qr_code: pixData.qr_code }
+      : null;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        paymentId: data.id,
+        status: data.status,
+        paymentMethod: data.payment_method_id,
+        pix,
+      }),
+    };
+  } catch (err) {
+    console.error("mp-create-payment error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ ok: false, error: String(err?.message || err) }),
+    };
+  }
+};

@@ -1,3 +1,4 @@
+
 // /js/checkout.js
 import { db } from "./firebase.js";
 import {
@@ -10,7 +11,9 @@ import {
 
 import { requireAuth } from "/cliente/_shared/auth.js";
 
-/* Helpers */
+/* ==========================
+   HELPERS
+========================== */
 function brl(n) {
   return Number(n || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -32,16 +35,16 @@ function normalizeCart(raw) {
 function getPricingState() {
   const s = sessionStorage.getItem("pricingState") || localStorage.getItem("pricingState") || "{}";
   try {
-    const parsed = JSON.parse(s);
+    const p = JSON.parse(s);
     return {
-      discount: Number(parsed.discount) || 0,
-      shipping: Number(parsed.shipping) || 0,
-      eta: String(parsed.eta || ""),
-      cep: String(parsed.cep || ""),
-      couponCode: String(parsed.couponCode || ""),
+      couponCode: String(p.couponCode || ""),
+      discount: Number(p.discount) || 0,
+      shipping: Number(p.shipping) || 0,
+      eta: String(p.eta || ""),
+      cep: String(p.cep || ""),
     };
   } catch {
-    return { discount: 0, shipping: 0, eta: "", cep: "", couponCode: "" };
+    return { couponCode: "", discount: 0, shipping: 0, eta: "", cep: "" };
   }
 }
 
@@ -49,8 +52,11 @@ function calcSubtotal(items) {
   return items.reduce((sum, i) => sum + i.price * i.qty, 0);
 }
 
-/* UI */
+/* ==========================
+   UI ELEMENTS (checkout.html)
+========================== */
 const form = document.getElementById("checkoutForm");
+
 const itemsWrap = document.getElementById("checkoutItems");
 const sumTotal = document.getElementById("sumTotal");
 const sumSubtotal = document.getElementById("sumSubtotal");
@@ -68,7 +74,7 @@ function renderSummary() {
   if (!cart.length) {
     if (itemsWrap) itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
   } else {
-    cart.forEach((i) => {
+    for (const i of cart) {
       subtotal += i.price * i.qty;
       if (itemsWrap) {
         itemsWrap.innerHTML += `
@@ -82,7 +88,7 @@ function renderSummary() {
           </div>
         `;
       }
-    });
+    }
   }
 
   const pricing = getPricingState();
@@ -94,7 +100,9 @@ function renderSummary() {
   if (sumShipping) sumShipping.textContent = brl(shipping);
   if (sumTotal) sumTotal.textContent = brl(total);
 
-  if (sumETA) sumETA.textContent = pricing.eta ? pricing.eta : "Calcule o frete informando seu CEP.";
+  if (sumETA) {
+    sumETA.textContent = pricing.eta ? pricing.eta : "Calcule o frete informando seu CEP.";
+  }
   if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
 
   return { cart, subtotal, discount, shipping, total, pricing };
@@ -103,7 +111,9 @@ function renderSummary() {
 renderSummary();
 window.addEventListener("cartUpdated", renderSummary);
 
-/* Overlay steps */
+/* ==========================
+   PAY STEPS UI
+========================== */
 const stepsOverlay = document.getElementById("paySteps");
 const stepsTitle = document.getElementById("payStepsTitle");
 const stepsSub = document.getElementById("payStepsSub");
@@ -127,7 +137,9 @@ function setStep(title, sub, progress = null) {
   if (payBar && typeof progress === "number") payBar.style.width = `${progress}%`;
 }
 
-/* Pix modal (se existir no seu HTML) */
+/* ==========================
+   PIX MODAL (se existir no HTML)
+========================== */
 function openPixModal({ qr_code_base64, qr_code }) {
   const modal = document.getElementById("pixModal");
   const img = document.getElementById("pixQrImg");
@@ -136,184 +148,199 @@ function openPixModal({ qr_code_base64, qr_code }) {
 
   img.src = `data:image/png;base64,${qr_code_base64}`;
   code.value = qr_code || "";
+
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 }
 
-/* Auth */
+/* ==========================
+   AUTH GUARD
+========================== */
 const user = await requireAuth();
 if (!user) {
   alert("Você precisa estar logado para finalizar o pedido.");
   location.href = "/cliente/login/";
 }
 
-/* Mercado Pago Brick */
-const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f"; // TEST-...
+/* ==========================
+   MERCADO PAGO BRICK
+========================== */
+const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f";
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
 let brickMounted = false;
-let isSubmitting = false;
 
 async function initPaymentBrick() {
   if (brickMounted) return;
-  brickMounted = true;
 
   const container = document.getElementById("paymentBrick_container");
   if (!container) {
     console.error("Não encontrei #paymentBrick_container");
-    brickMounted = false;
     return;
   }
-  container.innerHTML = "";
 
   const state = renderSummary();
-  if (!state.total || state.total <= 0) {
-    brickMounted = false;
-    return;
-  }
+  if (!state.total || state.total <= 0) return;
+
+  brickMounted = true;
+  container.innerHTML = "";
 
   await bricksBuilder.create("payment", "paymentBrick_container", {
-    initialization: { amount: Number(state.total.toFixed(2)) },
+    initialization: {
+      amount: Number(state.total.toFixed(2)),
+      // opcional (prefill): payer: { email: ... }
+    },
     customization: {
       paymentMethods: {
         creditCard: "all",
         debitCard: "all",
-        bankTransfer: "all", // pix cai aqui
-       // ticket: "none",
+        bankTransfer: ["pix"], // ✅ Pix no Brasil
+        // NÃO setar ticket/atm/mercadoPago aqui
+      },
+      visual: {
+        // opcional: já abre com Pix selecionado
+        defaultPaymentOption: { bankTransferForm: true },
       },
     },
     callbacks: {
       onReady: () => {},
-      onSubmit: async ({ formData }) => {
-        if (isSubmitting) throw new Error("Pagamento já está sendo enviado…");
-        isSubmitting = true;
 
-        try {
-          console.log("Brick formData:", formData);
-
-          const fd = new FormData(form);
-          const nome = String(fd.get("nome") || "").trim();
-          const whatsapp = String(fd.get("whatsapp") || "").trim();
-          const endereco = String(fd.get("endereco") || "").trim();
-          const email = String(fd.get("email") || "").trim();
-          const obs = String(fd.get("obs") || "").trim();
-
-          if (!nome || !whatsapp || !endereco) {
-            alert("Preencha nome, WhatsApp e endereço.");
-            throw new Error("Dados do cliente incompletos.");
-          }
-          if (!email || !email.includes("@")) {
-            alert("Informe um email válido (ex: test@testuser.com).");
-            throw new Error("Email inválido.");
-          }
-
-          const s2 = renderSummary();
-          const cart = s2.cart;
-          const subtotal = calcSubtotal(cart);
-          const discount = Math.min(Number(s2.discount || 0), subtotal);
-          const shipping = Number(s2.shipping || 0);
-          const totalReal = Math.max(0, subtotal - discount + shipping);
-
-          if (!cart.length || totalReal <= 0) {
-            alert("Carrinho vazio.");
-            throw new Error("Carrinho vazio.");
-          }
-
-          openPaySteps();
-          setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
-
-          const orderDoc = {
-            uid: user.uid,
-            status: "aguardando_pagamento",
-            customer: { nome, whatsapp, email },
-            shipping: { endereco },
-            notes: obs || null,
-            items: cart.map((i) => ({
-              type: i.type || "product",
-              id: i.id ?? null,
-              name: i.name,
-              price: i.price,
-              qty: i.qty,
-              image: i.image,
-              subtotal: i.price * i.qty,
-            })),
-            pricing: {
-              subtotal,
-              discount,
-              shipping,
-              total: totalReal,
-              couponCode: s2.pricing?.couponCode || "",
-              cep: s2.pricing?.cep || "",
-              eta: s2.pricing?.eta || "",
-            },
-            createdAt: serverTimestamp(),
-            createdAtClient: new Date().toISOString(),
-            mp: { paymentId: null, status: null, method: null },
-          };
-
-          const ref = await addDoc(collection(db, "orders"), orderDoc);
-          const orderId = ref.id;
-
-          setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45);
-          if (payMsg) payMsg.textContent = "Enviando ao Mercado Pago…";
-
-          const res = await fetch("/.netlify/functions/mp-create-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              orderId,
-              amount: Number(totalReal.toFixed(2)),
-              formData,
-              customer: { nome, whatsapp, email },
-            }),
-          });
-
-          const data = await res.json().catch(() => ({}));
-          console.log("MP function response:", data, "status:", res.status);
-
-          if (!res.ok || !data?.ok) {
-            throw new Error(data?.error || "Falha ao criar pagamento.");
-          }
-
-          if (data?.paymentId) {
-            try {
-              await updateDoc(doc(db, "orders", orderId), {
-                "mp.paymentId": data.paymentId,
-                "mp.status": data.status || null,
-                "mp.method": data.paymentMethod || null,
-              });
-            } catch (e) {
-              console.warn("Não consegui atualizar mp no pedido:", e);
-            }
-          }
-
-          if (data.pix?.qr_code_base64) {
-            setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 80);
-            closePaySteps();
-            openPixModal({ qr_code_base64: data.pix.qr_code_base64, qr_code: data.pix.qr_code });
-            return;
-          }
-
-          setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
-          localStorage.setItem("cart", "[]");
-          window.dispatchEvent(new Event("cartUpdated"));
-          location.href = `success.html?id=${encodeURIComponent(orderId)}`;
-          return;
-        } catch (err) {
-          console.error("onSubmit error:", err);
-          setStep("Erro no pagamento", err?.message || "Tente novamente.", 0);
-          closePaySteps();
-          throw err;
-        } finally {
-          isSubmitting = false;
-        }
-      },
       onError: (err) => {
         console.error("Brick onError:", err);
-        alert("Erro no pagamento. Tente novamente.");
-        closePaySteps();
+        if (payMsg) payMsg.textContent = "Erro ao carregar pagamento. Veja o console.";
+      },
+
+      onSubmit: ({ formData }) => {
+        // ✅ IMPORTANTE: devolver Promise (o Brick espera isso)
+        return new Promise(async (resolve, reject) => {
+          try {
+            console.log("Brick formData:", formData);
+
+            // 1) valida form
+            const fd = new FormData(form);
+            const email = String(fd.get("email") || "").trim();
+            const nome = String(fd.get("nome") || "").trim();
+            const whatsapp = String(fd.get("whatsapp") || "").trim();
+            const endereco = String(fd.get("endereco") || "").trim();
+            const obs = String(fd.get("obs") || "").trim();
+
+            if (!email || !email.includes("@")) {
+              alert("Informe um e-mail válido.");
+              return reject(new Error("Email inválido"));
+            }
+            if (!nome || !whatsapp || !endereco) {
+              alert("Preencha Nome, WhatsApp e Endereço.");
+              return reject(new Error("Dados do cliente incompletos"));
+            }
+
+            // 2) recalcula total
+            const s2 = renderSummary();
+            const cart = s2.cart;
+            const subtotal = calcSubtotal(cart);
+            const discount = Math.min(Number(s2.discount || 0), subtotal);
+            const shipping = Number(s2.shipping || 0);
+            const totalReal = Math.max(0, subtotal - discount + shipping);
+
+            if (!cart.length || totalReal <= 0) {
+              alert("Carrinho vazio.");
+              return reject(new Error("Carrinho vazio"));
+            }
+
+            // 3) cria order no Firestore
+            openPaySteps();
+            setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
+
+            const orderDoc = {
+              uid: user.uid,
+              status: "aguardando_pagamento",
+              customer: { nome, whatsapp, email },
+              shipping: { endereco },
+              notes: obs || null,
+              items: cart.map((i) => ({
+                type: i.type || "product",
+                id: i.id ?? null,
+                name: i.name,
+                price: i.price,
+                qty: i.qty,
+                image: i.image,
+                subtotal: i.price * i.qty,
+              })),
+              pricing: {
+                subtotal,
+                discount,
+                shipping,
+                total: totalReal,
+                couponCode: s2.pricing?.couponCode || "",
+                cep: s2.pricing?.cep || "",
+                eta: s2.pricing?.eta || "",
+              },
+              createdAt: serverTimestamp(),
+              createdAtClient: new Date().toISOString(),
+              mp: { paymentId: null, status: null, method: null },
+            };
+
+            const ref = await addDoc(collection(db, "orders"), orderDoc);
+            const orderId = ref.id;
+
+            setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 55);
+
+            // 4) backend MP
+            const res = await fetch("/.netlify/functions/mp-create-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId,
+                amount: Number(totalReal.toFixed(2)),
+                formData,
+                customer: { nome, whatsapp, email },
+              }),
+            });
+
+            const data = await res.json().catch(() => ({}));
+            console.log("MP function response:", data, "status:", res.status);
+
+            if (!res.ok || !data?.ok) {
+              closePaySteps();
+              return reject(new Error(data?.error || "Falha ao criar pagamento"));
+            }
+
+            // 5) salva retorno MP no pedido
+            if (data?.paymentId) {
+              try {
+                await updateDoc(doc(db, "orders", orderId), {
+                  "mp.paymentId": data.paymentId,
+                  "mp.status": data.status || null,
+                  "mp.method": data.paymentMethod || null,
+                });
+              } catch (e) {
+                console.warn("Não consegui atualizar mp no pedido:", e);
+              }
+            }
+
+            // 6) Pix -> modal
+            if (data.pix?.qr_code_base64) {
+              setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 90);
+              closePaySteps();
+              openPixModal({ qr_code_base64: data.pix.qr_code_base64, qr_code: data.pix.qr_code });
+              return resolve();
+            }
+
+            // 7) cartão -> segue fluxo (webhook/poll depois)
+            setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
+
+            localStorage.setItem("cart", "[]");
+            window.dispatchEvent(new Event("cartUpdated"));
+
+            location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+            return resolve();
+          } catch (err) {
+            console.error("onSubmit error:", err);
+            closePaySteps();
+            return reject(err);
+          }
+        });
       },
     },
   });

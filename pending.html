@@ -91,11 +91,10 @@
 
           // ✅ trate tudo que é “negado”
           if (j.status === "rejected" || j.status === "cancelled") {
-            // volta pro checkout e mostra mensagem
             alert(
-              "Pagamento não aprovado. Tente novamente ou use outro cartão/Pix.",
+              `Pagamento não aprovado: ${j.status_detail || "motivo não informado"}. Tente outro cartão ou Pix.`,
             );
-            location.href = `/checkout.html`; // ou o caminho real do seu checkout
+            location.href = "/checkout.html";
             return;
           }
 

@@ -14,7 +14,10 @@ import { requireAuth } from "/cliente/_shared/auth.js";
    HELPERS
 ========================== */
 function brl(n) {
-  return Number(n || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return Number(n || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }
 
 function normalizeCart(raw) {
@@ -75,7 +78,8 @@ function renderSummary() {
   let subtotal = 0;
 
   if (cart.length === 0) {
-    if (itemsWrap) itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
+    if (itemsWrap)
+      itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
   } else {
     cart.forEach((i) => {
       subtotal += i.price * i.qty;
@@ -103,7 +107,10 @@ function renderSummary() {
   if (sumDiscount) sumDiscount.textContent = `- ${brl(discount)}`;
   if (sumShipping) sumShipping.textContent = brl(shipping);
   if (sumTotal) sumTotal.textContent = brl(total);
-  if (sumETA) sumETA.textContent = pricing.eta ? pricing.eta : "Calcule o frete informando seu CEP.";
+  if (sumETA)
+    sumETA.textContent = pricing.eta
+      ? pricing.eta
+      : "Calcule o frete informando seu CEP.";
   if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
 
   return { cart, subtotal, discount, shipping, total, pricing };
@@ -175,7 +182,8 @@ function closePaySteps() {
 function setStep(title, sub, progress = null) {
   if (stepsTitle) stepsTitle.textContent = title;
   if (stepsSub) stepsSub.textContent = sub;
-  if (payBar && typeof progress === "number") payBar.style.width = `${progress}%`;
+  if (payBar && typeof progress === "number")
+    payBar.style.width = `${progress}%`;
 }
 
 /* ==========================
@@ -202,20 +210,20 @@ async function initPaymentBrick() {
     if (payMsg) payMsg.textContent = "Carrinho vazio.";
     return;
   }
-const container = document.getElementById("paymentBrick_container");
-if (!container) {
-  console.warn("paymentBrick_container não encontrado. Brick não iniciado.");
-  return;
-}
+  const container = document.getElementById("paymentBrick_container");
+  if (!container) {
+    console.warn("paymentBrick_container não encontrado. Brick não iniciado.");
+    return;
+  }
   await bricksBuilder.create("payment", "paymentBrick_container", {
     initialization: {
       amount: Number(state.total.toFixed(2)),
     },
     customization: {
       paymentMethods: {
-        pix: "all",
         creditCard: "all",
         debitCard: "all",
+        bankTransfer: "all",
       },
     },
     callbacks: {

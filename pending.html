@@ -30,50 +30,56 @@
   </main>
 
   <script>
-    const params = new URLSearchParams(location.search);
-    const orderId = params.get("id");
-    const paymentId = params.get("paymentId");
+  const params = new URLSearchParams(location.search);
+  const orderId = params.get("id");
+  const paymentId = params.get("paymentId");
 
-    const msg = document.getElementById("msg");
-    const bar = document.getElementById("bar");
+  const msg = document.getElementById("msg");
+  const bar = document.getElementById("bar");
 
-    if (!orderId && !paymentId) {
-      msg.textContent = "Não foi possível identificar o pagamento. Volte e tente novamente.";
-    }
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+  async function checkPayment() {
+    const maxTries = 20; // ~50s
 
-    async function checkPayment() {
-      // tenta por ~30s
-      const maxTries = 12;
-      for (let i = 0; i < maxTries; i++) {
-        bar.style.width = Math.min(95, 10 + i * 7) + "%";
+    for (let i = 0; i < maxTries; i++) {
+      bar.style.width = Math.min(95, 10 + i * 4) + "%";
 
-        if (paymentId) {
-          const r = await fetch(`/.netlify/functions/mp-get-payment?paymentId=${encodeURIComponent(paymentId)}`);
-          const j = await r.json().catch(() => ({}));
+      const r = await fetch(`/.netlify/functions/mp-get-payment?paymentId=${encodeURIComponent(paymentId)}`);
+      const j = await r.json().catch(() => ({}));
 
-          if (j && j.ok) {
-            if (j.status === "approved") {
-              bar.style.width = "100%";
-              location.href = `success.html?id=${encodeURIComponent(orderId || "")}`;
-              return;
-            }
-            if (j.status === "rejected" || j.status === "cancelled") {
-              location.href = `failure.html?id=${encodeURIComponent(orderId || "")}`;
-              return;
-            }
-          }
-        }
-
+      if (!j?.ok) {
+        msg.textContent = `Erro ao consultar pagamento: ${j?.error || "desconhecido"}`;
         await sleep(2500);
+        continue;
       }
 
-      msg.textContent = "Ainda estamos confirmando. Se você já pagou, aguarde mais um pouco ou fale com o suporte.";
-      document.getElementById("hint").textContent = "Você pode deixar esta página aberta e ela vai atualizar automaticamente.";
+      // ✅ Mostra na tela o status real
+      msg.textContent = `Status: ${j.status} (${j.status_detail || "sem detalhe"})`;
+
+      if (j.status === "approved") {
+        bar.style.width = "100%";
+        location.href = `success.html?id=${encodeURIComponent(orderId || "")}`;
+        return;
+      }
+
+      // ✅ trate tudo que é “negado”
+      if (j.status === "rejected" || j.status === "cancelled") {
+        location.href = `failure.html?id=${encodeURIComponent(orderId || "")}`;
+        return;
+      }
+
+      await sleep(2500);
     }
 
+    msg.textContent = "Ainda aguardando confirmação. Se você já pagou, aguarde mais um pouco ou tente novamente.";
+  }
+
+  if (!paymentId) {
+    msg.textContent = "paymentId não encontrado na URL.";
+  } else {
     checkPayment();
-  </script>
+  }
+</script>
 </body>
 </html>

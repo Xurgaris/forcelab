@@ -200,7 +200,7 @@ if (!user) {
 ========================== */
 // ⚠️ IMPORTANTE:
 // Use aqui a SUA PUBLIC KEY (não Access Token).
-const MP_PUBLIC_KEY = "APP_USR-552b9b15-749f-4aad-b174-f57fe8e2f0eb";
+const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f";
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 

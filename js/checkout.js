@@ -224,6 +224,7 @@ async function initPaymentBrick() {
         creditCard: "all",
         debitCard: "all",
         bankTransfer: "all",
+        ticket: "none",
       },
     },
     callbacks: {
@@ -303,8 +304,16 @@ async function initPaymentBrick() {
         const orderId = ref.id;
 
         setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45);
+        const idemKey =
+          globalThis.crypto?.randomUUID?.() ||
+          `idem_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
         const res = await fetch("/.netlify/functions/mp-create-payment", {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
+            "X-Idempotency-Key": idemKey,
+          },
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

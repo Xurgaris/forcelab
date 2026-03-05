@@ -303,7 +303,9 @@ async function initPaymentBrick() {
               "Enviando dados ao Mercado Pago.",
               55,
             );
-
+            console.log("FORMDATA KEYS:", Object.keys(formData || {}));
+            console.log("FORMDATA FULL:", formData);
+            console.log("TOKEN?", formData?.token, formData?.card_token);
             // 4) backend MP
             const res = await fetch("/.netlify/functions/mp-create-payment", {
               method: "POST",

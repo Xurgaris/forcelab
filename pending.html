@@ -1,85 +1,116 @@
 <!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Pagamento em análise • ForceLab</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <main class="section" style="min-height:70vh;display:flex;align-items:center;">
-    <div class="container" style="max-width:720px;">
-      <h1 style="margin-bottom:10px;">Pagamento em análise</h1>
-      <p class="muted" id="msg">
-        Estamos confirmando seu pagamento. Isso pode levar alguns segundos…
-      </p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Pagamento em análise • ForceLab</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main
+      class="section"
+      style="min-height: 70vh; display: flex; align-items: center"
+    >
+      <div class="container" style="max-width: 720px">
+        <h1 style="margin-bottom: 10px">Pagamento em análise</h1>
+        <p class="muted" id="msg">
+          Estamos confirmando seu pagamento. Isso pode levar alguns segundos…
+        </p>
 
-      <div style="margin:18px 0;">
-        <div style="height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
-          <div id="bar" style="height:100%;width:10%;background:rgba(255,0,0,.65);border-radius:999px;"></div>
+        <div style="margin: 18px 0">
+          <div
+            style="
+              height: 10px;
+              background: rgba(255, 255, 255, 0.08);
+              border-radius: 999px;
+              overflow: hidden;
+            "
+          >
+            <div
+              id="bar"
+              style="
+                height: 100%;
+                width: 10%;
+                background: rgba(255, 0, 0, 0.65);
+                border-radius: 999px;
+              "
+            ></div>
+          </div>
+          <small
+            class="muted"
+            id="hint"
+            style="display: block; margin-top: 10px"
+          >
+            Não feche esta página.
+          </small>
         </div>
-        <small class="muted" id="hint" style="display:block;margin-top:10px;">
-          Não feche esta página.
-        </small>
+
+        <div class="divider" style="margin: 18px 0"></div>
+
+        <a class="btn btn-ghost" href="index.html">Voltar para a loja</a>
       </div>
+    </main>
 
-      <div class="divider" style="margin:18px 0;"></div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const orderId = params.get("id");
+      const paymentId = params.get("paymentId");
 
-      <a class="btn btn-ghost" href="index.html">Voltar para a loja</a>
-    </div>
-  </main>
+      const msg = document.getElementById("msg");
+      const bar = document.getElementById("bar");
 
-  <script>
-  const params = new URLSearchParams(location.search);
-  const orderId = params.get("id");
-  const paymentId = params.get("paymentId");
-
-  const msg = document.getElementById("msg");
-  const bar = document.getElementById("bar");
-
-  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-  async function checkPayment() {
-    const maxTries = 20; // ~50s
-
-    for (let i = 0; i < maxTries; i++) {
-      bar.style.width = Math.min(95, 10 + i * 4) + "%";
-
-      const r = await fetch(`/.netlify/functions/mp-get-payment?paymentId=${encodeURIComponent(paymentId)}`);
-      const j = await r.json().catch(() => ({}));
-
-      if (!j?.ok) {
-        msg.textContent = `Erro ao consultar pagamento: ${j?.error || "desconhecido"}`;
-        await sleep(2500);
-        continue;
+      function sleep(ms) {
+        return new Promise((r) => setTimeout(r, ms));
       }
 
-      // ✅ Mostra na tela o status real
-      msg.textContent = `Status: ${j.status} (${j.status_detail || "sem detalhe"})`;
+      async function checkPayment() {
+        const maxTries = 20; // ~50s
 
-      if (j.status === "approved") {
-        bar.style.width = "100%";
-        location.href = `success.html?id=${encodeURIComponent(orderId || "")}`;
-        return;
+        for (let i = 0; i < maxTries; i++) {
+          bar.style.width = Math.min(95, 10 + i * 4) + "%";
+
+          const r = await fetch(
+            `/.netlify/functions/mp-get-payment?paymentId=${encodeURIComponent(paymentId)}`,
+          );
+          const j = await r.json().catch(() => ({}));
+
+          if (!j?.ok) {
+            msg.textContent = `Erro ao consultar pagamento: ${j?.error || "desconhecido"}`;
+            await sleep(2500);
+            continue;
+          }
+
+          // ✅ Mostra na tela o status real
+          msg.textContent = `Status: ${j.status} (${j.status_detail || "sem detalhe"})`;
+
+          if (j.status === "approved") {
+            bar.style.width = "100%";
+            location.href = `success.html?id=${encodeURIComponent(orderId || "")}`;
+            return;
+          }
+
+          // ✅ trate tudo que é “negado”
+          if (j.status === "rejected" || j.status === "cancelled") {
+            // volta pro checkout e mostra mensagem
+            alert(
+              "Pagamento não aprovado. Tente novamente ou use outro cartão/Pix.",
+            );
+            location.href = `/checkout.html`; // ou o caminho real do seu checkout
+            return;
+          }
+
+          await sleep(2500);
+        }
+
+        msg.textContent =
+          "Ainda aguardando confirmação. Se você já pagou, aguarde mais um pouco ou tente novamente.";
       }
 
-      // ✅ trate tudo que é “negado”
-      if (j.status === "rejected" || j.status === "cancelled") {
-        location.href = `failure.html?id=${encodeURIComponent(orderId || "")}`;
-        return;
+      if (!paymentId) {
+        msg.textContent = "paymentId não encontrado na URL.";
+      } else {
+        checkPayment();
       }
-
-      await sleep(2500);
-    }
-
-    msg.textContent = "Ainda aguardando confirmação. Se você já pagou, aguarde mais um pouco ou tente novamente.";
-  }
-
-  if (!paymentId) {
-    msg.textContent = "paymentId não encontrado na URL.";
-  } else {
-    checkPayment();
-  }
-</script>
-</body>
+    </script>
+  </body>
 </html>

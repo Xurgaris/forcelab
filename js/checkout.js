@@ -180,7 +180,23 @@ const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
 let brickMounted = false;
+function fixBrickSvg() {
+  const root = document.getElementById("paymentBrick_container");
+  if (!root) return;
 
+  const sanitize = () => {
+    const svgs = root.querySelectorAll("svg");
+    svgs.forEach((svg) => {
+      if (svg.getAttribute("width") === "") svg.removeAttribute("width");
+      if (svg.getAttribute("height") === "") svg.removeAttribute("height");
+    });
+  };
+
+  // roda agora e sempre que o Brick mudar o DOM
+  sanitize();
+  const mo = new MutationObserver(sanitize);
+  mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["width", "height"] });
+}
 async function initPaymentBrick() {
   if (brickMounted) return;
 

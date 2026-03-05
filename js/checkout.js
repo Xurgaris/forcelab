@@ -327,6 +327,9 @@ async function initPaymentBrick() {
 
           const data = await res.json();
 
+          // ✅ DEBUG (temporário)
+          console.log("MP function response:", data);
+
           if (!res.ok || !data?.ok) {
             throw new Error(data?.error || "Falha ao criar pagamento.");
           }

@@ -11,7 +11,10 @@ exports.handler = async (event) => {
     if (!ACCESS_TOKEN) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ ok: false, error: "MP_ACCESS_TOKEN não configurado no Netlify." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "MP_ACCESS_TOKEN não configurado no Netlify.",
+        }),
       };
     }
 
@@ -21,7 +24,10 @@ exports.handler = async (event) => {
     if (!orderId || !amount || !formData) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: "Payload inválido: precisa de orderId, amount e formData." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "Payload inválido: precisa de orderId, amount e formData.",
+        }),
       };
     }
 
@@ -33,12 +39,15 @@ exports.handler = async (event) => {
     if (!payment_method_id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: "formData.payment_method_id não veio do Brick." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "formData.payment_method_id não veio do Brick.",
+        }),
       };
     }
 
     const payerEmail =
-      (customer?.email && String(customer.email).includes("@"))
+      customer?.email && String(customer.email).includes("@")
         ? customer.email
         : "test_user_123456@testuser.com";
 
@@ -50,9 +59,14 @@ exports.handler = async (event) => {
     if (!isPixLike && !token) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: "formData.token não veio do Brick (cartão)." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "formData.token não veio do Brick (cartão).",
+        }),
       };
     }
+    console.log("FORMDATA_KEYS:", Object.keys(formData || {}));
+    console.log("FORMDATA:", formData);
 
     const mpBody = {
       transaction_amount: Number(Number(amount).toFixed(2)),
@@ -86,7 +100,11 @@ exports.handler = async (event) => {
     if (!res.ok) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: data?.message || "Mercado Pago error", details: data }),
+        body: JSON.stringify({
+          ok: false,
+          error: data?.message || "Mercado Pago error",
+          details: data,
+        }),
       };
     }
 

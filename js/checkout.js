@@ -78,8 +78,7 @@ function renderSummary() {
   let subtotal = 0;
 
   if (cart.length === 0) {
-    if (itemsWrap)
-      itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
+    if (itemsWrap) itemsWrap.innerHTML = `<p class="muted">Seu carrinho está vazio.</p>`;
   } else {
     cart.forEach((i) => {
       subtotal += i.price * i.qty;
@@ -108,11 +107,11 @@ function renderSummary() {
   if (sumShipping) sumShipping.textContent = brl(shipping);
   if (sumTotal) sumTotal.textContent = brl(total);
 
-  if (sumETA)
-    sumETA.textContent = pricing.eta
-      ? pricing.eta
-      : "Calcule o frete informando seu CEP.";
-  //if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
+  if (sumETA) {
+    sumETA.textContent = pricing.eta ? pricing.eta : "Calcule o frete informando seu CEP.";
+  }
+  if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
+
   return { cart, subtotal, discount, shipping, total, pricing };
 }
 
@@ -160,7 +159,7 @@ document.getElementById("pixCopyBtn")?.addEventListener("click", async () => {
 });
 
 /* ==========================
-   PAY STEPS UI (você já tem)
+   PAY STEPS UI
 ========================== */
 const stepsOverlay = document.getElementById("paySteps");
 const stepsTitle = document.getElementById("payStepsTitle");
@@ -182,12 +181,11 @@ function closePaySteps() {
 function setStep(title, sub, progress = null) {
   if (stepsTitle) stepsTitle.textContent = title;
   if (stepsSub) stepsSub.textContent = sub;
-  if (payBar && typeof progress === "number")
-    payBar.style.width = `${progress}%`;
+  if (payBar && typeof progress === "number") payBar.style.width = `${progress}%`;
 }
 
 /* ==========================
-   AUTH GUARD (precisa logar)
+   AUTH GUARD
 ========================== */
 const user = await requireAuth();
 if (!user) {
@@ -198,9 +196,7 @@ if (!user) {
 /* ==========================
    MERCADO PAGO BRICK
 ========================== */
-// ⚠️ IMPORTANTE:
-// Use aqui a SUA PUBLIC KEY (não Access Token).
-const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f";
+const MP_PUBLIC_KEY = "TEST-3bccdd4c-2b7c-4a7d-81fd-b209c1ac639f"; // TEST-xxxx
 const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
@@ -211,7 +207,11 @@ async function initPaymentBrick() {
   brickMounted = true;
 
   const container = document.getElementById("paymentBrick_container");
-  if (!container) return;
+  if (!container) {
+    console.error("Não encontrei #paymentBrick_container");
+    brickMounted = false;
+    return;
+  }
   container.innerHTML = "";
 
   const state = renderSummary();
@@ -228,7 +228,7 @@ async function initPaymentBrick() {
       paymentMethods: {
         creditCard: "all",
         debitCard: "all",
-        bankTransfer: "all",
+        bankTransfer: "all", // pix
       },
     },
     callbacks: {
@@ -236,11 +236,15 @@ async function initPaymentBrick() {
 
       onSubmit: async ({ formData }) => {
         try {
-          // 1) valida dados do cliente
+          // Debug rápido (pode remover depois)
+          console.log("Brick formData:", formData);
+
+          // 1) dados do cliente
           const fd = new FormData(form);
           const nome = String(fd.get("nome") || "").trim();
           const whatsapp = String(fd.get("whatsapp") || "").trim();
           const endereco = String(fd.get("endereco") || "").trim();
+          const email = String(fd.get("email") || "").trim(); // ✅ precisa existir no form
           const obs = String(fd.get("obs") || "").trim();
 
           if (!nome || !whatsapp || !endereco) {
@@ -248,15 +252,17 @@ async function initPaymentBrick() {
             throw new Error("Dados do cliente incompletos.");
           }
 
-          // 2) recalcula valores reais
+          if (!email || !email.includes("@")) {
+            alert("Informe um email válido (em teste use test@testuser.com).");
+            throw new Error("Email inválido.");
+          }
+
+          // 2) valores
           const s2 = renderSummary();
           const cart = s2.cart;
           const subtotal = calcSubtotal(cart);
-          const discount = Math.min(
-            Number(s2.pricing?.discount || 0),
-            subtotal,
-          );
-          const shipping = Number(s2.pricing?.shipping || 0);
+          const discount = Math.min(Number(s2.discount || 0), subtotal); // ✅ correto
+          const shipping = Number(s2.shipping || 0);                     // ✅ correto
           const totalReal = Math.max(0, subtotal - discount + shipping);
 
           if (!cart.length || totalReal <= 0) {
@@ -264,18 +270,14 @@ async function initPaymentBrick() {
             throw new Error("Carrinho vazio.");
           }
 
-          // 3) cria pedido em orders
+          // 3) cria pedido no Firestore
           openPaySteps();
           setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
 
           const orderDoc = {
             uid: user.uid,
             status: "aguardando_pagamento",
-            customer: {
-              nome,
-              whatsapp,
-              email: String(fd.get("email") || "").trim() || null,
-            },
+            customer: { nome, whatsapp, email },
             shipping: { endereco },
             notes: obs || null,
 
@@ -301,7 +303,6 @@ async function initPaymentBrick() {
 
             createdAt: serverTimestamp(),
             createdAtClient: new Date().toISOString(),
-
             mp: { paymentId: null, status: null, method: null },
           };
 
@@ -312,33 +313,23 @@ async function initPaymentBrick() {
 
           const res = await fetch("/.netlify/functions/mp-create-payment", {
             method: "POST",
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-              "Content-Type": "application/json",
-              "X-Idempotency-Key": idemKey,
-            },
-            body: JSON.stringify(mpBody),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderId,
+              amount: Number(totalReal.toFixed(2)),
+              formData,
+              customer: { nome, whatsapp, email },
+            }),
           });
-          const data = await res.json().catch(() => ({}));
-          const xRequestId = res.headers.get("x-request-id") || null;
 
-          // ✅ log no Netlify (Functions → Logs)
-          console.log("MP status:", res.status, "x-request-id:", xRequestId);
-          console.log("MP response body:", data);
-          if (!res.ok) {
-            return {
-              statusCode: 400,
-              body: JSON.stringify({
-                ok: false,
-                error: data?.message || "Mercado Pago error",
-                mp_status: res.status,
-                x_request_id: xRequestId,
-                details: data,
-              }),
-            };
+          const data = await res.json().catch(() => ({}));
+          console.log("MP function response:", data, "status:", res.status);
+
+          if (!res.ok || !data?.ok) {
+            throw new Error(data?.error || "Falha ao criar pagamento.");
           }
 
-          // 4) salva infos mp no pedido
+          // 4) atualiza mp no pedido
           if (data?.paymentId) {
             try {
               await updateDoc(doc(db, "orders", orderId), {
@@ -354,15 +345,12 @@ async function initPaymentBrick() {
           // 5) Pix: mostra QR
           if (data.pix?.qr_code_base64) {
             setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 80);
-            closePaySteps(); // ✅ não trava a tela
-            openPixModal({
-              qr_code_base64: data.pix.qr_code_base64,
-              qr_code: data.pix.qr_code,
-            });
+            closePaySteps();
+            openPixModal({ qr_code_base64: data.pix.qr_code_base64, qr_code: data.pix.qr_code });
             return;
           }
 
-          // 6) Cartão: finaliza
+          // 6) cartão: finaliza (você pode trocar por polling)
           setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
 
           localStorage.setItem("cart", "[]");
@@ -374,12 +362,12 @@ async function initPaymentBrick() {
           console.error("onSubmit error:", err);
           setStep("Erro no pagamento", err?.message || "Tente novamente.", 0);
           closePaySteps();
-          throw err; // ✅ faz o Brick parar de carregar
+          throw err;
         }
       },
 
       onError: (err) => {
-        console.error(err);
+        console.error("Brick onError:", err);
         alert("Erro no pagamento. Tente novamente.");
         closePaySteps();
       },

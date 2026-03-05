@@ -11,10 +11,7 @@ exports.handler = async (event) => {
     if (!ACCESS_TOKEN) {
       return {
         statusCode: 500,
-        body: JSON.stringify({
-          ok: false,
-          error: "MP_ACCESS_TOKEN não configurado no Netlify.",
-        }),
+        body: JSON.stringify({ ok: false, error: "MP_ACCESS_TOKEN não configurado no Netlify." }),
       };
     }
 
@@ -24,60 +21,40 @@ exports.handler = async (event) => {
     if (!orderId || !amount || !formData) {
       return {
         statusCode: 400,
-        body: JSON.stringify({
-          ok: false,
-          error: "Payload inválido: precisa de orderId, amount e formData.",
-        }),
-      };
-    }
-
-    const token = formData.token || null;
-    const payment_method_id = formData.payment_method_id || null;
-    const payment_type_id = formData.payment_type_id || null;
-    const installments = Number(formData.installments || 1);
-
-    if (!payment_method_id) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          ok: false,
-          error: "formData.payment_method_id não veio do Brick.",
-        }),
+        body: JSON.stringify({ ok: false, error: "Payload inválido: precisa de orderId, amount e formData." }),
       };
     }
 
     const payerEmail =
-      customer?.email && String(customer.email).includes("@")
+      (customer?.email && String(customer.email).includes("@"))
         ? String(customer.email).trim()
-        : "test@testuser.com";
+        : "test@testuser.com"; // ✅ padrão de teste
 
-    const isTest = String(ACCESS_TOKEN || "").startsWith("TEST-");
-    if (isTest && !payerEmail.endsWith("@testuser.com")) {
+    const payment_method_id = formData.payment_method_id || null;
+    const payment_type_id = formData.payment_type_id || null;
+    const token = formData.token || null;
+    const installments = Math.max(1, Number(formData.installments || 1));
+
+    if (!payment_method_id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({
-          ok: false,
-          error: "Email de teste inválido. Use test@testuser.com",
-        }),
+        body: JSON.stringify({ ok: false, error: "formData.payment_method_id não veio do Brick.", debug: formData }),
       };
     }
 
+    // Heurística pro Pix via brick:
     const isPixLike =
       payment_type_id === "bank_transfer" ||
       payment_method_id === "pix" ||
       String(payment_method_id).toLowerCase().includes("pix");
 
+    // cartão/débito precisa token
     if (!isPixLike && !token) {
       return {
         statusCode: 400,
-        body: JSON.stringify({
-          ok: false,
-          error: "formData.token não veio do Brick (cartão).",
-        }),
+        body: JSON.stringify({ ok: false, error: "formData.token não veio do Brick (cartão).", debug: formData }),
       };
     }
-    console.log("FORMDATA_KEYS:", Object.keys(formData || {}));
-    console.log("FORMDATA:", formData);
 
     const mpBody = {
       transaction_amount: Number(Number(amount).toFixed(2)),
@@ -93,7 +70,6 @@ exports.handler = async (event) => {
       mpBody.installments = installments;
     }
 
-    // ✅ NUNCA null
     const idemKey = randomUUID();
 
     const res = await fetch("https://api.mercadopago.com/v1/payments", {
@@ -106,7 +82,11 @@ exports.handler = async (event) => {
       body: JSON.stringify(mpBody),
     });
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    const xRequestId = res.headers.get("x-request-id") || null;
+
+    console.log("MP status:", res.status, "x-request-id:", xRequestId);
+    console.log("MP response body:", data);
 
     if (!res.ok) {
       return {
@@ -114,6 +94,8 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           ok: false,
           error: data?.message || "Mercado Pago error",
+          mp_status: res.status,
+          x_request_id: xRequestId,
           details: data,
         }),
       };

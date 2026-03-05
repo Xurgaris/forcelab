@@ -98,6 +98,7 @@ function renderSummary() {
     });
   }
 
+  const pricing = getPricingState();
   const discount = Math.min(Number(s2.pricing?.discount || 0), subtotal);
   const shipping = Number(s2.pricing?.shipping || 0);
   const total = Math.max(0, subtotal - discount + shipping);
@@ -106,14 +107,15 @@ function renderSummary() {
   if (sumDiscount) sumDiscount.textContent = `- ${brl(discount)}`;
   if (sumShipping) sumShipping.textContent = brl(shipping);
   if (sumTotal) sumTotal.textContent = brl(total);
+
   if (sumETA)
     sumETA.textContent = pricing.eta
       ? pricing.eta
       : "Calcule o frete informando seu CEP.";
-  if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
+  //if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
 
-  return { cart, subtotal, discount, shipping, total, pricing };
 }
+return { cart, subtotal, discount, shipping, total, pricing };
 
 renderSummary();
 window.addEventListener("cartUpdated", renderSummary);

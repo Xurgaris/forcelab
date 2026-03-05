@@ -113,9 +113,9 @@ function renderSummary() {
       ? pricing.eta
       : "Calcule o frete informando seu CEP.";
   //if (summaryItems) summaryItems.textContent = `${cart.length} itens`;
+  return { cart, subtotal, discount, shipping, total, pricing };
 
 }
-return { cart, subtotal, discount, shipping, total, pricing };
 
 renderSummary();
 window.addEventListener("cartUpdated", renderSummary);

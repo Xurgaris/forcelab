@@ -327,7 +327,32 @@ async function initPaymentBrick() {
             }
 
             console.log("MP function response:", data, "status:", res.status);
+            // ... depois de receber "data" do backend
 
+            const paymentId = data?.paymentId;
+
+            if (!paymentId) {
+              // Se cair aqui, o backend NÃO te devolveu paymentId
+              // (ou seja, o pagamento nem foi criado corretamente)
+              closePaySteps();
+              alert(
+                "Pagamento não retornou paymentId. Veja o console/logs do Netlify.",
+              );
+              console.error("Sem paymentId:", data);
+              return reject(new Error("Sem paymentId"));
+            }
+
+            // ✅ Se aprovado, vai direto
+            if (data.status === "approved") {
+              localStorage.setItem("cart", "[]");
+              window.dispatchEvent(new Event("cartUpdated"));
+              location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+              return resolve();
+            }
+
+            // ✅ Se não aprovado na hora, vai pro pending COM paymentId
+            location.href = `pending.html?id=${encodeURIComponent(orderId)}&paymentId=${encodeURIComponent(paymentId)}`;
+            return resolve();
             if (!res.ok || !data?.ok) {
               closePaySteps();
               console.error("MP ERROR FULL:", data);

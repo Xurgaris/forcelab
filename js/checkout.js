@@ -312,26 +312,30 @@ async function initPaymentBrick() {
 
           const res = await fetch("/.netlify/functions/mp-create-payment", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              orderId,
-              amount: Number(totalReal.toFixed(2)),
-              formData,
-              customer: {
-                nome,
-                whatsapp,
-                email: String(fd.get("email") || "").trim(),
-              },
-            }),
+            headers: {
+              Authorization: `Bearer ${ACCESS_TOKEN}`,
+              "Content-Type": "application/json",
+              "X-Idempotency-Key": idemKey,
+            },
+            body: JSON.stringify(mpBody),
           });
+          const data = await res.json().catch(() => ({}));
+          const xRequestId = res.headers.get("x-request-id") || null;
 
-          const data = await res.json();
-
-          // ✅ DEBUG (temporário)
-          console.log("MP function response:", data, "status", res.status);
-
-          if (!res.ok || !data?.ok) {
-            throw new Error(data?.error || "Falha ao criar pagamento.");
+          // ✅ log no Netlify (Functions → Logs)
+          console.log("MP status:", res.status, "x-request-id:", xRequestId);
+          console.log("MP response body:", data);
+          if (!res.ok) {
+            return {
+              statusCode: 400,
+              body: JSON.stringify({
+                ok: false,
+                error: data?.message || "Mercado Pago error",
+                mp_status: res.status,
+                x_request_id: xRequestId,
+                details: data,
+              }),
+            };
           }
 
           // 4) salva infos mp no pedido

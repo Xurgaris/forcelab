@@ -127,6 +127,10 @@ const stepsTitle = document.getElementById("payStepsTitle");
 const stepsSub = document.getElementById("payStepsSub");
 const payBar = document.getElementById("payBar");
 
+// ✅ anti-submit duplicado + reaproveitar pedido
+let currentOrderId = null;
+let creatingOrder = false;
+
 function openPaySteps() {
   if (!stepsOverlay) return;
   stepsOverlay.classList.add("open");
@@ -180,23 +184,29 @@ const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
 let brickMounted = false;
+
+// remove width/height vazios de SVGs dentro do Brick
 function fixBrickSvg() {
   const root = document.getElementById("paymentBrick_container");
   if (!root) return;
 
   const sanitize = () => {
-    const svgs = root.querySelectorAll("svg");
-    svgs.forEach((svg) => {
+    root.querySelectorAll("svg").forEach((svg) => {
       if (svg.getAttribute("width") === "") svg.removeAttribute("width");
       if (svg.getAttribute("height") === "") svg.removeAttribute("height");
     });
   };
 
-  // roda agora e sempre que o Brick mudar o DOM
   sanitize();
   const mo = new MutationObserver(sanitize);
-  mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["width", "height"] });
+  mo.observe(root, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["width", "height"],
+  });
 }
+
 async function initPaymentBrick() {
   if (brickMounted) return;
 
@@ -212,20 +222,20 @@ async function initPaymentBrick() {
   brickMounted = true;
   container.innerHTML = "";
 
+  // ✅ chama o fix antes do Brick renderizar
+  fixBrickSvg();
+
   await bricksBuilder.create("payment", "paymentBrick_container", {
     initialization: {
       amount: Number(state.total.toFixed(2)),
-      // opcional (prefill): payer: { email: ... }
     },
     customization: {
       paymentMethods: {
         creditCard: "all",
         debitCard: "all",
-        bankTransfer: ["pix"], // ✅ Pix no Brasil
-        // NÃO setar ticket/atm/mercadoPago aqui
+        bankTransfer: ["pix"],
       },
       visual: {
-        // opcional: já abre com Pix selecionado
         defaultPaymentOption: { bankTransferForm: true },
       },
     },
@@ -239,11 +249,11 @@ async function initPaymentBrick() {
       },
 
       onSubmit: ({ formData }) => {
-        // ✅ IMPORTANTE: devolver Promise (o Brick espera isso)
         return new Promise(async (resolve, reject) => {
-          try {
-            console.log("Brick formData:", formData);
+          if (creatingOrder) return resolve();
+          creatingOrder = true;
 
+          try {
             // 1) valida form
             const fd = new FormData(form);
             const email = String(fd.get("email") || "").trim();
@@ -252,14 +262,10 @@ async function initPaymentBrick() {
             const endereco = String(fd.get("endereco") || "").trim();
             const obs = String(fd.get("obs") || "").trim();
 
-            if (!email || !email.includes("@")) {
-              alert("Informe um e-mail válido.");
-              return reject(new Error("Email inválido"));
-            }
-            if (!nome || !whatsapp || !endereco) {
-              alert("Preencha Nome, WhatsApp e Endereço.");
-              return reject(new Error("Dados do cliente incompletos"));
-            }
+            if (!email || !email.includes("@"))
+              throw new Error("Informe um e-mail válido.");
+            if (!nome || !whatsapp || !endereco)
+              throw new Error("Preencha Nome, WhatsApp e Endereço.");
 
             // 2) recalcula total
             const s2 = renderSummary();
@@ -269,18 +275,11 @@ async function initPaymentBrick() {
             const shipping = Number(s2.shipping || 0);
             const totalReal = Math.max(0, subtotal - discount + shipping);
 
-            if (!cart.length || totalReal <= 0) {
-              alert("Carrinho vazio.");
-              return reject(new Error("Carrinho vazio"));
-            }
+            if (!cart.length || totalReal <= 0) throw new Error("Carrinho vazio.");
 
-            // 3) cria order no Firestore
+            // 3) cria/reusa pedido
             openPaySteps();
-            setStep(
-              "Criando pedido…",
-              "Salvando informações do seu pedido.",
-              20,
-            );
+            setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
 
             const orderDoc = {
               uid: user.uid,
@@ -311,18 +310,26 @@ async function initPaymentBrick() {
               mp: { paymentId: null, status: null, method: null },
             };
 
-            const ref = await addDoc(collection(db, "orders"), orderDoc);
-            const orderId = ref.id;
+            let orderId = currentOrderId;
 
-            setStep(
-              "Criando pagamento…",
-              "Enviando dados ao Mercado Pago.",
-              55,
-            );
-            console.log("FORMDATA KEYS:", Object.keys(formData || {}));
-            console.log("FORMDATA FULL:", formData);
-            console.log("TOKEN?", formData?.token, formData?.card_token);
-            // 4) backend MP
+            if (!orderId) {
+              const ref = await addDoc(collection(db, "orders"), orderDoc);
+              orderId = ref.id;
+              currentOrderId = orderId;
+            } else {
+              await updateDoc(doc(db, "orders", orderId), {
+                customer: orderDoc.customer,
+                shipping: orderDoc.shipping,
+                notes: orderDoc.notes,
+                items: orderDoc.items,
+                pricing: orderDoc.pricing,
+                status: "aguardando_pagamento",
+              });
+            }
+
+            // 4) cria pagamento no backend
+            setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 55);
+
             const res = await fetch("/.netlify/functions/mp-create-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -342,58 +349,25 @@ async function initPaymentBrick() {
               data = { raw };
             }
 
-            console.log("MP function response:", data, "status:", res.status);
-            // ... depois de receber "data" do backend
-
-            const paymentId = data?.paymentId;
-
-            if (!paymentId) {
-              // Se cair aqui, o backend NÃO te devolveu paymentId
-              // (ou seja, o pagamento nem foi criado corretamente)
-              closePaySteps();
-              alert(
-                "Pagamento não retornou paymentId. Veja o console/logs do Netlify.",
-              );
-              console.error("Sem paymentId:", data);
-              return reject(new Error("Sem paymentId"));
-            }
-
-            // ✅ Se aprovado, vai direto
-            if (data.status === "approved") {
-              localStorage.setItem("cart", "[]");
-              window.dispatchEvent(new Event("cartUpdated"));
-              location.href = `success.html?id=${encodeURIComponent(orderId)}`;
-              return resolve();
-            }
-
-            // ✅ Se não aprovado na hora, vai pro pending COM paymentId
-            location.href = `pending.html?id=${encodeURIComponent(orderId)}&paymentId=${encodeURIComponent(paymentId)}`;
-            return resolve();
             if (!res.ok || !data?.ok) {
               closePaySteps();
-              console.error("MP ERROR FULL:", data);
-              alert(
-                `Falha ao criar pagamento: ${data?.error || data?.raw || "erro desconhecido"}`,
-              );
-              return reject(
-                new Error(data?.error || "Falha ao criar pagamento"),
-              );
+              throw new Error(data?.error || data?.raw || "Falha ao criar pagamento");
+            }
+
+            const paymentId = data?.paymentId;
+            if (!paymentId) {
+              closePaySteps();
+              throw new Error("Pagamento não retornou paymentId.");
             }
 
             // 5) salva retorno MP no pedido
-            if (data?.paymentId) {
-              try {
-                await updateDoc(doc(db, "orders", orderId), {
-                  "mp.paymentId": data.paymentId,
-                  "mp.status": data.status || null,
-                  "mp.method": data.paymentMethod || null,
-                });
-              } catch (e) {
-                console.warn("Não consegui atualizar mp no pedido:", e);
-              }
-            }
+            await updateDoc(doc(db, "orders", orderId), {
+              "mp.paymentId": paymentId,
+              "mp.status": data.status || null,
+              "mp.method": data.paymentMethod || null,
+            });
 
-            // 6) Pix -> modal
+            // 6) PIX -> abre modal
             if (data.pix?.qr_code_base64) {
               setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 90);
               closePaySteps();
@@ -401,56 +375,30 @@ async function initPaymentBrick() {
                 qr_code_base64: data.pix.qr_code_base64,
                 qr_code: data.pix.qr_code,
               });
+              creatingOrder = false;
               return resolve();
             }
 
-            async function checkApproved(paymentId) {
-              // tenta 2x (rápido) porque às vezes aprova alguns segundos depois
-              for (let i = 0; i < 2; i++) {
-                const r = await fetch(
-                  `/.netlify/functions/mp-get-payment?paymentId=${encodeURIComponent(paymentId)}`,
-                );
-                const j = await r.json().catch(() => ({}));
-                if (j?.ok && j.status === "approved") return true;
-                await new Promise((res) => setTimeout(res, 1200)); // 1.2s
-              }
-              return false;
-            }
-
-            // ...
-
-            // 7) cartão -> decide pelo status, mas com recheck
+            // 7) cartão -> success/pending com paymentId
             setStep("Pagamento enviado ✅", "Confirmando status…", 92);
-
-            let approved = false;
-            if (data?.paymentId) {
-              approved = await checkApproved(data.paymentId);
-            }
-
-            if (approved) {
-              localStorage.setItem("cart", "[]");
-              window.dispatchEvent(new Event("cartUpdated"));
-              location.href = `success.html?id=${encodeURIComponent(orderId)}`;
-            } else {
-              location.href = `pending.html?id=${encodeURIComponent(orderId)}`;
-            }
-            return resolve();
-
-            // 7) cartão -> segue fluxo (webhook/poll depois)
-            // 7) cartão -> decide pelo status
-            setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
 
             if (data.status === "approved") {
               localStorage.setItem("cart", "[]");
               window.dispatchEvent(new Event("cartUpdated"));
               location.href = `success.html?id=${encodeURIComponent(orderId)}`;
             } else {
-              location.href = `pending.html?id=${encodeURIComponent(orderId)}&paymentId=${encodeURIComponent(data.paymentId)}`;
+              location.href = `pending.html?id=${encodeURIComponent(
+                orderId
+              )}&paymentId=${encodeURIComponent(paymentId)}`;
             }
+
+            creatingOrder = false;
             return resolve();
           } catch (err) {
             console.error("onSubmit error:", err);
             closePaySteps();
+            creatingOrder = false;
+            alert(err.message || "Erro ao finalizar pagamento.");
             return reject(err);
           }
         });

@@ -11,9 +11,21 @@ exports.handler = async (event) => {
     if (!ACCESS_TOKEN) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ ok: false, error: "MP_ACCESS_TOKEN não configurado no Netlify." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "MP_ACCESS_TOKEN não configurado no Netlify.",
+        }),
       };
     }
+    const meRes = await fetch("https://api.mercadopago.com/users/me", {
+      headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+    });
+    const me = await meRes.json().catch(() => ({}));
+    console.log("MP users/me:", {
+      id: me.id,
+      nickname: me.nickname,
+      site_id: me.site_id,
+    });
 
     const payload = JSON.parse(event.body || "{}");
     const { orderId, amount, formData, customer } = payload || {};
@@ -21,7 +33,10 @@ exports.handler = async (event) => {
     if (!orderId || !amount || !formData) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: "Payload inválido: precisa de orderId, amount e formData." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "Payload inválido: precisa de orderId, amount e formData.",
+        }),
       };
     }
 
@@ -29,32 +44,39 @@ exports.handler = async (event) => {
     const payment_method_id = formData.payment_method_id || null;
     const payment_type_id = formData.payment_type_id || null;
     const token = formData.token || null;
-    const issuer_id = formData.issuer_id ? String(formData.issuer_id) : undefined;
+    const issuer_id = formData.issuer_id
+      ? String(formData.issuer_id)
+      : undefined;
     const installments = Math.max(1, Number(formData.installments || 1));
 
     // payer: usa o que veio do Brick (se vier) e completa com customer
     const payerEmail =
-      (formData?.payer?.email && String(formData.payer.email).includes("@"))
+      formData?.payer?.email && String(formData.payer.email).includes("@")
         ? String(formData.payer.email).trim()
-        : (customer?.email && String(customer.email).includes("@"))
+        : customer?.email && String(customer.email).includes("@")
           ? String(customer.email).trim()
           : "test@testuser.com";
 
     // CPF (preferência: Brick -> customer)
-    const identification =
-      formData?.payer?.identification?.number
-        ? {
-            type: String(formData.payer.identification.type || "CPF"),
-            number: String(formData.payer.identification.number).replace(/\D/g, ""),
-          }
-        : customer?.cpf
-          ? { type: "CPF", number: String(customer.cpf).replace(/\D/g, "") }
-          : undefined;
+    const identification = formData?.payer?.identification?.number
+      ? {
+          type: String(formData.payer.identification.type || "CPF"),
+          number: String(formData.payer.identification.number).replace(
+            /\D/g,
+            "",
+          ),
+        }
+      : customer?.cpf
+        ? { type: "CPF", number: String(customer.cpf).replace(/\D/g, "") }
+        : undefined;
 
     if (!payment_method_id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: "formData.payment_method_id não veio do Brick." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "formData.payment_method_id não veio do Brick.",
+        }),
       };
     }
 
@@ -68,7 +90,10 @@ exports.handler = async (event) => {
     if (!isPixLike && !token) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ ok: false, error: "formData.token não veio do Brick (cartão)." }),
+        body: JSON.stringify({
+          ok: false,
+          error: "formData.token não veio do Brick (cartão).",
+        }),
       };
     }
 

@@ -363,6 +363,38 @@ async function initPaymentBrick() {
               return resolve();
             }
 
+            async function checkApproved(paymentId) {
+              // tenta 2x (rápido) porque às vezes aprova alguns segundos depois
+              for (let i = 0; i < 2; i++) {
+                const r = await fetch(
+                  `/.netlify/functions/mp-get-payment?paymentId=${encodeURIComponent(paymentId)}`,
+                );
+                const j = await r.json().catch(() => ({}));
+                if (j?.ok && j.status === "approved") return true;
+                await new Promise((res) => setTimeout(res, 1200)); // 1.2s
+              }
+              return false;
+            }
+
+            // ...
+
+            // 7) cartão -> decide pelo status, mas com recheck
+            setStep("Pagamento enviado ✅", "Confirmando status…", 92);
+
+            let approved = false;
+            if (data?.paymentId) {
+              approved = await checkApproved(data.paymentId);
+            }
+
+            if (approved) {
+              localStorage.setItem("cart", "[]");
+              window.dispatchEvent(new Event("cartUpdated"));
+              location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+            } else {
+              location.href = `pending.html?id=${encodeURIComponent(orderId)}`;
+            }
+            return resolve();
+
             // 7) cartão -> segue fluxo (webhook/poll depois)
             // 7) cartão -> decide pelo status
             setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
@@ -372,7 +404,7 @@ async function initPaymentBrick() {
               window.dispatchEvent(new Event("cartUpdated"));
               location.href = `success.html?id=${encodeURIComponent(orderId)}`;
             } else {
-              location.href = `pending.html?id=${encodeURIComponent(orderId)}`;
+              location.href = `pending.html?id=${encodeURIComponent(orderId)}&paymentId=${encodeURIComponent(data.paymentId)}`;
             }
             return resolve();
           } catch (err) {

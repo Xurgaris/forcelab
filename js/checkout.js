@@ -205,16 +205,21 @@ const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "pt-BR" });
 const bricksBuilder = mp.bricks();
 
 async function initPaymentBrick() {
+  if (brickMounted) return;
+  brickMounted = true;
+
+  const container = document.getElementById("paymentBrick_container");
+  if (!container) return;
+  container.innerHTML = ""; // evita re-render bugado
+
+  // ... aqui continua seu bricksBuilder.create(...)
+
   const state = renderSummary();
   if (!state.total || state.total <= 0) {
-    if (payMsg) payMsg.textContent = "Carrinho vazio.";
+    brickMounted = false;
     return;
   }
-  const container = document.getElementById("paymentBrick_container");
-  if (!container) {
-    console.warn("paymentBrick_container não encontrado. Brick não iniciado.");
-    return;
-  }
+
   await bricksBuilder.create("payment", "paymentBrick_container", {
     initialization: {
       amount: Number(state.total.toFixed(2)),
@@ -230,145 +235,76 @@ async function initPaymentBrick() {
       onReady: () => {},
 
       onSubmit: async ({ formData }) => {
-        // 1) valida dados do cliente
-        const fd = new FormData(form);
-        const nome = String(fd.get("nome") || "").trim();
-        const whatsapp = String(fd.get("whatsapp") || "").trim();
-        const endereco = String(fd.get("endereco") || "").trim();
-        const pagamento = String(fd.get("pagamento") || "").trim();
-        const obs = String(fd.get("obs") || "").trim();
+        try {
+          // 1) valida dados do cliente
+          const fd = new FormData(form);
+          const nome = String(fd.get("nome") || "").trim();
+          const whatsapp = String(fd.get("whatsapp") || "").trim();
+          const endereco = String(fd.get("endereco") || "").trim();
+          const pagamento = String(fd.get("pagamento") || "").trim();
+          const obs = String(fd.get("obs") || "").trim();
+          if (!nome || !whatsapp || !endereco) {
+            alert("Preencha nome, WhatsApp e endereço.");
+            return;
+          } // 2) recalcula valores reais const s2 = renderSummary(); const cart = s2.cart; const subtotal = calcSubtotal(cart); const discount = Math.min(Number(s2.discount || 0), subtotal); const shipping = Number(s2.shipping || 0); const totalReal = Math.max(0, subtotal - discount + shipping); if (!cart.length || totalReal <= 0) { alert("Carrinho vazio."); return; } // 3) cria pedido em orders (cliente) openPaySteps(); setStep("Criando pedido…", "Salvando informações do seu pedido.", 20); const orderDoc = { uid: user.uid, status: "aguardando_pagamento", customer: { nome, whatsapp }, shipping: { endereco }, payment: { metodo: pagamento || "Brick" }, notes: obs || null, items: cart.map((i) => ({ type: i.type || "product", id: i.id ?? null, name: i.name, price: i.price, qty: i.qty, image: i.image, subtotal: i.price * i.qty, })), pricing: { subtotal, discount, shipping, total: totalReal, couponCode: s2.pricing?.couponCode || "", cep: s2.pricing?.cep || "", eta: s2.pricing?.eta || "", }, createdAt: serverTimestamp(), createdAtClient: new Date().toISOString(), mp: { paymentId: null, status: null, method: null, }, }; const ref = await addDoc(collection(db, "orders"), orderDoc); const orderId = ref.id; setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45); const idemKey = globalThis.crypto?.randomUUID?.() || `idem_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
-        if (!nome || !whatsapp || !endereco) {
-          alert("Preencha nome, WhatsApp e endereço.");
-          return;
-        }
-
-        // 2) recalcula valores reais
-        const s2 = renderSummary();
-        const cart = s2.cart;
-        const subtotal = calcSubtotal(cart);
-        const discount = Math.min(Number(s2.discount || 0), subtotal);
-        const shipping = Number(s2.shipping || 0);
-        const totalReal = Math.max(0, subtotal - discount + shipping);
-
-        if (!cart.length || totalReal <= 0) {
-          alert("Carrinho vazio.");
-          return;
-        }
-
-        // 3) cria pedido em orders (cliente)
-        openPaySteps();
-        setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
-
-        const orderDoc = {
-          uid: user.uid,
-          status: "aguardando_pagamento",
-
-          customer: { nome, whatsapp },
-          shipping: { endereco },
-          payment: { metodo: pagamento || "Brick" },
-          notes: obs || null,
-
-          items: cart.map((i) => ({
-            type: i.type || "product",
-            id: i.id ?? null,
-            name: i.name,
-            price: i.price,
-            qty: i.qty,
-            image: i.image,
-            subtotal: i.price * i.qty,
-          })),
-
-          pricing: {
-            subtotal,
-            discount,
-            shipping,
-            total: totalReal,
-            couponCode: s2.pricing?.couponCode || "",
-            cep: s2.pricing?.cep || "",
-            eta: s2.pricing?.eta || "",
-          },
-
-          createdAt: serverTimestamp(),
-          createdAtClient: new Date().toISOString(),
-
-          mp: {
-            paymentId: null,
-            status: null,
-            method: null,
-          },
-        };
-
-        const ref = await addDoc(collection(db, "orders"), orderDoc);
-        const orderId = ref.id;
-
-        setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 45);
-        const idemKey =
-          globalThis.crypto?.randomUUID?.() ||
-          `idem_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-
-        const res = await fetch("/.netlify/functions/mp-create-payment", {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            "Content-Type": "application/json",
-            "X-Idempotency-Key": idemKey,
-          },
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId,
-            amount: Number(totalReal.toFixed(2)),
-            formData, // vem do Brick
-            customer: { nome, whatsapp, email: fd.get("email") || "" },
-          }),
-        });
-        const data = await res.json();
-
-        if (!data?.ok) {
-          setStep("Falha no pagamento", data?.error || "Tente novamente.", 0);
-          alert(data?.error || "Falha ao criar pagamento.");
-          closePaySteps();
-          return;
-        }
-
-        // 5) salva infos do pagamento no pedido (se veio paymentId)
-        if (data?.paymentId) {
-          try {
-            await updateDoc(doc(db, "orders", orderId), {
-              "mp.paymentId": data.paymentId,
-              "mp.status": data.status || null,
-              "mp.method": data.paymentMethod || null,
-            });
-          } catch (e) {
-            console.warn("Não consegui atualizar mp no pedido:", e);
-          }
-        }
-
-        // 6) Pix: mostra QR (se veio)
-        if (data.pix?.qr_code_base64) {
-          setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 80);
-          if (payMsg) payMsg.textContent = "Pix gerado! Escaneie o QR Code.";
-
-          openPixModal({
-            qr_code_base64: data.pix.qr_code_base64,
-            qr_code: data.pix.qr_code,
+          const res = await fetch("/.netlify/functions/mp-create-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderId,
+              amount: Number(totalReal.toFixed(2)),
+              formData,
+              customer: { nome, whatsapp, email: fd.get("email") || "" },
+            }),
           });
 
-          // opcional: manda para página de status
-          // location.href = `success.html?id=${encodeURIComponent(orderId)}`;
-          return;
+          const data = await res.json();
+
+          if (!res.ok || !data?.ok) {
+            throw new Error(data?.error || "Falha ao criar pagamento.");
+          }
+
+          // atualiza order com mp infos (não pode travar o fluxo)
+          if (data?.paymentId) {
+            try {
+              await updateDoc(doc(db, "orders", orderId), {
+                "mp.paymentId": data.paymentId,
+                "mp.status": data.status || null,
+                "mp.method": data.paymentMethod || null,
+              });
+            } catch (e) {
+              console.warn("Não consegui atualizar mp no pedido:", e);
+            }
+          }
+
+          // Pix: abre modal e encerra o submit
+          if (data.pix?.qr_code_base64) {
+            setStep("Pix gerado ✅", "Escaneie o QR Code para pagar.", 80);
+            if (payMsg) payMsg.textContent = "Pix gerado! Escaneie o QR Code.";
+            openPixModal({
+              qr_code_base64: data.pix.qr_code_base64,
+              qr_code: data.pix.qr_code,
+            });
+            return; // ✅ libera o Brick
+          }
+
+          // Cartão: redireciona e encerra
+          setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
+          localStorage.setItem("cart", "[]");
+          window.dispatchEvent(new Event("cartUpdated"));
+
+          location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+          return; // ✅ libera o Brick
+
+        } catch (err) {
+          console.error("onSubmit error:", err);
+          setStep("Erro no pagamento", err?.message || "Tente novamente.", 0);
+          closePaySteps();
+          // ✅ MUITO IMPORTANTE: lançar o erro faz o Brick parar o loading
+          throw err;
         }
-
-        // 7) cartão/débito: manda para página de sucesso/status
-        setStep("Pagamento enviado ✅", "Aguardando confirmação.", 90);
-
-        // limpa carrinho (pedido criado com sucesso)
-        localStorage.setItem("cart", "[]");
-        window.dispatchEvent(new Event("cartUpdated"));
-
-        location.href = `success.html?id=${encodeURIComponent(orderId)}`;
       },
-
       onError: (err) => {
         console.error(err);
         alert("Erro no pagamento. Tente novamente.");
@@ -378,4 +314,6 @@ async function initPaymentBrick() {
   });
 }
 
-initPaymentBrick();
+document.addEventListener("DOMContentLoaded", () => {
+  initPaymentBrick();
+});

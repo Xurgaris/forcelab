@@ -224,7 +224,6 @@ async function initPaymentBrick() {
         creditCard: "all",
         debitCard: "all",
         bankTransfer: "all",
-        ticket: "none",
       },
     },
     callbacks: {

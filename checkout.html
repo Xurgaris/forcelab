@@ -199,8 +199,102 @@
         <small class="muted" id="payHint">Não feche esta página.</small>
       </div>
     </div>
+    <!-- PIX MODAL -->
+    <div class="modal" id="pixModal" aria-hidden="true">
+      <div class="modal-card" style="max-width: 520px">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+          "
+        >
+          <strong>Pagamento via Pix</strong>
+          <button class="btn-mini ghost" type="button" id="pixClose">
+            Fechar
+          </button>
+        </div>
+
+        <p class="muted" style="margin: 10px 0 14px">
+          Escaneie o QR Code no app do seu banco ou copie o código Pix.
+        </p>
+
+        <div style="display: flex; justify-content: center; margin: 10px 0">
+          <img
+            id="pixQrImg"
+            alt="QR Code Pix"
+            style="
+              width: 260px;
+              height: 260px;
+              object-fit: contain;
+              background: #fff;
+              border-radius: 12px;
+              padding: 10px;
+            "
+          />
+        </div>
+
+        <label class="muted" style="display: block; margin: 10px 0 6px"
+          >Código Pix (copia e cola)</label
+        >
+        <div style="display: flex; gap: 10px">
+          <input
+            id="pixCode"
+            readonly
+            style="
+              flex: 1;
+              padding: 12px;
+              border-radius: 10px;
+              border: 1px solid rgba(255, 255, 255, 0.15);
+              background: rgba(255, 255, 255, 0.06);
+              color: #fff;
+            "
+          />
+          <button class="btn btn-primary" type="button" id="pixCopy">
+            Copiar
+          </button>
+        </div>
+
+        <small class="muted" style="display: block; margin-top: 12px">
+          Depois do pagamento, a confirmação pode levar alguns segundos.
+        </small>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const modal = document.getElementById("pixModal");
+        const btnClose = document.getElementById("pixClose");
+        const btnCopy = document.getElementById("pixCopy");
+        const code = document.getElementById("pixCode");
+
+        function close() {
+          if (!modal) return;
+          modal.classList.remove("open");
+          modal.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+        }
+
+        btnClose?.addEventListener("click", close);
+        modal?.addEventListener("click", (e) => {
+          if (e.target === modal) close();
+        });
+
+        btnCopy?.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(code.value || "");
+            btnCopy.textContent = "Copiado!";
+            setTimeout(() => (btnCopy.textContent = "Copiar"), 1200);
+          } catch {
+            alert("Não consegui copiar. Selecione e copie manualmente.");
+          }
+        });
+      })();
+    </script>
     <script src="js/cart.js"></script>
     <script src="js/checkoutSummary.js"></script>
+
     <!-- Render de itens no checkout -->
     <script>
       (function () {
@@ -250,58 +344,67 @@
         renderItems();
       })();
     </script>
+
     <script>
-  (function () {
-    // 1) Bloqueia setAttribute width/height vazios em SVG (mais abrangente: Element, não só SVGElement)
-    const _setAttribute = Element.prototype.setAttribute;
-    const _setAttributeNS = Element.prototype.setAttributeNS;
+      (function () {
+        // 1) Bloqueia setAttribute width/height vazios em SVG (mais abrangente: Element, não só SVGElement)
+        const _setAttribute = Element.prototype.setAttribute;
+        const _setAttributeNS = Element.prototype.setAttributeNS;
 
-    function isBadSizeAttr(el, name, value) {
-      return (
-        el instanceof SVGElement &&
-        (name === "width" || name === "height") &&
-        (value === "" || value === null || value === undefined)
-      );
-    }
+        function isBadSizeAttr(el, name, value) {
+          return (
+            el instanceof SVGElement &&
+            (name === "width" || name === "height") &&
+            (value === "" || value === null || value === undefined)
+          );
+        }
 
-    Element.prototype.setAttribute = function (name, value) {
-      if (isBadSizeAttr(this, name, value)) return;
-      return _setAttribute.call(this, name, value);
-    };
+        Element.prototype.setAttribute = function (name, value) {
+          if (isBadSizeAttr(this, name, value)) return;
+          return _setAttribute.call(this, name, value);
+        };
 
-    Element.prototype.setAttributeNS = function (ns, name, value) {
-      if (isBadSizeAttr(this, name, value)) return;
-      return _setAttributeNS.call(this, ns, name, value);
-    };
+        Element.prototype.setAttributeNS = function (ns, name, value) {
+          if (isBadSizeAttr(this, name, value)) return;
+          return _setAttributeNS.call(this, ns, name, value);
+        };
 
-    // 2) Sanitiza HTML injetado com width="" height="" (quando vem em string)
-    const badSvgAttrRegex = /(<svg\b[^>]*?)\s(width|height)=""/gi;
+        // 2) Sanitiza HTML injetado com width="" height="" (quando vem em string)
+        const badSvgAttrRegex = /(<svg\b[^>]*?)\s(width|height)=""/gi;
 
-    function sanitizeSvgMarkup(html) {
-      if (!html || typeof html !== "string") return html;
-      // remove width="" e height="" apenas de tags <svg ...>
-      return html.replace(badSvgAttrRegex, "$1");
-    }
+        function sanitizeSvgMarkup(html) {
+          if (!html || typeof html !== "string") return html;
+          // remove width="" e height="" apenas de tags <svg ...>
+          return html.replace(badSvgAttrRegex, "$1");
+        }
 
-    const desc = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML");
-    if (desc && desc.set) {
-      Object.defineProperty(Element.prototype, "innerHTML", {
-        get: desc.get,
-        set: function (v) {
-          return desc.set.call(this, sanitizeSvgMarkup(v));
-        },
-      });
-    }
+        const desc = Object.getOwnPropertyDescriptor(
+          Element.prototype,
+          "innerHTML",
+        );
+        if (desc && desc.set) {
+          Object.defineProperty(Element.prototype, "innerHTML", {
+            get: desc.get,
+            set: function (v) {
+              return desc.set.call(this, sanitizeSvgMarkup(v));
+            },
+          });
+        }
 
-    const _insertAdjacentHTML = Element.prototype.insertAdjacentHTML;
-    Element.prototype.insertAdjacentHTML = function (position, text) {
-      return _insertAdjacentHTML.call(this, position, sanitizeSvgMarkup(text));
-    };
+        const _insertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+        Element.prototype.insertAdjacentHTML = function (position, text) {
+          return _insertAdjacentHTML.call(
+            this,
+            position,
+            sanitizeSvgMarkup(text),
+          );
+        };
 
-    // Debug (pra você ter certeza que esse patch está rodando ANTES do MP)
-    console.log("[MP FIX] SVG width/height empty sanitizer ativo");
-  })();
-</script>
+        // Debug (pra você ter certeza que esse patch está rodando ANTES do MP)
+        console.log("[MP FIX] SVG width/height empty sanitizer ativo");
+      })();
+    </script>
+
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script type="module" src="/js/checkout.js"></script>
     <script type="module" src="/cliente/_shared/account-drawer.js"></script>

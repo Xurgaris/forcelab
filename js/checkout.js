@@ -275,11 +275,16 @@ async function initPaymentBrick() {
             const shipping = Number(s2.shipping || 0);
             const totalReal = Math.max(0, subtotal - discount + shipping);
 
-            if (!cart.length || totalReal <= 0) throw new Error("Carrinho vazio.");
+            if (!cart.length || totalReal <= 0)
+              throw new Error("Carrinho vazio.");
 
             // 3) cria/reusa pedido
             openPaySteps();
-            setStep("Criando pedido…", "Salvando informações do seu pedido.", 20);
+            setStep(
+              "Criando pedido…",
+              "Salvando informações do seu pedido.",
+              20,
+            );
 
             const orderDoc = {
               uid: user.uid,
@@ -328,7 +333,11 @@ async function initPaymentBrick() {
             }
 
             // 4) cria pagamento no backend
-            setStep("Criando pagamento…", "Enviando dados ao Mercado Pago.", 55);
+            setStep(
+              "Criando pagamento…",
+              "Enviando dados ao Mercado Pago.",
+              55,
+            );
 
             const res = await fetch("/.netlify/functions/mp-create-payment", {
               method: "POST",
@@ -351,7 +360,9 @@ async function initPaymentBrick() {
 
             if (!res.ok || !data?.ok) {
               closePaySteps();
-              throw new Error(data?.error || data?.raw || "Falha ao criar pagamento");
+              throw new Error(
+                data?.error || data?.raw || "Falha ao criar pagamento",
+              );
             }
 
             const paymentId = data?.paymentId;
@@ -385,11 +396,15 @@ async function initPaymentBrick() {
             if (data.status === "approved") {
               localStorage.setItem("cart", "[]");
               window.dispatchEvent(new Event("cartUpdated"));
-              location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+              closePaySteps();
+              setTimeout(() => {
+                location.href = `success.html?id=${encodeURIComponent(orderId)}`;
+              }, 50);
             } else {
-              location.href = `pending.html?id=${encodeURIComponent(
-                orderId
-              )}&paymentId=${encodeURIComponent(paymentId)}`;
+              closePaySteps();
+              setTimeout(() => {
+                location.href = `pending.html?id=${encodeURIComponent(orderId)}&paymentId=${encodeURIComponent(paymentId)}`;
+              }, 50);
             }
 
             creatingOrder = false;

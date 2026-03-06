@@ -70,7 +70,7 @@ function renderLoggedIn(user){
   if(body){
     body.innerHTML = `
       <div class="acc-menu">
-        <a class="acc-link" href="/cliente/pedidos/">
+        <a class="acc-link" href="/cliente/conta/index.html#pedidos">
           <div>
             <strong>Meus pedidos</strong>
             <small>Acompanhe status e histórico</small>
@@ -78,15 +78,15 @@ function renderLoggedIn(user){
           <span>→</span>
         </a>
 
-        <a class="acc-link" href="/cliente/vistos/">
+        <a class="acc-link" href="/cliente/conta/index.html#dados">
           <div>
-            <strong>Visto por último</strong>
+            <strong>Meus Dados</strong>
             <small>Produtos que você viu</small>
           </div>
           <span>→</span>
         </a>
 
-        <a class="acc-link" href="/cliente/config/">
+        <a class="acc-link" href="/cliente/conta/config/">
           <div>
             <strong>Configurações</strong>
             <small>Dados e preferências</small>

@@ -1,3 +1,4 @@
+// /cliente/conta/conta.js
 import { watchAuth, logout } from "../_shared/auth.js";
 import { db } from "/js/firebase.js";
 
@@ -9,10 +10,13 @@ import {
   limit,
   getDocs,
   doc,
-  getDoc, setDoc
+  getDoc,
+  setDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-/* ========== ELEMENTOS ========== */
+/* ==========================
+   ELEMENTOS
+========================== */
 const statusEl = document.getElementById("status");
 const btnLogout = document.getElementById("btnLogout");
 
@@ -20,8 +24,15 @@ const clientName = document.getElementById("clientName");
 const clientEmail = document.getElementById("clientEmail");
 const clientHello = document.getElementById("clientHello");
 
+// tabelas
 const lastOrdersTbody = document.getElementById("lastOrders");
 const allOrdersTbody = document.getElementById("allOrders");
+
+// counters
+const stPending = document.getElementById("stPending");
+const stConfirm = document.getElementById("stConfirm");
+const stShipped = document.getElementById("stShipped");
+const stDone = document.getElementById("stDone");
 
 // drawer
 const orderDrawer = document.getElementById("orderDrawer");
@@ -29,13 +40,32 @@ const odTitle = document.getElementById("odTitle");
 const odSub = document.getElementById("odSub");
 const odBody = document.getElementById("odBody");
 
-/* ========== TABS (mesma página) ========== */
+// meus dados
+const uNome = document.getElementById("uNome");
+const uWhatsapp = document.getElementById("uWhatsapp");
+const uEmail = document.getElementById("uEmail");
+const uEndereco = document.getElementById("uEndereco");
+const uCep = document.getElementById("uCep");
+
+const btnSaveProfile = document.getElementById("btnSaveProfile");
+const btnFillFromLastOrder = document.getElementById("btnFillFromLastOrder");
+const profileMsg = document.getElementById("profileMsg");
+
+/* ==========================
+   TABS
+========================== */
 function setActiveTab(tab) {
-  document.querySelectorAll(".client-tab").forEach((el) => el.classList.remove("active"));
-  document.querySelectorAll(".client-nav-item[data-tab]").forEach((a) => a.classList.remove("active"));
+  document
+    .querySelectorAll(".client-tab")
+    .forEach((el) => el.classList.remove("active"));
+  document
+    .querySelectorAll(".client-nav-item[data-tab]")
+    .forEach((a) => a.classList.remove("active"));
 
   document.getElementById(`tab-${tab}`)?.classList.add("active");
-  document.querySelector(`.client-nav-item[data-tab="${tab}"]`)?.classList.add("active");
+  document
+    .querySelector(`.client-nav-item[data-tab="${tab}"]`)
+    ?.classList.add("active");
 }
 
 function getTabFromHash() {
@@ -46,20 +76,22 @@ function getTabFromHash() {
 window.addEventListener("hashchange", () => setActiveTab(getTabFromHash()));
 setActiveTab(getTabFromHash());
 
-// cards -> navega
-document.querySelectorAll(".client-card[data-go]").forEach((btn) => {
-  btn.addEventListener("click", () => (location.hash = `#${btn.dataset.go}`));
-});
-
-/* ========== LOGOUT ========== */
+/* ==========================
+   LOGOUT
+========================== */
 btnLogout?.addEventListener("click", async () => {
   await logout();
   window.location.href = "/";
 });
 
-/* ========== HELPERS ========== */
+/* ==========================
+   HELPERS
+========================== */
 function brl(v) {
-  return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return Number(v || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }
 
 function formatFirestoreTimestamp(ts) {
@@ -91,90 +123,77 @@ function statusLabel(orderStatus, mpStatus) {
   if (s === "pending") return "PENDENTE";
   if (s === "rejected" || s === "cancelled") return "NÃO APROVADO";
 
-  // Seu status interno
+  // seu status interno
   if (s === "aguardando_pagamento") return "AGUARDANDO";
   if (s === "pago") return "CONCLUÍDO";
   if (s === "enviado") return "ENVIADO";
+  if (s === "entregue" || s === "delivered") return "FINALIZADO";
 
   return s ? s.toUpperCase() : "—";
 }
 
-// ========== MEUS DADOS (perfil) ==========
-const uNome = document.getElementById("uNome");
-const uWhatsapp = document.getElementById("uWhatsapp");
-const uEmail = document.getElementById("uEmail");
-const uEndereco = document.getElementById("uEndereco");
-const uCep = document.getElementById("uCep");
+/**
+ * buckets para os cards
+ * pending  = aguardando/pending/in_process
+ * confirm  = aprovado/pago (separação)
+ * shipped  = enviado
+ * done     = entregue/finalizado
+ */
+function bucketOrder(data) {
+  const orderStatus = String(data?.status || "").toLowerCase();
+  const mpStatus = String(data?.mp?.status || "").toLowerCase();
 
-const btnSaveProfile = document.getElementById("btnSaveProfile");
-const btnFillFromLastOrder = document.getElementById("btnFillFromLastOrder");
-const profileMsg = document.getElementById("profileMsg");
+  if (orderStatus === "delivered" || orderStatus === "entregue") return "done";
+  if (orderStatus === "shipped" || orderStatus === "enviado") return "shipped";
+  if (mpStatus === "approved" || orderStatus === "pago") return "confirm";
 
-function showProfileMsg(text, ok = true) {
-  if (!profileMsg) return;
-  profileMsg.style.display = "block";
-  profileMsg.textContent = text;
-  profileMsg.style.borderColor = ok ? "rgba(60,255,160,.25)" : "rgba(255,80,80,.25)";
-  profileMsg.style.background = ok ? "rgba(60,255,160,.08)" : "rgba(255,80,80,.08)";
-}
-
-async function loadUserProfile(uid, fallbackEmail) {
-  if (uEmail) uEmail.value = fallbackEmail || "";
-
-  // users/{uid}
-  const ref = doc(db, "users", uid);
-  const snap = await getDoc(ref);
-
-  if (snap.exists()) {
-    const p = snap.data() || {};
-    if (uNome) uNome.value = p.nome || "";
-    if (uWhatsapp) uWhatsapp.value = p.whatsapp || "";
-    if (uEndereco) uEndereco.value = p.endereco || "";
-    if (uCep) uCep.value = p.cep || "";
-  }
-}
-
-async function saveUserProfile(uid, email) {
-  const payload = {
-    email: email || "",
-    nome: String(uNome?.value || "").trim(),
-    whatsapp: String(uWhatsapp?.value || "").trim(),
-    endereco: String(uEndereco?.value || "").trim(),
-    cep: String(uCep?.value || "").trim(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  if (!payload.nome) return showProfileMsg("Informe seu nome.", false);
-  if (!payload.whatsapp) return showProfileMsg("Informe seu WhatsApp.", false);
-
-  await setDoc(doc(db, "users", uid), payload, { merge: true });
-  showProfileMsg("Dados salvos com sucesso ✅", true);
-}
-
-async function fillFromLastOrder(uid) {
-  // pega o último pedido do usuário e preenche os campos
-  const qLast = query(
-    collection(db, "orders"),
-    where("uid", "==", uid),
-    orderBy("createdAt", "desc"),
-    limit(1)
-  );
-
-  const snap = await getDocs(qLast);
-  if (snap.empty) {
-    return showProfileMsg("Você ainda não tem pedidos para puxar dados.", false);
+  if (
+    mpStatus === "in_process" ||
+    mpStatus === "pending" ||
+    orderStatus === "aguardando_pagamento"
+  ) {
+    return "pending";
   }
 
-  const data = snap.docs[0].data() || {};
-  if (uNome) uNome.value = data?.customer?.nome || uNome.value;
-  if (uWhatsapp) uWhatsapp.value = data?.customer?.whatsapp || uWhatsapp.value;
-  if (uEndereco) uEndereco.value = data?.shipping?.endereco || uEndereco.value;
-  if (uCep) uCep.value = data?.pricing?.cep || uCep.value;
-
-  showProfileMsg("Dados puxados do último pedido. Agora clique em Salvar ✅", true);
+  if (mpStatus === "rejected" || mpStatus === "cancelled") return "pending";
+  return "pending";
 }
 
-/* ========== DRAWER ========== */
+/* ==========================
+   FILTRO (cards)
+========================== */
+function setActiveStat(filter) {
+  document.querySelectorAll(".order-stats .stat").forEach((b) => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+}
+
+function applyOrdersFilter(filter) {
+  if (!allOrdersTbody) return;
+  const rows = Array.from(allOrdersTbody.querySelectorAll("tr"));
+  rows.forEach((tr) => {
+    const g = String(tr.getAttribute("data-bucket") || "");
+    tr.style.display = !filter || filter === "all" || g === filter ? "" : "none";
+  });
+}
+
+// clique nos cards
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".order-stats .stat[data-filter]");
+  if (!btn) return;
+
+  const f = btn.dataset.filter; // pending|confirm|shipped|done
+  sessionStorage.setItem("ordersFilter", f);
+  setActiveStat(f);
+
+  // abre aba pedidos e aplica filtro
+  location.hash = "#pedidos";
+  setTimeout(() => applyOrdersFilter(f), 0);
+});
+
+/* ==========================
+   DRAWER (detalhe pedido)
+========================== */
 function openOrderDrawer() {
   if (!orderDrawer) return;
   orderDrawer.classList.add("open");
@@ -217,7 +236,7 @@ async function showOrderDetail(orderId) {
           <strong>${it?.name || "Produto"}</strong><br/>
           <small class="muted">${Number(it?.qty || 1)}x • ${brl(it?.price || 0)}</small>
         </div>
-        <strong>${brl(it?.subtotal ?? (Number(it?.price || 0) * Number(it?.qty || 1)))}</strong>
+        <strong>${brl(it?.subtotal ?? Number(it?.price || 0) * Number(it?.qty || 1))}</strong>
       </div>
     `
     )
@@ -231,23 +250,88 @@ async function showOrderDetail(orderId) {
 
     <h3 style="margin:14px 0 8px;">Itens</h3>
     <div class="od-items">${itemsHtml || `<p class="muted">Sem itens.</p>`}</div>
-
-    <div style="margin-top:14px;">
-      <a class="btn btn-ghost btn-sm" href="/cliente/pedidos/" style="text-decoration:none;display:inline-block;">
-        Abrir lista completa
-      </a>
-    </div>
   `;
 }
 
-/* ✅ 1 listener só (funciona para lastOrders + allOrders) */
+// 1 listener global: "Ver"
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-view-order]");
   if (!btn) return;
   showOrderDetail(btn.dataset.viewOrder);
 });
 
-/* ========== LISTAS ========== */
+/* ==========================
+   MEUS DADOS
+========================== */
+function showProfileMsg(text, ok = true) {
+  if (!profileMsg) return;
+  profileMsg.style.display = "block";
+  profileMsg.textContent = text;
+  profileMsg.style.borderColor = ok
+    ? "rgba(60,255,160,.25)"
+    : "rgba(255,80,80,.25)";
+  profileMsg.style.background = ok
+    ? "rgba(60,255,160,.08)"
+    : "rgba(255,80,80,.08)";
+}
+
+async function loadUserProfile(uid, fallbackEmail) {
+  if (uEmail) uEmail.value = fallbackEmail || "";
+
+  const ref = doc(db, "users", uid);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const p = snap.data() || {};
+    if (uNome) uNome.value = p.nome || "";
+    if (uWhatsapp) uWhatsapp.value = p.whatsapp || "";
+    if (uEndereco) uEndereco.value = p.endereco || "";
+    if (uCep) uCep.value = p.cep || "";
+  }
+}
+
+async function saveUserProfile(uid, email) {
+  const payload = {
+    email: email || "",
+    nome: String(uNome?.value || "").trim(),
+    whatsapp: String(uWhatsapp?.value || "").trim(),
+    endereco: String(uEndereco?.value || "").trim(),
+    cep: String(uCep?.value || "").trim(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (!payload.nome) return showProfileMsg("Informe seu nome.", false);
+  if (!payload.whatsapp) return showProfileMsg("Informe seu WhatsApp.", false);
+
+  await setDoc(doc(db, "users", uid), payload, { merge: true });
+  showProfileMsg("Dados salvos com sucesso ✅", true);
+}
+
+async function fillFromLastOrder(uid) {
+  const qLast = query(
+    collection(db, "orders"),
+    where("uid", "==", uid),
+    orderBy("createdAt", "desc"),
+    limit(1)
+  );
+
+  const snap = await getDocs(qLast);
+  if (snap.empty) {
+    return showProfileMsg("Você ainda não tem pedidos para puxar dados.", false);
+  }
+
+  const data = snap.docs[0].data() || {};
+  if (uNome) uNome.value = data?.customer?.nome || uNome.value;
+  if (uWhatsapp) uWhatsapp.value = data?.customer?.whatsapp || uWhatsapp.value;
+  if (uEndereco) uEndereco.value = data?.shipping?.endereco || uEndereco.value;
+  if (uCep) uCep.value = data?.pricing?.cep || uCep.value;
+
+  showProfileMsg("Dados puxados do último pedido. Agora clique em Salvar ✅", true);
+}
+
+/* ==========================
+   LISTAS
+========================== */
 async function loadLastOrders(uid) {
   if (!lastOrdersTbody) return;
 
@@ -268,11 +352,9 @@ async function loadLastOrders(uid) {
   }
 
   lastOrdersTbody.innerHTML = "";
-
   snap.forEach((d) => {
     const data = d.data();
     const orderId = d.id;
-
     const total = data?.pricing?.total ?? 0;
     const date = formatFirestoreTimestamp(data?.createdAt);
     const pay = paymentLabel(data?.mp?.method);
@@ -307,14 +389,26 @@ async function loadAllOrders(uid) {
 
   if (snap.empty) {
     allOrdersTbody.innerHTML = `<tr><td colspan="6" class="muted">Você ainda não tem pedidos.</td></tr>`;
+    if (stPending) stPending.textContent = "0";
+    if (stConfirm) stConfirm.textContent = "0";
+    if (stShipped) stShipped.textContent = "0";
+    if (stDone) stDone.textContent = "0";
     return;
   }
 
-  allOrdersTbody.innerHTML = "";
+  let cPending = 0, cConfirm = 0, cShipped = 0, cDone = 0;
 
+  // render
+  allOrdersTbody.innerHTML = "";
   snap.forEach((d) => {
     const data = d.data();
     const orderId = d.id;
+
+    const b = bucketOrder(data);
+    if (b === "pending") cPending++;
+    if (b === "confirm") cConfirm++;
+    if (b === "shipped") cShipped++;
+    if (b === "done") cDone++;
 
     const total = data?.pricing?.total ?? 0;
     const date = formatFirestoreTimestamp(data?.createdAt);
@@ -322,7 +416,7 @@ async function loadAllOrders(uid) {
     const st = statusLabel(data?.status, data?.mp?.status);
 
     allOrdersTbody.innerHTML += `
-      <tr>
+      <tr data-bucket="${b}">
         <td>#${orderId.slice(0, 10).toUpperCase()}</td>
         <td>${pay}</td>
         <td>${date}</td>
@@ -332,9 +426,24 @@ async function loadAllOrders(uid) {
       </tr>
     `;
   });
+
+  // counters
+  if (stPending) stPending.textContent = String(cPending);
+  if (stConfirm) stConfirm.textContent = String(cConfirm);
+  if (stShipped) stShipped.textContent = String(cShipped);
+  if (stDone) stDone.textContent = String(cDone);
+
+  // aplica filtro salvo (uma vez, no final)
+  const saved = sessionStorage.getItem("ordersFilter") || "";
+  if (saved) {
+    setActiveStat(saved);
+    applyOrdersFilter(saved);
+  }
 }
 
-/* ========== AUTH ========== */
+/* ==========================
+   AUTH
+========================== */
 watchAuth(async (user) => {
   if (!user) {
     window.location.href = "/cliente/login/";
@@ -350,79 +459,31 @@ watchAuth(async (user) => {
   clientHello.textContent = `Olá, ${nome}`;
 
   await loadLastOrders(user.uid);
-  await loadAllOrders(user.uid); // ✅ agora “Meus pedidos” funciona
-  // ========== MEUS DADOS (perfil) ==========
-const uNome = document.getElementById("uNome");
-const uWhatsapp = document.getElementById("uWhatsapp");
-const uEmail = document.getElementById("uEmail");
-const uEndereco = document.getElementById("uEndereco");
-const uCep = document.getElementById("uCep");
+  await loadAllOrders(user.uid);
+  await loadUserProfile(user.uid, user.email);
 
-const btnSaveProfile = document.getElementById("btnSaveProfile");
-const btnFillFromLastOrder = document.getElementById("btnFillFromLastOrder");
-const profileMsg = document.getElementById("profileMsg");
+  // listeners (uma vez)
+  btnSaveProfile?.addEventListener("click", async () => {
+    try {
+      btnSaveProfile.disabled = true;
+      await saveUserProfile(user.uid, user.email);
+    } catch (e) {
+      console.error(e);
+      showProfileMsg("Não foi possível salvar seus dados.", false);
+    } finally {
+      btnSaveProfile.disabled = false;
+    }
+  });
 
-function showProfileMsg(text, ok = true) {
-  if (!profileMsg) return;
-  profileMsg.style.display = "block";
-  profileMsg.textContent = text;
-  profileMsg.style.borderColor = ok ? "rgba(60,255,160,.25)" : "rgba(255,80,80,.25)";
-  profileMsg.style.background = ok ? "rgba(60,255,160,.08)" : "rgba(255,80,80,.08)";
-}
-
-async function loadUserProfile(uid, fallbackEmail) {
-  if (uEmail) uEmail.value = fallbackEmail || "";
-
-  // users/{uid}
-  const ref = doc(db, "users", uid);
-  const snap = await getDoc(ref);
-
-  if (snap.exists()) {
-    const p = snap.data() || {};
-    if (uNome) uNome.value = p.nome || "";
-    if (uWhatsapp) uWhatsapp.value = p.whatsapp || "";
-    if (uEndereco) uEndereco.value = p.endereco || "";
-    if (uCep) uCep.value = p.cep || "";
-  }
-}
-
-async function saveUserProfile(uid, email) {
-  const payload = {
-    email: email || "",
-    nome: String(uNome?.value || "").trim(),
-    whatsapp: String(uWhatsapp?.value || "").trim(),
-    endereco: String(uEndereco?.value || "").trim(),
-    cep: String(uCep?.value || "").trim(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  if (!payload.nome) return showProfileMsg("Informe seu nome.", false);
-  if (!payload.whatsapp) return showProfileMsg("Informe seu WhatsApp.", false);
-
-  await setDoc(doc(db, "users", uid), payload, { merge: true });
-  showProfileMsg("Dados salvos com sucesso ✅", true);
-}
-
-async function fillFromLastOrder(uid) {
-  // pega o último pedido do usuário e preenche os campos
-  const qLast = query(
-    collection(db, "orders"),
-    where("uid", "==", uid),
-    orderBy("createdAt", "desc"),
-    limit(1)
-  );
-
-  const snap = await getDocs(qLast);
-  if (snap.empty) {
-    return showProfileMsg("Você ainda não tem pedidos para puxar dados.", false);
-  }
-
-  const data = snap.docs[0].data() || {};
-  if (uNome) uNome.value = data?.customer?.nome || uNome.value;
-  if (uWhatsapp) uWhatsapp.value = data?.customer?.whatsapp || uWhatsapp.value;
-  if (uEndereco) uEndereco.value = data?.shipping?.endereco || uEndereco.value;
-  if (uCep) uCep.value = data?.pricing?.cep || uCep.value;
-
-  showProfileMsg("Dados puxados do último pedido. Agora clique em Salvar ✅", true);
-}
+  btnFillFromLastOrder?.addEventListener("click", async () => {
+    try {
+      btnFillFromLastOrder.disabled = true;
+      await fillFromLastOrder(user.uid);
+    } catch (e) {
+      console.error(e);
+      showProfileMsg("Não foi possível puxar do último pedido.", false);
+    } finally {
+      btnFillFromLastOrder.disabled = false;
+    }
+  });
 });

@@ -200,6 +200,54 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
+      /* ====== ORDER STATS (Pendentes / Enviados / Finalizados / A confirmar) ====== */
+.order-stats{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 16px 0 18px;
+}
+
+.stat{
+  text-align:left;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  cursor:pointer;
+  transition: .15s ease;
+  color:#fff;
+}
+
+.stat strong{
+  display:block;
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat span{
+  display:block;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.stat:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,0,0,.25);
+  transform: translateY(-1px);
+}
+
+/* estado ativo (quando clicar no filtro) */
+.stat.active{
+  border-color: rgba(255,0,0,.38);
+  box-shadow: 0 0 0 2px rgba(255,0,0,.10) inset;
+  background: linear-gradient(90deg, rgba(255,0,0,.18), rgba(0,0,0,.18));
+}
+
+@media (max-width: 980px){
+  .order-stats{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
     </style>
   </head>
 
@@ -355,29 +403,29 @@
 
         <!-- TAB: PERFIL -->
         <div class="client-tab active" id="tab-perfil">
-          <div class="client-cards">
-            <button class="client-card" data-go="dados" type="button">
-              <span class="client-card-ico">👤</span>
-              <strong>Meus dados</strong>
-              <small class="muted">Editar informações</small>
+          <div class="order-stats" id="orderStats">
+            <button class="stat" type="button" data-filter="pending">
+              <strong id="stPending">0</strong>
+              <span>Pendentes</span>
+              <small class="muted">Aguardando pagamento / análise</small>
             </button>
 
-            <button class="client-card" data-go="pedidos" type="button">
-              <span class="client-card-ico">📦</span>
-              <strong>Meus pedidos</strong>
-              <small class="muted">Acompanhar status</small>
+            <button class="stat" type="button" data-filter="confirm">
+              <strong id="stConfirm">0</strong>
+              <span>A confirmar</span>
+              <small class="muted">Pagamento aprovado (separação)</small>
             </button>
 
-            <button class="client-card" data-go="enderecos" type="button">
-              <span class="client-card-ico">📍</span>
-              <strong>Endereços</strong>
-              <small class="muted">Gerenciar entregas</small>
+            <button class="stat" type="button" data-filter="shipped">
+              <strong id="stShipped">0</strong>
+              <span>Enviados</span>
+              <small class="muted">Em transporte</small>
             </button>
 
-            <button class="client-card" data-go="favoritos" type="button">
-              <span class="client-card-ico">❤️</span>
-              <strong>Favoritos</strong>
-              <small class="muted">Produtos salvos</small>
+            <button class="stat" type="button" data-filter="done">
+              <strong id="stDone">0</strong>
+              <span>Finalizados</span>
+              <small class="muted">Entregues / concluídos</small>
             </button>
           </div>
 
@@ -416,9 +464,7 @@
           <div class="client-panel">
             <div class="client-panel-head">
               <h2 style="margin: 0">Meus pedidos</h2>
-              <a class="btn btn-ghost btn-sm" href="/cliente/pedidos/"
-                >Abrir página completa</a
-              >
+              
             </div>
 
             <div class="client-table-wrap">

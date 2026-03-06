@@ -1,17 +1,23 @@
-
-
-  // /cliente/_shared/auth.js
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+// /cliente/_shared/auth.js
+import {
+  initializeApp,
+  getApp,
+  getApps,
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import {
   getAuth,
   onAuthStateChanged,
   signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendEmailVerification,
+  updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
-// ⚠️ Coloque seu firebaseConfig aqui (o mesmo do seu firebase.js)
-// (pode manter oculto publicamente se quiser, mas em front-end ele sempre vai existir)
 const firebaseConfig = {
-   apiKey: "AIzaSyA7nEeM0RAJ77HS-bvq84rpAbvV4IGosEw",
+  apiKey: "AIzaSyA7nEeM0RAJ77HS-bvq84rpAbvV4IGosEw",
   authDomain: "forcelabnutrition-afaa7.firebaseapp.com",
   projectId: "forcelabnutrition-afaa7",
 
@@ -22,10 +28,7 @@ const firebaseConfig = {
   appId: "1:355893469293:web:020fbced4dd761dc9d9f64",
 };
 
-// evita inicializar duas vezes
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-
-// ✅ AQUI é onde nasce o auth (o seu erro é porque isso não existia)
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 export function watchAuth(cb) {
@@ -43,4 +46,31 @@ export function requireAuth() {
       resolve(user);
     });
   });
+}
+
+export async function signupEmail({ nome, email, senha }) {
+  const cred = await createUserWithEmailAndPassword(auth, email, senha);
+
+  // Nome no Auth (displayName)
+  if (nome) {
+    await updateProfile(cred.user, { displayName: nome });
+  }
+
+  // Dispara verificação de e-mail
+  await sendEmailVerification(cred.user);
+
+  return cred.user;
+}
+
+export async function loginEmail({ email, senha }) {
+  const cred = await signInWithEmailAndPassword(auth, email, senha);
+  return cred.user;
+}
+
+export async function loginGoogle() {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+
+  const cred = await signInWithPopup(auth, provider);
+  return cred.user;
 }

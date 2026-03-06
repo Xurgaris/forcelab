@@ -42,31 +42,8 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-btnRegister.addEventListener("click", async () => {
-  const email = emailEl.value.trim().toLowerCase();
-  const pass = passEl.value;
-
-  if (!email || !pass) {
-    showMessage("Preencha email e senha para criar a conta.");
-    return;
-  }
-
-  setLoading(true);
-  try{
-    await createUserWithEmailAndPassword(auth, email, pass);
-    window.location.href = "/cliente/conta/";
-  }catch(err){
-    console.error(err);
-    if (String(err?.code).includes("auth/email-already-in-use")){
-      showMessage("Esse email já tem conta. Clique em Entrar ou redefina a senha.");
-    } else if (String(err?.code).includes("auth/weak-password")){
-      showMessage("Senha fraca. Use pelo menos 6 caracteres.");
-    } else {
-      showMessage("Não foi possível criar a conta. Tente novamente.");
-    }
-  }finally{
-    setLoading(false);
-  }
+btnRegister.addEventListener("click", () => {
+  window.location.href = "/cliente/cadastro/";
 });
 
 btnReset.addEventListener("click", async () => {

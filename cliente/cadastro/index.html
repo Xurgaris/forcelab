@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Criar conta | ForceLab</title>
+  <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
+  <link rel="shortcut icon" href="/img/force-logo.png" type="image/x-icon" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Criar conta</h1>
+      <p class="muted small">Crie sua conta para acompanhar pedidos e finalizar compras mais rápido.</p>
+
+      <button class="btn" id="btnGoogle" type="button" style="width:100%; margin-top:10px;">
+        Entrar com Google
+      </button>
+
+      <div class="msg" style="margin-top:12px;">ou continue com e-mail</div>
+
+      <form class="form" id="formSignup" autocomplete="on">
+        <label>
+          <span>Nome completo</span>
+          <input id="nome" required />
+        </label>
+
+        <label>
+          <span>WhatsApp</span>
+          <input id="whatsapp" inputmode="tel" placeholder="(00) 00000-0000" required />
+        </label>
+
+        <label>
+          <span>E-mail</span>
+          <input id="email" type="email" required />
+        </label>
+
+        <label>
+          <span>Senha</span>
+          <input id="senha" type="password" minlength="6" required />
+        </label>
+
+        <label>
+          <span>Confirmar senha</span>
+          <input id="senha2" type="password" minlength="6" required />
+        </label>
+
+        <label style="display:flex; gap:10px; align-items:flex-start;">
+          <input id="terms" type="checkbox" required style="width:auto; margin-top:4px;">
+          <span class="small">Li e aceito os termos e política de privacidade.</span>
+        </label>
+
+        <button class="btn" id="btnCreate" type="submit">Criar conta</button>
+      </form>
+
+      <div class="msg" id="msg" style="display:none;"></div>
+
+      <a class="link" href="/cliente/login/">Já tenho conta → Entrar</a>
+      <a class="link" href="/">← Voltar para a loja</a>
+    </section>
+  </main>
+
+  <script type="module" src="./cadastro.js"></script>
+</body>
+</html>

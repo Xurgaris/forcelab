@@ -1,46 +1,550 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Minha conta | ForceLab</title>
-  <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
-   <link rel="shortcut icon" href="../img/force-logo.png" type="image/x-icon" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Minha conta | ForceLab</title>
 
-<body>
-  <main class="wrap">
-    <section class="card">
-      <h1>Minha conta</h1>
-      <p class="muted" id="status">Verificando login...</p>
+    <link rel="stylesheet" href="/cliente/_shared/cliente.css" />
+    <link
+      rel="shortcut icon"
+      href="../img/force-logo.png"
+      type="image/x-icon"
+    />
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-        <a class="btn" href="/cliente/pedidos/" style="text-decoration:none; display:inline-block;">Meus pedidos</a>
-        <button class="btn" id="btnLogout" type="button">Sair</button>
-      </div>
-
-      <a class="link" href="/" style="margin-top:16px;">← Voltar para a loja</a>
-    </section>
-  </main>
-
-  <script type="module">
-    import { watchAuth, logout } from "../_shared/auth.js";
-
-    const status = document.getElementById("status");
-    const btnLogout = document.getElementById("btnLogout");
-
-    watchAuth((user) => {
-      if (user) {
-        status.textContent = `Logado como: ${user.email}`;
-      } else {
-        window.location.href = "/cliente/login/";
+    <style>
+      /* ====== LAYOUT CLIENTE (estilo print) ====== */
+      body {
+        background: #2d2d2d;
+        color: #fff;
       }
-    });
 
-    btnLogout.addEventListener("click", async () => {
-      await logout();
-      window.location.href = "/";
-    });
-  </script>
-</body>
+      .client-shell {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .client-sidebar {
+        background: rgba(255, 255, 255, 0.04);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 18px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .client-sidebar-head {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.2);
+        margin-bottom: 14px;
+      }
+      .client-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 0, 0, 0.15);
+        border: 1px solid rgba(255, 0, 0, 0.25);
+        font-size: 18px;
+      }
+      .client-user small {
+        display: block;
+        margin-top: 2px;
+      }
+
+      .client-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .client-nav-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.18);
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.15s ease;
+        user-select: none;
+      }
+      .client-nav-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .client-nav-item.active {
+        border-color: rgba(255, 0, 0, 0.35);
+        box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1) inset;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.2),
+          rgba(0, 0, 0, 0.18)
+        );
+      }
+      .client-nav-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 8px 0;
+      }
+      .client-nav-item.danger {
+        background: rgba(255, 0, 0, 0.1);
+        border-color: rgba(255, 0, 0, 0.2);
+      }
+
+      /* Content */
+      .client-content {
+        padding: 24px;
+      }
+      .client-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+        border-bottom: 2px solid rgba(255, 0, 0, 0.55);
+        padding-bottom: 14px;
+      }
+      .client-header h1 {
+        margin: 0;
+        font-size: 34px;
+      }
+
+      /* Tabs */
+      .client-tab {
+        display: none;
+      }
+      .client-tab.active {
+        display: block;
+      }
+
+      /* Cards */
+      .client-cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin: 16px 0 18px;
+      }
+      .client-card {
+        text-align: left;
+        padding: 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+      .client-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 0, 0, 0.25);
+        transform: translateY(-1px);
+      }
+      .client-card-ico {
+        font-size: 22px;
+        display: inline-block;
+        margin-bottom: 10px;
+      }
+
+      /* Panel */
+      .client-panel {
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.18);
+        padding: 14px;
+      }
+      .client-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      /* Table */
+      .client-table-wrap {
+        overflow: auto;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .client-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+      .client-table th,
+      .client-table td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 980px) {
+        .client-shell {
+          grid-template-columns: 1fr;
+        }
+        .client-sidebar {
+          position: relative;
+          height: auto;
+        }
+        .client-cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- DRAWER: DETALHE DO PEDIDO -->
+    <div class="order-drawer" id="orderDrawer" aria-hidden="true">
+      <div class="order-overlay" data-close="order"></div>
+
+      <aside class="order-panel" role="dialog" aria-label="Detalhe do pedido">
+        <header class="order-head">
+          <div>
+            <strong id="odTitle">Pedido</strong>
+            <small class="muted" id="odSub">—</small>
+          </div>
+          <button class="btn-mini ghost" type="button" data-close="order">
+            Fechar
+          </button>
+        </header>
+
+        <div class="order-body" id="odBody">
+          <p class="muted">Carregando…</p>
+        </div>
+      </aside>
+    </div>
+
+    <style>
+      .order-drawer {
+        position: fixed;
+        inset: 0;
+        display: none;
+        z-index: 9999;
+      }
+      .order-drawer.open {
+        display: block;
+      }
+      .order-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+      }
+      .order-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: min(520px, 92vw);
+        background: rgba(20, 20, 20, 0.98);
+        border-left: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 14px;
+        overflow: auto;
+      }
+      .order-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .order-body {
+        padding-top: 12px;
+      }
+      .od-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .od-item {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .od-item img {
+        width: 52px;
+        height: 52px;
+        object-fit: cover;
+        border-radius: 10px;
+        background: #111;
+      }
+      .od-kv {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+    </style>
+
+    <script>
+      // fechar drawer
+      document.addEventListener("click", (e) => {
+        const t = e.target;
+        if (t && t.matches('[data-close="order"]')) {
+          const d = document.getElementById("orderDrawer");
+          d?.classList.remove("open");
+          d?.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+        }
+      });
+    </script>
+    <main class="client-shell">
+      <!-- SIDEBAR -->
+      <aside class="client-sidebar" aria-label="Menu do cliente">
+        <div class="client-sidebar-head">
+          <div class="client-avatar">👤</div>
+          <div class="client-user">
+            <strong id="clientName">Minha Conta</strong>
+            <small class="muted" id="clientEmail">—</small>
+          </div>
+        </div>
+
+        <nav class="client-nav">
+          <a class="client-nav-item active" href="#perfil" data-tab="perfil"
+            >Minha Conta</a
+          >
+          <a class="client-nav-item" href="#pedidos" data-tab="pedidos"
+            >Meus Pedidos</a
+          >
+          <!--<a class="client-nav-item" href="#favoritos" data-tab="favoritos"
+            >Meus Favoritos</a>
+            <a class="client-nav-item" href="#enderecos" data-tab="enderecos"
+            >Endereços</a
+            >
+          -->
+          <a class="client-nav-item" href="#dados" data-tab="dados"
+            >Meus dados</a
+          >
+
+          <div class="client-nav-divider"></div>
+
+          <a class="client-nav-item" href="/" style="opacity: 0.9"
+            >← Voltar para a loja</a
+          >
+          <button class="client-nav-item danger" id="btnLogout" type="button">
+            Sair
+          </button>
+        </nav>
+      </aside>
+
+      <!-- CONTENT -->
+      <section class="client-content">
+        <header class="client-header">
+          <div>
+            <h1 id="clientHello">Olá, Cliente</h1>
+            <p class="muted" id="status">Verificando login...</p>
+          </div>
+        </header>
+
+        <!-- TAB: PERFIL -->
+        <div class="client-tab active" id="tab-perfil">
+          <div class="client-cards">
+            <button class="client-card" data-go="dados" type="button">
+              <span class="client-card-ico">👤</span>
+              <strong>Meus dados</strong>
+              <small class="muted">Editar informações</small>
+            </button>
+
+            <button class="client-card" data-go="pedidos" type="button">
+              <span class="client-card-ico">📦</span>
+              <strong>Meus pedidos</strong>
+              <small class="muted">Acompanhar status</small>
+            </button>
+
+            <button class="client-card" data-go="enderecos" type="button">
+              <span class="client-card-ico">📍</span>
+              <strong>Endereços</strong>
+              <small class="muted">Gerenciar entregas</small>
+            </button>
+
+            <button class="client-card" data-go="favoritos" type="button">
+              <span class="client-card-ico">❤️</span>
+              <strong>Favoritos</strong>
+              <small class="muted">Produtos salvos</small>
+            </button>
+          </div>
+
+          <div class="client-panel">
+            <div class="client-panel-head">
+              <h2 style="margin: 0">Últimos pedidos</h2>
+              <a class="btn btn-ghost btn-sm" href="#pedidos" data-tab="pedidos"
+                >Ver todos</a
+              >
+            </div>
+
+            <div class="client-table-wrap">
+              <table class="client-table">
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Pagamento</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="lastOrders">
+                  <tr>
+                    <td colspan="6" class="muted">Sem pedidos ainda.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: PEDIDOS -->
+        <div class="client-tab" id="tab-pedidos">
+          <div class="client-panel">
+            <div class="client-panel-head">
+              <h2 style="margin: 0">Meus pedidos</h2>
+              <a class="btn btn-ghost btn-sm" href="/cliente/pedidos/"
+                >Abrir página completa</a
+              >
+            </div>
+
+            <div class="client-table-wrap">
+              <table class="client-table">
+                <thead>
+                  <tr>
+                    <th>Número</th>
+                    <th>Pagamento</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="allOrders">
+                  <tr>
+                    <td colspan="6" class="muted">Carregando…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- TAB: FAVORITOS 
+  <div class="client-tab" id="tab-favoritos">
+          <div class="client-panel">
+            <div class="client-panel-head">
+              <h2 style="margin: 0">Meus favoritos</h2>
+            </div>
+            <div class="muted">Em breve…</div>
+          </div>
+        </div> 
+        
+        <!-- TAB: ENDEREÇOS 
+             <div class="client-tab" id="tab-enderecos">
+          <div class="client-panel">
+            <div class="client-panel-head">
+              <h2 style="margin: 0">Endereços</h2>
+            </div>
+            <div class="muted">Em breve…</div>
+          </div>
+        </div>
+      -->
+
+        <!-- TAB: DADOS -->
+        <div class="client-tab" id="tab-dados">
+          <div class="client-panel">
+            <div class="client-panel-head">
+              <h2 style="margin: 0">Meus dados</h2>
+              <small class="muted"
+                >Atualize seus dados para agilizar o checkout.</small
+              >
+            </div>
+
+            <div
+              class="client-form"
+              style="
+                margin-top: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+              "
+            >
+              <div class="field">
+                <label>Nome</label>
+                <input id="uNome" type="text" placeholder="Seu nome" />
+              </div>
+
+              <div class="field">
+                <label>WhatsApp</label>
+                <input
+                  id="uWhatsapp"
+                  type="text"
+                  placeholder="(00) 00000-0000"
+                />
+              </div>
+
+              <div class="field">
+                <label>E-mail</label>
+                <input id="uEmail" type="email" disabled />
+                <small class="muted"
+                  >O e-mail vem do login e não pode ser alterado aqui.</small
+                >
+              </div>
+
+              <div class="field">
+                <label>Endereço completo</label>
+                <input
+                  id="uEndereco"
+                  type="text"
+                  placeholder="Rua, número, bairro, cidade/UF"
+                />
+              </div>
+
+              <div class="field">
+                <label>CEP (opcional)</label>
+                <input id="uCep" type="text" placeholder="00000-000" />
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  flex-wrap: wrap;
+                  margin-top: 6px;
+                "
+              >
+                <button class="btn" id="btnSaveProfile" type="button">
+                  Salvar dados
+                </button>
+                <button
+                  class="btn btn-ghost"
+                  id="btnFillFromLastOrder"
+                  type="button"
+                >
+                  Puxar do último pedido
+                </button>
+              </div>
+
+              <div class="msg" id="profileMsg" style="display: none"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./conta.js"></script>
+  </body>
 </html>

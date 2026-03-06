@@ -1,11 +1,37 @@
 :root{
-  --bg:#070707;
-  --card: rgba(255,255,255,.05);
-  --border: rgba(255,255,255,.12);
-  --text:#fff;
+  /* fundo mais profundo */
+  --bg:#070709;
+  --bg-2:#0b0b10;
+
+  /* cards com vidro escuro */
+  --card: rgba(5, 5, 5, 0.822);
+  --card-2: rgb(0, 0, 0);
+
+  /* bordas bem discretas */
+  --border: rgba(255,255,255,.10);
+  --border-2: rgb(0, 0, 0);
+
+  /* texto */
+  --text:#ffffff;
   --muted: rgba(255,255,255,.72);
-  --primary:#ff1a1a;
+
+  /* vinho premium (principal) */
+  --primary:#8b0f1c;          /* vinho */
+  --primary-2:#b01224;        /* vinho mais vivo pra hover */
+  --primary-soft: rgba(139,15,28,.18);  /* glow/transparente */
+  --primary-line: rgba(139,15,28,.35);  /* borda/outline */
+
+  /* estados */
+  --ok: rgba(60,255,160,.18);
+  --danger: rgba(255,80,80,.18);
+
+  /* layout */
   --radius:18px;
+  --radius-lg:26px;
+
+  /* sombras */
+  --shadow-soft: 0 22px 60px rgba(0,0,0,.60);
+  --shadow-wine: 0 0 70px rgba(139,15,28,.18);
 }
 
 *{box-sizing:border-box}
@@ -102,3 +128,4 @@ input:focus{border-color: rgba(255,26,26,.55); box-shadow: 0 0 0 3px rgba(255,26
 .stat span{font-weight:800; display:block;}
 .stat small{display:block; margin-top:4px;}
 .stat:hover{border-color: rgba(255,26,26,.35);}
+

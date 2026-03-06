@@ -73,7 +73,19 @@ function getTabFromHash() {
   return h || "perfil";
 }
 
-window.addEventListener("hashchange", () => setActiveTab(getTabFromHash()));
+window.addEventListener("hashchange", () => {
+  setActiveTab(getTabFromHash());
+
+  // se entrar em #pedidos e tiver filtro salvo, aplica
+  if (location.hash === "#pedidos") {
+    const saved = sessionStorage.getItem("ordersFilter") || "";
+    if (saved) {
+      setActiveStat(saved);
+      applyOrdersFilter(saved);
+    }
+  }
+});
+
 setActiveTab(getTabFromHash());
 
 /* ==========================
@@ -170,14 +182,16 @@ function setActiveStat(filter) {
 
 function applyOrdersFilter(filter) {
   if (!allOrdersTbody) return;
+
   const rows = Array.from(allOrdersTbody.querySelectorAll("tr"));
   rows.forEach((tr) => {
     const g = String(tr.getAttribute("data-bucket") || "");
-    tr.style.display = !filter || filter === "all" || g === filter ? "" : "none";
+    tr.style.display =
+      !filter || filter === "all" || g === filter ? "" : "none";
   });
 }
 
-// clique nos cards
+// clique nos cards (Pendentes / etc)
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".order-stats .stat[data-filter]");
   if (!btn) return;
@@ -234,9 +248,13 @@ async function showOrderDetail(orderId) {
         <img src="${it?.image || "https://via.placeholder.com/80"}" alt="">
         <div style="flex:1">
           <strong>${it?.name || "Produto"}</strong><br/>
-          <small class="muted">${Number(it?.qty || 1)}x • ${brl(it?.price || 0)}</small>
+          <small class="muted">${Number(it?.qty || 1)}x • ${brl(
+        it?.price || 0
+      )}</small>
         </div>
-        <strong>${brl(it?.subtotal ?? Number(it?.price || 0) * Number(it?.qty || 1))}</strong>
+        <strong>${brl(
+          it?.subtotal ?? Number(it?.price || 0) * Number(it?.qty || 1)
+        )}</strong>
       </div>
     `
     )
@@ -246,14 +264,18 @@ async function showOrderDetail(orderId) {
     <div class="od-kv"><span class="muted">Status</span><strong>${st}</strong></div>
     <div class="od-kv"><span class="muted">Pagamento</span><strong>${pay}</strong></div>
     <div class="od-kv"><span class="muted">Total</span><strong>${brl(total)}</strong></div>
-    <div class="od-kv"><span class="muted">Endereço</span><strong>${data?.shipping?.endereco || "—"}</strong></div>
+    <div class="od-kv"><span class="muted">Endereço</span><strong>${
+      data?.shipping?.endereco || "—"
+    }</strong></div>
 
     <h3 style="margin:14px 0 8px;">Itens</h3>
-    <div class="od-items">${itemsHtml || `<p class="muted">Sem itens.</p>`}</div>
+    <div class="od-items">${
+      itemsHtml || `<p class="muted">Sem itens.</p>`
+    }</div>
   `;
 }
 
-// 1 listener global: "Ver"
+// 1 listener global: botão "Ver"
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-view-order]");
   if (!btn) return;
@@ -326,7 +348,10 @@ async function fillFromLastOrder(uid) {
   if (uEndereco) uEndereco.value = data?.shipping?.endereco || uEndereco.value;
   if (uCep) uCep.value = data?.pricing?.cep || uCep.value;
 
-  showProfileMsg("Dados puxados do último pedido. Agora clique em Salvar ✅", true);
+  showProfileMsg(
+    "Dados puxados do último pedido. Agora clique em Salvar ✅",
+    true
+  );
 }
 
 /* ==========================
@@ -355,13 +380,14 @@ async function loadLastOrders(uid) {
   snap.forEach((d) => {
     const data = d.data();
     const orderId = d.id;
+
     const total = data?.pricing?.total ?? 0;
     const date = formatFirestoreTimestamp(data?.createdAt);
     const pay = paymentLabel(data?.mp?.method);
     const st = statusLabel(data?.status, data?.mp?.status);
 
     lastOrdersTbody.innerHTML += `
-      <tr>
+      <tr data-bucket="${bucketOrder(data)}">
         <td>#${orderId.slice(0, 10).toUpperCase()}</td>
         <td>${pay}</td>
         <td>${date}</td>
@@ -396,10 +422,13 @@ async function loadAllOrders(uid) {
     return;
   }
 
-  let cPending = 0, cConfirm = 0, cShipped = 0, cDone = 0;
+  let cPending = 0,
+    cConfirm = 0,
+    cShipped = 0,
+    cDone = 0;
 
-  // render
   allOrdersTbody.innerHTML = "";
+
   snap.forEach((d) => {
     const data = d.data();
     const orderId = d.id;
@@ -444,6 +473,8 @@ async function loadAllOrders(uid) {
 /* ==========================
    AUTH
 ========================== */
+let listenersBound = false;
+
 watchAuth(async (user) => {
   if (!user) {
     window.location.href = "/cliente/login/";
@@ -462,28 +493,32 @@ watchAuth(async (user) => {
   await loadAllOrders(user.uid);
   await loadUserProfile(user.uid, user.email);
 
-  // listeners (uma vez)
-  btnSaveProfile?.addEventListener("click", async () => {
-    try {
-      btnSaveProfile.disabled = true;
-      await saveUserProfile(user.uid, user.email);
-    } catch (e) {
-      console.error(e);
-      showProfileMsg("Não foi possível salvar seus dados.", false);
-    } finally {
-      btnSaveProfile.disabled = false;
-    }
-  });
+  // listeners (só uma vez)
+  if (!listenersBound) {
+    listenersBound = true;
 
-  btnFillFromLastOrder?.addEventListener("click", async () => {
-    try {
-      btnFillFromLastOrder.disabled = true;
-      await fillFromLastOrder(user.uid);
-    } catch (e) {
-      console.error(e);
-      showProfileMsg("Não foi possível puxar do último pedido.", false);
-    } finally {
-      btnFillFromLastOrder.disabled = false;
-    }
-  });
+    btnSaveProfile?.addEventListener("click", async () => {
+      try {
+        btnSaveProfile.disabled = true;
+        await saveUserProfile(user.uid, user.email);
+      } catch (e) {
+        console.error(e);
+        showProfileMsg("Não foi possível salvar seus dados.", false);
+      } finally {
+        btnSaveProfile.disabled = false;
+      }
+    });
+
+    btnFillFromLastOrder?.addEventListener("click", async () => {
+      try {
+        btnFillFromLastOrder.disabled = true;
+        await fillFromLastOrder(user.uid);
+      } catch (e) {
+        console.error(e);
+        showProfileMsg("Não foi possível puxar do último pedido.", false);
+      } finally {
+        btnFillFromLastOrder.disabled = false;
+      }
+    });
+  }
 });

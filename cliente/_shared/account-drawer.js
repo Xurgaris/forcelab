@@ -44,7 +44,7 @@ function renderLoggedOut(){
           <span>→</span>
         </a>
 
-        <a class="acc-link" href="/cliente/cadastro/index.html/?mode=signup">
+        <a class="acc-link" href="/cliente/cadastro/index.html">
           <div>
             <strong>Criar conta</strong>
             <small>Leva menos de 1 minuto</small>

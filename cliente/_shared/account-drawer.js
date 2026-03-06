@@ -44,7 +44,7 @@ function renderLoggedOut(){
           <span>→</span>
         </a>
 
-        <a class="acc-link" href="/cliente/login/?mode=signup">
+        <a class="acc-link" href="/cliente/cadastro/index.html/?mode=signup">
           <div>
             <strong>Criar conta</strong>
             <small>Leva menos de 1 minuto</small>
@@ -86,7 +86,7 @@ function renderLoggedIn(user){
           <span>→</span>
         </a>
 
-        <a class="acc-link" href="/cliente/conta/config/">
+        <a class="acc-link" href="/cliente/conta/index.html">
           <div>
             <strong>Configurações</strong>
             <small>Dados e preferências</small>

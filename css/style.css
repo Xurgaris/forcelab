@@ -1560,8 +1560,15 @@ body {
   gap: 12px;
   margin-bottom: 16px;
 }
-.close-cart {
-  background: rgba(255, 255, 255, 0.05);
+
+#accTitle{
+background: none;
+border: none;
+color: #fff;
+}
+
+.close-cart, .btn-mini {
+  background: rgba(65, 37, 37, 0.05);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 12px;

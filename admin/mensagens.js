@@ -1,4 +1,8 @@
-// admin/mensagens.js
+import { requireAuth } from "./auth.js";
+import { loadSidebar } from "./sidebar-loader.js";
+await requireAuth();
+await loadSidebar("mensagens");
+
 import { db } from "../js/firebase.js";
 
 import {
@@ -8,6 +12,7 @@ import {
   orderBy,
   doc,
   updateDoc,
+  limit,
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 // ===== DOM =====
@@ -43,7 +48,6 @@ function escapeHtml(s) {
     .replaceAll("'", "&#039;");
 }
 
-// Pega campos mesmo que você tenha salvo com nomes diferentes
 function pickName(m) {
   return (
     m?.nome ??
@@ -96,7 +100,6 @@ function pickText(m) {
 }
 
 function isRead(m) {
-  // Aceita vários formatos: status, lido true/false, readAt...
   if (m?.status) return String(m.status).toLowerCase() === "lido";
   if (typeof m?.lido === "boolean") return m.lido === true;
   if (m?.readAt) return true;
@@ -106,40 +109,48 @@ function isRead(m) {
 function normalizePhoneBR(phone) {
   const digits = String(phone || "").replace(/\D/g, "");
   if (!digits) return "";
-  // wa.me aceita com DDI. Se já tem 55 ok, se não tiver, adiciona 55.
   return digits.startsWith("55") ? digits : `55${digits}`;
 }
 
 function getDateText(m) {
-  // createdAt pode ser Timestamp do Firestore (toDate)
-  // createdAtClient pode ser ISO string
   try {
     if (m?.createdAt?.toDate) {
       const d = m.createdAt.toDate();
       return d.toLocaleString("pt-BR");
     }
   } catch {}
+
   try {
     if (m?.createdAtClient) {
       const d = new Date(m.createdAtClient);
       if (!Number.isNaN(d.getTime())) return d.toLocaleString("pt-BR");
     }
   } catch {}
-  return "—";
-}
 
-function previewText(m, max = 36) {
-  const t = String(pickText(m) || "")
-    .trim()
-    .replace(/\s+/g, " ");
-  return t.length > max ? `${t.slice(0, max)}…` : t || "(sem conteúdo)";
+  return "—";
 }
 
 // ===== Fetch =====
 async function fetchMessages() {
-  // tenta ordenar por createdAt (se existir). Se não existir em alguns docs, ainda funciona, só pode vir ordem esquisita.
-  const q = query(collection(db, "contatos"), orderBy("createdAt", "desc"));
-  const snap = await getDocs(q);
+  let snap;
+
+  try {
+    const q = query(
+      collection(db, "contatos"),
+      orderBy("createdAt", "desc"),
+      limit(200)
+    );
+    snap = await getDocs(q);
+  } catch (e) {
+    const q2 = query(
+      collection(db, "contatos"),
+      orderBy("createdAtClient", "desc"),
+      limit(200)
+    );
+    snap = await getDocs(q2);
+  }
+
+  console.log("CONTATOS:", snap.size);
 
   const list = [];
   snap.forEach((d) => list.push({ id: d.id, ...d.data() }));
@@ -155,26 +166,23 @@ function renderList(rows) {
     return;
   }
 
-  msgList.innerHTML = rows
-    .map((m) => {
-      const nome = pickName(m) || "Sem nome";
-      const date = getDateText(m);
-      const badge = isRead(m)
-        ? `<span class="badge wait">lida</span>`
-        : `<span class="badge ok">nova</span>`;
+  msgList.innerHTML = rows.map((m) => {
+    const nome = pickName(m) || "Sem nome";
+    const date = getDateText(m);
+    const badge = isRead(m)
+      ? `<span class="badge wait">lida</span>`
+      : `<span class="badge ok">nova</span>`;
 
-      return `
-        <button class="msg-item" type="button" data-id="${escapeHtml(m.id)}">
-          <div class="msg-item-top">
-            <strong>${escapeHtml(nome)}</strong>
-            ${badge}
-          </div>
-          <div class="muted small">${escapeHtml(date)}</div>
-
-        </button>
-      `;
-    })
-    .join("");
+    return `
+      <button class="msg-item" type="button" data-id="${escapeHtml(m.id)}">
+        <div class="msg-item-top">
+          <strong>${escapeHtml(nome)}</strong>
+          ${badge}
+        </div>
+        <div class="muted small">${escapeHtml(date)}</div>
+      </button>
+    `;
+  }).join("");
 
   msgList.querySelectorAll("[data-id]").forEach((btn) => {
     btn.addEventListener("click", () => openMessage(btn.dataset.id));
@@ -182,9 +190,7 @@ function renderList(rows) {
 }
 
 function applyFilters() {
-  const q = String(msgSearch?.value || "")
-    .trim()
-    .toLowerCase();
+  const q = String(msgSearch?.value || "").trim().toLowerCase();
   const f = String(msgFilter?.value || "all");
 
   let rows = [...ALL];
@@ -195,6 +201,7 @@ function applyFilters() {
       const email = String(pickEmail(m) || "").toLowerCase();
       const whats = String(pickWhats(m) || "").toLowerCase();
       const text = String(pickText(m) || "").toLowerCase();
+
       return (
         nome.includes(q) ||
         email.includes(q) ||
@@ -216,7 +223,6 @@ function openMessage(id) {
 
   CURRENT_ID = id;
 
-  // mostra card e esconde tela vazia
   msgEmpty.hidden = true;
   msgCard.hidden = false;
 
@@ -233,19 +239,16 @@ function openMessage(id) {
   if (whats) metaParts.push(`WhatsApp: ${whats}`);
   metaParts.push(`Enviado: ${date}`);
   vMeta.textContent = metaParts.join(" • ");
- // garante que não exista snippet/preview dentro do card (só no vText)
-msgCard.querySelectorAll(".msg-preview, .msg-snippet, #vPreview, #vSnippet")
-  .forEach((el) => (el.textContent = ""));
 
-  // <<< Aqui garante que o texto vai pro “espaço da mensagem”
+  msgCard.querySelectorAll(".msg-preview, .msg-snippet, #vPreview, #vSnippet")
+    .forEach((el) => (el.textContent = ""));
+
   vText.textContent = texto;
   vText.style.whiteSpace = "pre-wrap";
 
-  // links
   btnMail.href = email ? `mailto:${email}` : "#";
   btnWhats.href = whats ? `https://wa.me/${normalizePhoneBR(whats)}` : "#";
 
-  // botão de lida
   const lida = isRead(m);
   btnMarkRead.disabled = lida;
   btnMarkRead.textContent = lida ? "Já está lida" : "Marcar como lida";
@@ -262,21 +265,17 @@ async function markAsRead() {
     btnMarkRead.disabled = true;
     btnMarkRead.textContent = "Salvando...";
 
-    // salva em um formato bem compatível
     await updateDoc(doc(db, "contatos", CURRENT_ID), {
       status: "lido",
       lido: true,
       readAtClient: new Date().toISOString(),
     });
 
-    // atualiza cache local
     m.status = "lido";
     m.lido = true;
     m.readAtClient = new Date().toISOString();
 
-    // re-render lista (pra badge mudar)
     applyFilters();
-
     btnMarkRead.textContent = "Já está lida";
   } catch (err) {
     console.error(err);

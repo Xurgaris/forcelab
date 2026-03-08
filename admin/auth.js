@@ -17,8 +17,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
   document.body.classList.add("auth-ok");
-  initPage();
-});
+  });
 
 // garante login + garante admin (admins/{uid})
 export function requireAuth() {

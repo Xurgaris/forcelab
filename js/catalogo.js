@@ -56,13 +56,7 @@ function matchAllTokens(haystack, q) {
 function renderChips(activeTag) {
   const base = [
     { label: "Todos", tag: "" },
-    { label: "Creatina", tag: "creatina" },
-    { label: "Proteínas", tag: "proteinas" },
-    { label: "Pré-treino", tag: "pre treino" },
-    { label: "Massa", tag: "massa" },
-    { label: "Força", tag: "forca" },
-    { label: "Energia", tag: "energia" },
-    { label: "Saúde", tag: "saude" },
+ 
   ];
 
   chipsWrap.innerHTML = "";

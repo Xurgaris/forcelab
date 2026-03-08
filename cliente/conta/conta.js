@@ -76,12 +76,14 @@ function getTabFromHash() {
 window.addEventListener("hashchange", () => {
   setActiveTab(getTabFromHash());
 
-  // se entrar em #pedidos e tiver filtro salvo, aplica
   if (location.hash === "#pedidos") {
     const saved = sessionStorage.getItem("ordersFilter") || "";
     if (saved) {
       setActiveStat(saved);
       applyOrdersFilter(saved);
+    } else {
+      setActiveStat("all");
+      applyOrdersFilter("all");
     }
   }
 });
@@ -106,14 +108,18 @@ function brl(v) {
   });
 }
 
-function formatFirestoreTimestamp(ts) {
-  if (!ts) return "—";
+// data: aceita createdAt (Timestamp Firestore) OU createdAtClient (string/iso)
+function formatOrderDate(data) {
   try {
-    const d = typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
-    return d.toLocaleString("pt-BR");
-  } catch {
-    return "—";
+    if (data?.createdAt && typeof data.createdAt.toDate === "function") {
+      return data.createdAt.toDate().toLocaleString("pt-BR");
+    }
+  } catch {}
+  if (data?.createdAtClient) {
+    const d = new Date(data.createdAtClient);
+    if (!isNaN(d.getTime())) return d.toLocaleString("pt-BR");
   }
+  return "—";
 }
 
 function paymentLabel(method) {
@@ -138,19 +144,13 @@ function statusLabel(orderStatus, mpStatus) {
   // seu status interno
   if (s === "aguardando_pagamento") return "AGUARDANDO";
   if (s === "pago") return "CONCLUÍDO";
-  if (s === "enviado") return "ENVIADO";
+  if (s === "enviado" || s === "shipped") return "ENVIADO";
   if (s === "entregue" || s === "delivered") return "FINALIZADO";
 
   return s ? s.toUpperCase() : "—";
 }
 
-/**
- * buckets para os cards
- * pending  = aguardando/pending/in_process
- * confirm  = aprovado/pago (separação)
- * shipped  = enviado
- * done     = entregue/finalizado
- */
+// buckets dos cards
 function bucketOrder(data) {
   const orderStatus = String(data?.status || "").toLowerCase();
   const mpStatus = String(data?.mp?.status || "").toLowerCase();
@@ -190,17 +190,61 @@ function applyOrdersFilter(filter) {
       !filter || filter === "all" || g === filter ? "" : "none";
   });
 }
+// ====== FILTRO POR BOTÕES (aba Meus pedidos) ======
+const ordersFilterHint = document.getElementById("ordersFilterHint");
+const btnClearOrdersFilter = document.getElementById("btnClearOrdersFilter");
+
+function labelFilter(f) {
+  if (f === "pending") return "Pendentes";
+  if (f === "confirm") return "Concluídos";
+  if (f === "shipped") return "Enviados";
+  if (f === "done") return "Finalizados";
+  return "Todos";
+}
+
+function setOrdersFilterUI(filter) {
+  document.querySelectorAll(".of-btn[data-of]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.of === filter);
+  });
+  if (ordersFilterHint)
+    ordersFilterHint.textContent = `Mostrando: ${labelFilter(filter)}`;
+}
+
+function setOrdersFilter(filter) {
+  if (!filter || filter === "all") {
+    sessionStorage.removeItem("ordersFilter");
+    setOrdersFilterUI("all");
+    applyOrdersFilter("all");
+    return;
+  }
+  sessionStorage.setItem("ordersFilter", filter);
+  setOrdersFilterUI(filter);
+  applyOrdersFilter(filter);
+}
+
+// clique nos botões
+document.addEventListener("click", (e) => {
+  const b = e.target.closest(".of-btn[data-of]");
+  if (!b) return;
+  setOrdersFilter(b.dataset.of);
+});
+
+// limpar
+btnClearOrdersFilter?.addEventListener("click", () => {
+  setOrdersFilter("all");
+});
 
 // clique nos cards (Pendentes / etc)
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".order-stats .stat[data-filter]");
   if (!btn) return;
 
-  const f = btn.dataset.filter; // pending|confirm|shipped|done
-  sessionStorage.setItem("ordersFilter", f);
-  setActiveStat(f);
+  const f = btn.dataset.filter; // pending|confirm|shipped|done|all
 
-  // abre aba pedidos e aplica filtro
+  if (f === "all") sessionStorage.removeItem("ordersFilter");
+  else sessionStorage.setItem("ordersFilter", f);
+
+  setActiveStat(f);
   location.hash = "#pedidos";
   setTimeout(() => applyOrdersFilter(f), 0);
 });
@@ -233,8 +277,8 @@ async function showOrderDetail(orderId) {
   }
 
   const data = snap.data();
-  const date = formatFirestoreTimestamp(data?.createdAt);
-  const total = data?.pricing?.total ?? 0;
+  const date = formatOrderDate(data);
+  const total = data?.pricing?.total ?? data?.total ?? 0;
   const pay = paymentLabel(data?.mp?.method);
   const st = statusLabel(data?.status, data?.mp?.status);
 
@@ -242,36 +286,31 @@ async function showOrderDetail(orderId) {
 
   const items = Array.isArray(data?.items) ? data.items : [];
   const itemsHtml = items
-    .map(
-      (it) => `
-      <div class="od-item">
-        <img src="${it?.image || "https://via.placeholder.com/80"}" alt="">
-        <div style="flex:1">
-          <strong>${it?.name || "Produto"}</strong><br/>
-          <small class="muted">${Number(it?.qty || 1)}x • ${brl(
-        it?.price || 0
-      )}</small>
+    .map((it) => {
+      const qty = Number(it?.qty || 1);
+      const price = Number(it?.price || 0);
+      const sub = it?.subtotal ?? price * qty;
+      return `
+        <div class="od-item">
+          <img src="${it?.image || "https://via.placeholder.com/80"}" alt="">
+          <div style="flex:1">
+            <strong>${it?.name || "Produto"}</strong><br/>
+            <small class="muted">${qty}x • ${brl(price)}</small>
+          </div>
+          <strong>${brl(sub)}</strong>
         </div>
-        <strong>${brl(
-          it?.subtotal ?? Number(it?.price || 0) * Number(it?.qty || 1)
-        )}</strong>
-      </div>
-    `
-    )
+      `;
+    })
     .join("");
 
   odBody.innerHTML = `
     <div class="od-kv"><span class="muted">Status</span><strong>${st}</strong></div>
     <div class="od-kv"><span class="muted">Pagamento</span><strong>${pay}</strong></div>
     <div class="od-kv"><span class="muted">Total</span><strong>${brl(total)}</strong></div>
-    <div class="od-kv"><span class="muted">Endereço</span><strong>${
-      data?.shipping?.endereco || "—"
-    }</strong></div>
+    <div class="od-kv"><span class="muted">Endereço</span><strong>${data?.shipping?.endereco || "—"}</strong></div>
 
     <h3 style="margin:14px 0 8px;">Itens</h3>
-    <div class="od-items">${
-      itemsHtml || `<p class="muted">Sem itens.</p>`
-    }</div>
+    <div class="od-items">${itemsHtml || `<p class="muted">Sem itens.</p>`}</div>
   `;
 }
 
@@ -330,16 +369,31 @@ async function saveUserProfile(uid, email) {
 }
 
 async function fillFromLastOrder(uid) {
-  const qLast = query(
-    collection(db, "orders"),
-    where("uid", "==", uid),
-    orderBy("createdAt", "desc"),
-    limit(1)
-  );
+  // tenta pelo createdAt (Timestamp). Se der erro de index/tipo, cai no createdAtClient.
+  let snap;
+  try {
+    const qLast = query(
+      collection(db, "orders"),
+      where("uid", "==", uid),
+      orderBy("createdAt", "desc"),
+      limit(1),
+    );
+    snap = await getDocs(qLast);
+  } catch (e) {
+    const qLast2 = query(
+      collection(db, "orders"),
+      where("uid", "==", uid),
+      orderBy("createdAtClient", "desc"),
+      limit(1),
+    );
+    snap = await getDocs(qLast2);
+  }
 
-  const snap = await getDocs(qLast);
-  if (snap.empty) {
-    return showProfileMsg("Você ainda não tem pedidos para puxar dados.", false);
+  if (!snap || snap.empty) {
+    return showProfileMsg(
+      "Você ainda não tem pedidos para puxar dados.",
+      false,
+    );
   }
 
   const data = snap.docs[0].data() || {};
@@ -350,7 +404,7 @@ async function fillFromLastOrder(uid) {
 
   showProfileMsg(
     "Dados puxados do último pedido. Agora clique em Salvar ✅",
-    true
+    true,
   );
 }
 
@@ -362,16 +416,27 @@ async function loadLastOrders(uid) {
 
   lastOrdersTbody.innerHTML = `<tr><td colspan="6" class="muted">Carregando pedidos…</td></tr>`;
 
-  const q = query(
-    collection(db, "orders"),
-    where("uid", "==", uid),
-    orderBy("createdAt", "desc"),
-    limit(5)
-  );
+  // tenta createdAt, cai pra createdAtClient
+  let snap;
+  try {
+    const q = query(
+      collection(db, "orders"),
+      where("uid", "==", uid),
+      orderBy("createdAt", "desc"),
+      limit(5),
+    );
+    snap = await getDocs(q);
+  } catch (e) {
+    const q2 = query(
+      collection(db, "orders"),
+      where("uid", "==", uid),
+      orderBy("createdAtClient", "desc"),
+      limit(5),
+    );
+    snap = await getDocs(q2);
+  }
 
-  const snap = await getDocs(q);
-
-  if (snap.empty) {
+  if (!snap || snap.empty) {
     lastOrdersTbody.innerHTML = `<tr><td colspan="6" class="muted">Você ainda não tem pedidos.</td></tr>`;
     return;
   }
@@ -381,8 +446,8 @@ async function loadLastOrders(uid) {
     const data = d.data();
     const orderId = d.id;
 
-    const total = data?.pricing?.total ?? 0;
-    const date = formatFirestoreTimestamp(data?.createdAt);
+    const total = data?.pricing?.total ?? data?.total ?? 0;
+    const date = formatOrderDate(data);
     const pay = paymentLabel(data?.mp?.method);
     const st = statusLabel(data?.status, data?.mp?.status);
 
@@ -404,16 +469,27 @@ async function loadAllOrders(uid) {
 
   allOrdersTbody.innerHTML = `<tr><td colspan="6" class="muted">Carregando pedidos…</td></tr>`;
 
-  const qAll = query(
-    collection(db, "orders"),
-    where("uid", "==", uid),
-    orderBy("createdAt", "desc"),
-    limit(50)
-  );
+  // tenta createdAt, cai pra createdAtClient
+  let snap;
+  try {
+    const qAll = query(
+      collection(db, "orders"),
+      where("uid", "==", uid),
+      orderBy("createdAt", "desc"),
+      limit(50),
+    );
+    snap = await getDocs(qAll);
+  } catch (e) {
+    const qAll2 = query(
+      collection(db, "orders"),
+      where("uid", "==", uid),
+      orderBy("createdAtClient", "desc"),
+      limit(50),
+    );
+    snap = await getDocs(qAll2);
+  }
 
-  const snap = await getDocs(qAll);
-
-  if (snap.empty) {
+  if (!snap || snap.empty) {
     allOrdersTbody.innerHTML = `<tr><td colspan="6" class="muted">Você ainda não tem pedidos.</td></tr>`;
     if (stPending) stPending.textContent = "0";
     if (stConfirm) stConfirm.textContent = "0";
@@ -422,13 +498,13 @@ async function loadAllOrders(uid) {
     return;
   }
 
+  // contadores
   let cPending = 0,
     cConfirm = 0,
     cShipped = 0,
     cDone = 0;
 
   allOrdersTbody.innerHTML = "";
-
   snap.forEach((d) => {
     const data = d.data();
     const orderId = d.id;
@@ -439,8 +515,8 @@ async function loadAllOrders(uid) {
     if (b === "shipped") cShipped++;
     if (b === "done") cDone++;
 
-    const total = data?.pricing?.total ?? 0;
-    const date = formatFirestoreTimestamp(data?.createdAt);
+    const total = data?.pricing?.total ?? data?.total ?? 0;
+    const date = formatOrderDate(data);
     const pay = paymentLabel(data?.mp?.method);
     const st = statusLabel(data?.status, data?.mp?.status);
 
@@ -454,6 +530,9 @@ async function loadAllOrders(uid) {
         <td><button class="btn btn-ghost btn-sm" type="button" data-view-order="${orderId}">Ver</button></td>
       </tr>
     `;
+    const saved = sessionStorage.getItem("ordersFilter") || "all";
+    setOrdersFilterUI(saved);
+    applyOrdersFilter(saved);
   });
 
   // counters
@@ -462,7 +541,7 @@ async function loadAllOrders(uid) {
   if (stShipped) stShipped.textContent = String(cShipped);
   if (stDone) stDone.textContent = String(cDone);
 
-  // aplica filtro salvo (uma vez, no final)
+  // aplica filtro salvo
   const saved = sessionStorage.getItem("ordersFilter") || "";
   if (saved) {
     setActiveStat(saved);
@@ -489,6 +568,7 @@ watchAuth(async (user) => {
   clientName.textContent = nome;
   clientHello.textContent = `Olá, ${nome}`;
 
+  // carrega tudo
   await loadLastOrders(user.uid);
   await loadAllOrders(user.uid);
   await loadUserProfile(user.uid, user.email);

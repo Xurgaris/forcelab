@@ -12,240 +12,497 @@
       type="image/x-icon"
     />
 
-    <style>
-      /* ====== LAYOUT CLIENTE (estilo print) ====== */
-    
+  <style>
+  /* ====== LAYOUT CLIENTE (responsivo melhorado) ====== */
 
-      .client-shell {
-        display: grid;
-        grid-template-columns: 290px 1fr;
-        min-height: 100vh;
-      }
+  .client-shell {
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    min-height: 100vh;
+  }
 
-      /* Sidebar */
-      .client-sidebar {
-        background: rgba(255, 255, 255, 0.04);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 18px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-      }
-      .client-sidebar-head {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        padding: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 14px;
-        background: rgba(0, 0, 0, 0.2);
-        margin-bottom: 14px;
-      }
-      .client-avatar {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        background: rgba(255, 0, 0, 0.15);
-        border: 1px solid rgba(255, 0, 0, 0.25);
-        font-size: 18px;
-      }
-      .client-user small {
-        display: block;
-        margin-top: 2px;
-      }
+  /* Sidebar */
+  .client-sidebar {
+    background: rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 18px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
-      .client-nav {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .client-nav-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 12px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.18);
-        color: #fff;
-        text-decoration: none;
-        cursor: pointer;
-        transition: 0.15s ease;
-        user-select: none;
-      }
-      .client-nav-item:hover {
-        background: rgba(255, 255, 255, 0.06);
-      }
-      .client-nav-item.active {
-        border-color: rgba(255, 0, 0, 0.35);
-        box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1) inset;
-        background: linear-gradient(
-          90deg,
-          rgba(255, 0, 0, 0.2),
-          rgba(0, 0, 0, 0.18)
-        );
-      }
-      .client-nav-divider {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.1);
-        margin: 8px 0;
-      }
-      .client-nav-item.danger {
-        background: rgba(255, 0, 0, 0.1);
-        border-color: rgba(255, 0, 0, 0.2);
-      }
+  .client-sidebar-head {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    margin-bottom: 14px;
+  }
 
-      /* Content */
-      .client-content {
-        padding: 24px;
-      }
-      .client-header {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 14px;
-        margin-bottom: 18px;
-        border-bottom: 2px solid rgba(255, 0, 0, 0.55);
-        padding-bottom: 14px;
-      }
-      .client-header h1 {
-        margin: 0;
-        font-size: 34px;
-      }
+  .client-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 0, 0, 0.15);
+    border: 1px solid rgba(255, 0, 0, 0.25);
+    font-size: 18px;
+    flex: 0 0 auto;
+  }
 
-      /* Tabs */
-      .client-tab {
-        display: none;
-      }
-      .client-tab.active {
-        display: block;
-      }
+  .client-user {
+    min-width: 0;
+  }
 
-      /* Cards */
-      .client-cards {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
-        margin: 16px 0 18px;
-      }
-      .client-card {
-        text-align: left;
-        padding: 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.04);
-        cursor: pointer;
-        transition: 0.15s ease;
-      }
-      .client-card:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 0, 0, 0.25);
-        transform: translateY(-1px);
-      }
-      .client-card-ico {
-        font-size: 22px;
-        display: inline-block;
-        margin-bottom: 10px;
-      }
+  .client-user strong,
+  .client-user small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-      /* Panel */
-      .client-panel {
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.18);
-        padding: 14px;
-      }
-      .client-panel-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 10px;
-      }
+  .client-user small {
+    margin-top: 2px;
+  }
 
-      /* Table */
-      .client-table-wrap {
-        overflow: auto;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      .client-table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 720px;
-      }
-      .client-table th,
-      .client-table td {
-        padding: 12px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        text-align: left;
-        white-space: nowrap;
-      }
+  .client-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-      @media (max-width: 980px) {
-        .client-shell {
-          grid-template-columns: 1fr;
-        }
-        .client-sidebar {
-          position: relative;
-          height: auto;
-        }
-        .client-cards {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-      /* ====== ORDER STATS (Pendentes / Enviados / Finalizados / A confirmar) ====== */
-.order-stats{
-  display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin: 16px 0 18px;
-}
+  .client-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.18);
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.15s ease;
+    user-select: none;
+    min-width: 0;
+  }
 
-.stat{
-  text-align:left;
-  padding: 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
-  cursor:pointer;
-  transition: .15s ease;
-  color:#fff;
-}
+  .client-nav-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
 
-.stat strong{
-  display:block;
-  font-size: 28px;
-  line-height: 1;
-  margin-bottom: 8px;
-}
+  .client-nav-item.active {
+    border-color: rgba(255, 0, 0, 0.35);
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1) inset;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.18)
+    );
+  }
 
-.stat span{
-  display:block;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
+  .client-nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+  }
 
-.stat:hover{
-  background: rgba(255,255,255,.06);
-  border-color: rgba(255,0,0,.25);
-  transform: translateY(-1px);
-}
+  .client-nav-item.danger {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 0, 0, 0.2);
+  }
 
-/* estado ativo (quando clicar no filtro) */
-.stat.active{
-  border-color: rgba(255,0,0,.38);
-  box-shadow: 0 0 0 2px rgba(255,0,0,.10) inset;
-  background: linear-gradient(90deg, rgba(255,0,0,.18), rgba(0,0,0,.18));
-}
+  /* Content */
+  .client-content {
+    padding: 24px;
+    min-width: 0;
+  }
 
-@media (max-width: 980px){
-  .order-stats{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-}
-    </style>
+  .client-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid rgba(255, 0, 0, 0.55);
+    padding-bottom: 14px;
+  }
+
+  .client-header h1 {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  /* Tabs */
+  .client-tab {
+    display: none;
+  }
+
+  .client-tab.active {
+    display: block;
+  }
+
+  /* Cards */
+  .client-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 16px 0 18px;
+  }
+
+  .client-card {
+    text-align: left;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: 0.15s ease;
+    min-width: 0;
+  }
+
+  .client-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 0, 0, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .client-card-ico {
+    font-size: 22px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  /* Panel */
+  .client-panel {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.18);
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .client-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    min-width: 0;
+  }
+
+  .client-panel-head h2,
+  .client-panel-head small {
+    min-width: 0;
+  }
+
+  /* Table */
+  .client-table-wrap {
+    overflow: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .client-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+  }
+
+  .client-table th,
+  .client-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  /* ====== ORDER STATS ====== */
+  .order-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 16px 0 18px;
+  }
+
+  .stat {
+    text-align: left;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: 0.15s ease;
+    color: #fff;
+    min-width: 0;
+  }
+
+  .stat strong {
+    display: block;
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat span {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .stat:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 0, 0, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .stat.active {
+    border-color: rgba(255, 0, 0, 0.38);
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1) inset;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.18),
+      rgba(0, 0, 0, 0.18)
+    );
+  }
+
+  /* filtros pedidos */
+  .orders-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .of-btn {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.15s ease;
+  }
+
+  .of-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 0, 0, 0.24);
+  }
+
+  .of-btn.active {
+    border-color: rgba(255, 0, 0, 0.35);
+    background: rgba(255, 0, 0, 0.14);
+  }
+
+  /* forms */
+  .client-form .field {
+    min-width: 0;
+  }
+
+  .client-form .field input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* ====== RESPONSIVO ====== */
+
+  @media (max-width: 1100px) {
+    .client-shell {
+      grid-template-columns: 240px 1fr;
+    }
+
+    .client-content {
+      padding: 18px;
+    }
+
+    .client-header h1 {
+      font-size: 30px;
+    }
+
+    .client-cards,
+    .order-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 980px) {
+    .client-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .client-sidebar {
+      position: relative;
+      top: auto;
+      height: auto;
+      overflow: visible;
+      border-right: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 14px;
+    }
+
+    .client-content {
+      padding: 16px;
+    }
+
+    .client-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .client-header h1 {
+      font-size: 28px;
+    }
+
+    .client-panel-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .client-cards,
+    .order-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 700px) {
+    .client-sidebar {
+      padding: 14px;
+    }
+
+    .client-sidebar-head {
+      padding: 10px;
+    }
+
+    .client-nav {
+      gap: 8px;
+    }
+
+    .client-nav-item {
+      padding: 11px 12px;
+    }
+
+    .client-content {
+      padding: 14px;
+    }
+
+    .client-header h1 {
+      font-size: 24px;
+    }
+
+    .client-panel {
+      padding: 12px;
+    }
+
+    .client-cards,
+    .order-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .orders-filters {
+      gap: 8px;
+    }
+
+    .of-btn {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .client-sidebar-head {
+      align-items: flex-start;
+    }
+
+    .client-avatar {
+      width: 40px;
+      height: 40px;
+      font-size: 17px;
+    }
+
+    .client-user strong,
+    .client-user small {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .client-header {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+    }
+
+    .client-header h1 {
+      font-size: 22px;
+    }
+
+    .client-panel-head > div[style*="display: flex"] {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+
+    .client-table {
+      min-width: 640px;
+    }
+
+    .stat {
+      padding: 14px;
+    }
+
+    .stat strong {
+      font-size: 24px;
+    }
+
+    .client-form [style*="display: flex"] {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+
+    .client-form [style*="display: flex"] .btn,
+    .client-form [style*="display: flex"] .btn-ghost {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .client-content {
+      padding: 12px;
+    }
+
+    .client-sidebar {
+      padding: 12px;
+    }
+
+    .client-sidebar-head {
+      gap: 10px;
+    }
+
+    .client-nav-item {
+      font-size: 14px;
+    }
+
+    .client-panel {
+      padding: 10px;
+    }
+
+    .client-table th,
+    .client-table td {
+      padding: 10px;
+      font-size: 13px;
+    }
+  }
+</style>
   </head>
 
   <body>
@@ -271,72 +528,109 @@
     </div>
 
     <style>
-      .order-drawer {
-        position: fixed;
-        inset: 0;
-        display: none;
-        z-index: 9999;
-      }
-      .order-drawer.open {
-        display: block;
-      }
-      .order-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.55);
-      }
-      .order-panel {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: min(520px, 92vw);
-        background: rgba(20, 20, 20, 0.98);
-        border-left: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 14px;
-        overflow: auto;
-      }
-      .order-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .order-body {
-        padding-top: 12px;
-      }
-      .od-items {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 10px;
-      }
-      .od-item {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        padding: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.04);
-      }
-      .od-item img {
-        width: 52px;
-        height: 52px;
-        object-fit: cover;
-        border-radius: 10px;
-        background: #111;
-      }
-      .od-kv {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 8px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      }
-    </style>
+  .order-drawer {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 9999;
+  }
+
+  .order-drawer.open {
+    display: block;
+  }
+
+  .order-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .order-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(520px, 92vw);
+    background: rgba(20, 20, 20, 0.98);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 14px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .order-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .order-body {
+    padding-top: 12px;
+  }
+
+  .od-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .od-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .od-item img {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #111;
+    flex: 0 0 auto;
+  }
+
+  .od-kv {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  @media (max-width: 560px) {
+    .order-panel {
+      width: 100vw;
+      padding: 12px;
+      border-left: 0;
+    }
+
+    .order-head {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .order-head .btn-mini {
+      width: 100%;
+    }
+
+    .od-item {
+      align-items: flex-start;
+    }
+
+    .od-kv {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+</style>
 
     <script>
       // fechar drawer
@@ -459,9 +753,55 @@
         <!-- TAB: PEDIDOS -->
         <div class="client-tab" id="tab-pedidos">
           <div class="client-panel">
-            <div class="client-panel-head">
-              <h2 style="margin: 0">Meus pedidos</h2>
-              
+            <div
+              class="client-panel-head"
+              style="flex-direction: column; align-items: flex-start; gap: 12px"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 12px;
+                  width: 100%;
+                "
+              >
+                <h2 style="margin: 0">Meus pedidos</h2>
+
+                <button
+                  class="btn btn-ghost btn-sm"
+                  type="button"
+                  id="btnClearOrdersFilter"
+                >
+                  Limpar filtro
+                </button>
+              </div>
+
+              <div
+                class="orders-filters"
+                role="tablist"
+                aria-label="Filtros de pedidos"
+              >
+                <button class="of-btn active" type="button" data-of="all">
+                  Todos
+                </button>
+                <button class="of-btn" type="button" data-of="pending">
+                  Pendentes
+                </button>
+                <button class="of-btn" type="button" data-of="confirm">
+                  Concluídos
+                </button>
+                <button class="of-btn" type="button" data-of="shipped">
+                  Enviados
+                </button>
+                <button class="of-btn" type="button" data-of="done">
+                  Finalizados
+                </button>
+              </div>
+
+              <small class="muted" id="ordersFilterHint"
+                >Mostrando: Todos</small
+              >
             </div>
 
             <div class="client-table-wrap">

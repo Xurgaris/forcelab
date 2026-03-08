@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Gerenciar Pedidos | ForceLab ADM</title>
+
+    <link rel="stylesheet" href="/admin/admin.css" />
+    <link rel="shortcut icon" href="../img/force-logo.png" type="image/x-icon" />
+
+    <style>
+      .admin-page { display: none; }
+      body.auth-ok .admin-page { display: block; }
+      body.auth-ok .admin-loading { display: none; }
+
+      .admin-loading{
+        min-height: 70vh;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        color: #fff;
+      }
+
+      .auth-lock .admin-page{ display:none !important; }
+      .auth-lock .admin-loading{ display:grid !important; }
+    </style>
+  </head>
+
+  <body>
+    <!-- Proteção -->
+    <script type="module" src="/admin/protect.js"></script>
+
+    <!-- Loader -->
+    <div class="admin-loading">
+      <div>
+        <strong>Carregando painel…</strong><br />
+        <small class="muted">Validando acesso</small>
+      </div>
+    </div>
+
+    <!-- Conteúdo real -->
+    <div class="admin-page">
+      <div class="admin">
+        <!-- Sidebar injetado -->
+        <div id="sidebar"></div>
+
+        <!-- Conteúdo -->
+        <main class="main">
+          <header class="mobilebar">
+            <button class="micon" id="openSidebar" type="button" aria-label="Abrir menu">☰</button>
+
+            <div class="mobilebar-title">
+              <strong id="pageTitle">Gerenciar Pedidos</strong>
+              <small class="muted">ForceLab ADM</small>
+            </div>
+          </header>
+
+          <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+          <header class="top">
+            <div>
+              <h2>Gerenciar Pedidos</h2>
+              <div class="muted">Atualize status e adicione código de rastreio.</div>
+            </div>
+
+            <div class="top-actions">
+              <div class="search">
+                <span style="opacity:.7">🔎</span>
+                <input id="ordersSearch" placeholder="Buscar por ID, nome, WhatsApp..." />
+              </div>
+
+              <select id="ordersStatus" title="Filtrar status">
+                <option value="">Todos</option>
+                <option value="aguardando_pagamento">Aguardando</option>
+                <option value="pago">Pago</option>
+                <option value="em_preparacao">Em preparação</option>
+                <option value="enviado">Enviado</option>
+                <option value="entregue">Entregue</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+
+              <button class="icon" id="btnRefreshOrders" type="button" title="Atualizar">⟲</button>
+            </div>
+          </header>
+
+          <section class="table">
+            <div class="table-head">
+              <h3>Pedidos</h3>
+              <small class="muted">Clique para editar status e rastreio</small>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pedido</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Rastreio</th>
+                    <th style="width:160px;text-align:right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTbody">
+                  <tr><td colspan="6" class="muted">Carregando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Modal editar -->
+          <div class="modal" id="orderModal" aria-hidden="true">
+            <div class="modal-backdrop" data-close="1"></div>
+
+            <div class="modal-card" role="dialog" aria-modal="true" aria-label="Editar pedido">
+              <div class="modal-head">
+                <div>
+                  <h3 id="oTitle">Pedido</h3>
+                  <small class="muted" id="oSub">—</small>
+                </div>
+                <button class="icon" type="button" data-close="1" aria-label="Fechar">✕</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="panel">
+                  <h4>Status e rastreio</h4>
+
+                  <div class="form-row">
+                    <div class="field">
+                      <label>Status</label>
+                      <select id="oStatus">
+                        <option value="aguardando_pagamento">Aguardando</option>
+                        <option value="pago">Pago</option>
+                        <option value="em_preparacao">Em preparação</option>
+                        <option value="enviado">Enviado</option>
+                        <option value="entregue">Entregue</option>
+                        <option value="cancelado">Cancelado</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label>Código de rastreio</label>
+                      <input id="oTracking" placeholder="Ex: BR123456789BR" />
+                    </div>
+                  </div>
+
+                  <div class="divider"></div>
+
+                  <div class="panel-actions" style="grid-template-columns:1fr 1fr">
+                    <button class="btn btn-primary" id="btnSaveOrder" type="button">Salvar</button>
+                    <button class="btn btn-ghost" data-close="1" type="button">Cancelar</button>
+                  </div>
+
+                  <small class="muted" id="oMsg"></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </main>
+      </div>
+
+      <!-- Sidebar + scripts (ordem correta) -->
+      <script type="module">
+        const mount = document.getElementById("sidebar");
+
+        const html = await fetch("/admin/sidebar.html").then((r) => r.text());
+        mount.innerHTML = html;
+
+        await import("/admin/ui.js");
+        await import("/admin/gerenciar-pedidos.js");
+      </script>
+    </div>
+  </body>
+</html>

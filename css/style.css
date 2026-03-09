@@ -1805,31 +1805,18 @@ color: #fff;
   pointer-events: auto;
 }
 .catalog-filters-panel {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: min(92vw, 380px);
   background:
     radial-gradient(
       900px 420px at 18% 12%,
-      rgba(255, 0, 0, 0.12),
+      rgba(255, 0, 0, 0.14),
       transparent 60%
     ),
-    linear-gradient(180deg, rgba(14, 14, 14, 0.98), rgba(7, 7, 7, 0.98));
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    -22px 0 70px rgba(0, 0, 0, 0.75),
-    -6px 0 22px rgba(255, 0, 0, 0.1);
-  border-radius: 18px 0 0 18px;
-  padding: 16px;
-  transform: translateX(18px);
-  opacity: 0.96;
-  transition:
-    transform 0.22s ease,
-    opacity 0.22s ease;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+    linear-gradient(
+      180deg,
+      rgba(16, 16, 16, 0.995),
+      rgba(6, 6, 6, 0.995)
+    );
+  opacity: 1;
 }
 .catalog-filters-overlay.open .catalog-filters-panel {
   transform: translateX(0);
@@ -1873,6 +1860,77 @@ color: #fff;
   min-width: 0;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    overflow: visible !important;
+  }
+
+  .mobile-menu {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    background: rgba(0, 0, 0, 0.96) !important;
+    backdrop-filter: blur(18px) saturate(1.2) !important;
+    opacity: 0;
+    pointer-events: none;
+    isolation: isolate;
+  }
+
+  .mobile-menu.open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-menu-inner {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: min(92vw, 380px) !important;
+    height: 100vh !important;
+    z-index: 1000000 !important;
+    background:
+      radial-gradient(
+        900px 420px at 18% 12%,
+        rgba(255, 0, 0, 0.14),
+        transparent 60%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(16, 16, 16, 0.995),
+        rgba(6, 6, 6, 0.995)
+      ) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+      -24px 0 80px rgba(0, 0, 0, 0.88),
+      -10px 0 24px rgba(255, 0, 0, 0.12) !important;
+    border-radius: 18px 0 0 18px !important;
+    padding: 16px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    transform: translateX(18px);
+    transition: transform 0.22s ease;
+  }
+
+  .mobile-menu.open .mobile-menu-inner {
+    transform: translateX(0) !important;
+  }
+
+  /* derruba o catálogo para trás quando o menu abre */
+  .catalog-hero,
+  .catalog-hero-inner,
+  .catalog-meta,
+  .catalog-grid,
+  .catalog-grid-wrap,
+  .catalog-controls,
+  .catalog-open-filters,
+  .catalog-filters-overlay,
+  .catalog-filters-panel {
+    position: relative;
+    z-index: 1 !important;
+  }
 }
 
 /* ===============================
@@ -2899,52 +2957,54 @@ main {
   }
 
   /* MOBILE MENU overlay + painel (consolidado + iOS safe) */
-  .mobile-menu {
-    display: block !important;
-    position: fixed !important;
-    inset: 0 !important;
-    background: rgba(0, 0, 0, 0.82);
-    backdrop-filter: blur(14px) saturate(1.2);
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.22s ease;
-    z-index: 99999 !important;
-  }
-  .mobile-menu.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .mobile-menu-inner {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: min(92vw, 380px);
+.mobile-menu {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(18px) saturate(1.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.22s ease;
+  z-index: 99999 !important;
+}
 
-    background:
-      radial-gradient(
-        900px 420px at 18% 12%,
-        rgba(255, 0, 0, 0.12),
-        transparent 60%
-      ),
-      linear-gradient(180deg, rgba(14, 14, 14, 0.98), rgba(7, 7, 7, 0.98));
+.mobile-menu.open {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-      -22px 0 70px rgba(0, 0, 0, 0.75),
-      -6px 0 22px rgba(255, 0, 0, 0.1);
-    border-radius: 18px 0 0 18px;
+.mobile-menu-inner {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: min(92vw, 380px);
 
-    padding: 16px;
-    transform: translateX(18px);
-    opacity: 0.98;
-    transition:
-      transform 0.22s ease,
-      opacity 0.22s ease;
+  background:
+    radial-gradient(
+      900px 420px at 18% 12%,
+      rgba(255, 0, 0, 0.14),
+      transparent 60%
+    ),
+    linear-gradient(180deg, rgba(16, 16, 16, 0.995), rgba(8, 8, 8, 0.995));
 
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    -22px 0 70px rgba(0, 0, 0, 0.82),
+    -6px 0 22px rgba(255, 0, 0, 0.12);
+  border-radius: 18px 0 0 18px;
+
+  padding: 16px;
+  transform: translateX(18px);
+  opacity: 1;
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease;
+
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
   .mobile-menu.open .mobile-menu-inner {
     transform: translateX(0);
     opacity: 1;
@@ -3173,26 +3233,37 @@ main {
   .catalog-hero {
     padding: 34px 0 18px;
   }
-  .catalog-meta {
+   .catalog-meta {
     position: sticky;
     top: 74px;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+      radial-gradient(
+        700px 220px at 18% 12%,
+        rgba(255, 0, 0, 0.10),
+        transparent 60%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(14, 14, 14, 0.96),
+        rgba(8, 8, 8, 0.96)
+      );
+    backdrop-filter: blur(16px) saturate(1.15);
+    border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 16px;
     padding: 10px 12px;
-    z-index: 5;
+    z-index: 20;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.42);
   }
-  .catalog-open-filters {
+ .catalog-open-filters {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     padding: 10px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.96);
     font-weight: 950;
     cursor: pointer;
     transition: 0.18s;
@@ -3904,77 +3975,6 @@ body::after {
     flex: 1 1 auto;
     text-align: center;
   }
-} /* =========================
-   MOBILE MENU (Blog header)
-========================= */
-.mobile-menu {
-  position: fixed;
-  inset: 0;
-  display: none;
-  z-index: 99999;
-}
-.mobile-menu.open {
-  display: block;
-}
-
-.mobile-menu-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-}
-
-.mobile-menu-panel {
-  position: absolute;
-  right: 14px;
-  top: 14px;
-  width: min(92vw, 360px);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(10, 10, 10, 0.96);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65);
-  overflow: hidden;
-}
-
-.mobile-menu-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.2);
-}
-.mobile-menu-links {
-  display: grid;
-  gap: 8px;
-  padding: 14px;
-}
-.mobile-menu-links a {
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.88);
-}
-.mobile-menu-links a.active {
-  border-color: rgba(255, 0, 0, 0.35);
-  background: rgba(255, 0, 0, 0.16);
-  color: #fff;
-}
-.mobile-menu-foot {
-  padding: 14px;
-  display: grid;
-  gap: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* só mostra botão de menu no mobile (se seu CSS já faz isso, pode ignorar) */
-@media (min-width: 980px) {
-  .mobile-menu {
-    display: none !important;
-  }
 }
 .nl-msg {
   display: block;
@@ -4530,3 +4530,4 @@ body.no-scroll{
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.65);z-index:9999}
 .modal.open{display:flex}
 .modal-card{width:min(520px,94vw);background:rgba(20,20,20,.95);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+

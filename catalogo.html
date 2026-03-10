@@ -82,39 +82,37 @@
       </div>
 
     </header>
-    <!-- MOBILE MENU (overlay) -->
-    <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
-      <div class="mobile-menu-inner">
+
+  <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+      <div class="mobile-menu-inner" role="dialog" aria-label="Menu mobile">
         <div class="mobile-menu-top">
           <strong>Menu</strong>
           <button class="mobile-close" type="button" aria-label="Fechar menu">
-            ✕
+            ✖
           </button>
         </div>
 
-        <div class="mobile-search">
+        <!-- (opcional) Search mobile - seu JS suporta -->
+       <!-- <div class="mobile-search">
           <input
-            type="search"
+            type="text"
             placeholder="Buscar produtos..."
             aria-label="Buscar produtos"
           />
-        </div>
+        </div>-->
 
-        <nav class="mobile-links" aria-label="Menu mobile">
-          <a href="catalogo.html">Catálogo</a>
+        <nav class="mobile-links" aria-label="Links do menu mobile">
+          <a href="catalogo.html">Categorias</a>
           <a href="catalogo.html?tag=creatina">Creatina</a>
           <a href="catalogo.html?tag=proteinas">Proteínas</a>
-          <a href="catalogo.html?tag=pre-treino">Pré-treino</a>
-          <a href="catalogo.html?tag=massa">Massa</a>
-          <a href="catalogo.html?tag=energia">Energia</a>
-          <a href="catalogo.html?tag=forca">Força</a>
-          <a href="catalogo.html?tag=saude">Saúde</a>
-          <a href="index.html#kits">Kits</a>
-          <a href="index.html#contato">Contato</a>
+          <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
+          <a href="./index.html#kits">Kits</a>
+          <a href="./index.html#blog">Blog</a>
+          <a href="./index.html#contato">Contato</a>
         </nav>
       </div>
     </div>
-
+    
     <main>
       <!-- HERO DO CATÁLOGO -->
       <section class="catalog-hero">

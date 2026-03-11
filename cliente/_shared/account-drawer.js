@@ -1,22 +1,22 @@
 import { watchAuth, logout } from "/cliente/_shared/auth.js";
 
-function toggleAccount(force){
+function toggleAccount(force) {
   const drawer = document.getElementById("accountDrawer");
-  if(!drawer) return;
+  if (!drawer) return;
 
-  const shouldOpen = typeof force === "boolean"
-    ? force
-    : !drawer.classList.contains("open");
+  const shouldOpen =
+    typeof force === "boolean" ? force : !drawer.classList.contains("open");
 
   drawer.classList.toggle("open", shouldOpen);
   drawer.setAttribute("aria-hidden", shouldOpen ? "false" : "true");
   document.body.classList.toggle("no-scroll", shouldOpen);
 }
 
-function setBadge(textOrNull){
+function setBadge(textOrNull) {
   const badge = document.getElementById("accBadge");
-  if(!badge) return;
-  if(textOrNull){
+  if (!badge) return;
+
+  if (textOrNull) {
     badge.style.display = "grid";
     badge.textContent = String(textOrNull);
   } else {
@@ -24,16 +24,16 @@ function setBadge(textOrNull){
   }
 }
 
-function renderLoggedOut(){
+function renderLoggedOut() {
   const body = document.getElementById("accBody");
   const title = document.getElementById("accTitle");
   const sub = document.getElementById("accSub");
 
-  if(title) title.textContent = "Bem-vindo";
-  if(sub) sub.textContent = "Entre para acompanhar seus pedidos";
+  if (title) title.textContent = "Bem-vindo";
+  if (sub) sub.textContent = "Entre para acompanhar seus pedidos";
   setBadge(null);
 
-  if(body){
+  if (body) {
     body.innerHTML = `
       <div class="acc-menu">
         <a class="acc-link" href="/cliente/login/">
@@ -56,18 +56,17 @@ function renderLoggedOut(){
   }
 }
 
-function renderLoggedIn(user){
+function renderLoggedIn(user) {
   const body = document.getElementById("accBody");
   const title = document.getElementById("accTitle");
   const sub = document.getElementById("accSub");
 
-  if(title) title.textContent = "Minha conta";
-  if(sub) sub.textContent = user?.email || "Conectado";
+  if (title) title.textContent = "Minha conta";
+  if (sub) sub.textContent = user?.email || "Conectado";
 
-  // badge opcional (exemplo: só mostra “•” quando logado)
   setBadge("•");
 
-  if(body){
+  if (body) {
     body.innerHTML = `
       <div class="acc-menu">
         <a class="acc-link" href="/cliente/conta/index.html#pedidos">
@@ -108,12 +107,20 @@ function renderLoggedIn(user){
   }
 }
 
-function bind(){
-  const btn = document.getElementById("accountBtn");
-  btn?.addEventListener("click", () => toggleAccount(true));
-
+function bind() {
   document.addEventListener("click", (e) => {
-    if (e.target.closest('[data-close="account"]')) toggleAccount(false);
+    const openBtn = e.target.closest("#accountBtn, [data-open-account]");
+    if (openBtn) {
+      e.preventDefault();
+      toggleAccount(true);
+      return;
+    }
+
+    const closeBtn = e.target.closest('[data-close="account"]');
+    if (closeBtn) {
+      e.preventDefault();
+      toggleAccount(false);
+    }
   });
 
   document.addEventListener("keydown", (e) => {
@@ -124,7 +131,7 @@ function bind(){
 bind();
 
 watchAuth((user) => {
-  if(user) renderLoggedIn(user);
+  if (user) renderLoggedIn(user);
   else renderLoggedOut();
 });
 

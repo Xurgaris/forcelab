@@ -9,126 +9,58 @@
       content="Conteúdo direto, prático e organizado para decisão de compra."
     />
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="shortcut icon" href="./img/force-logo.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/force-logo.png" type="image/x-icon" />
   </head>
 
   <body>
-    <!-- HEADER -->
-    <header class="topbar">
-      <div class="container topbar-inner">
-        <!-- Brand -->
-        <a class="brand" href="/index.html">
-          <div class="logo">
-            <h1>FORCE<span>LAB</span></h1>
-            <small>Nutrition</small>
-          </div>
-        </a>
+  <body data-page="blog">
+  <div id="siteHeaderMount"></div>
 
-        <!-- Main nav (desktop) -->
-        <nav class="nav" aria-label="Menu principal">
-          <div class="nav-dd">
-            <button
-              class="nav-dd-btn"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
+    <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+      <div class="mobile-menu-inner" role="dialog" aria-label="Menu mobile">
+        <div class="mobile-menu-top">
+          <strong>Menu</strong>
+
+          <button
+            class="mobile-top-account nav-account"
+            type="button"
+            aria-label="Abrir minha conta"
+            data-open-account
+          >
+            <svg
+              class="acc-ico"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
             >
-              Categorias
-              <svg
-                class="chev"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  d="M6 9l6 6 6-6"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </button>
-
-            <div class="nav-dd-menu" role="menu" aria-label="Categorias">
-              <a role="menuitem" href="/catalogo.html?tag=forca">Força</a>
-              <a role="menuitem" href="/catalogo.html?tag=energia">Energia</a>
-              <a role="menuitem" href="/catalogo.html?tag=massa">Massa</a>
-              <a role="menuitem" href="/catalogo.html?tag=saude">Saúde</a>
-              <div class="sep"></div>
-              <a role="menuitem" href="/catalogo.html">Ver catálogo completo</a>
-            </div>
-          </div>
-
-          <a href="/catalogo.html?tag=creatina">Creatina</a>
-          <a href="/catalogo.html?tag=proteinas">Proteínas</a>
-          <a href="/catalogo.html?tag=pre-treino">Pré-Treino</a>
-          <a href="/index.html#kits">Kits</a>
-          <a href="/blog.html" class="active">Blog</a>
-        </nav>
-
-        <!-- Actions -->
-        <div class="topbar-actions">
-          <!-- Menu (mobile) -->
-          <button
-            class="menu-btn"
-            id="menuBtn"
-            type="button"
-            aria-label="Abrir menu"
-            aria-controls="mobileMenu"
-            aria-expanded="false"
-          >
-            <span class="sr-only">Abrir menu</span>
-          </button>
-
-          <!-- Cart -->
-          <button
-            class="cart-ico-btn"
-            type="button"
-            onclick="toggleCart()"
-            aria-label="Abrir carrinho"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
               <path
-                d="M6 6h15l-2 9H7L6 6z"
+                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2-8 4.5V21h16v-2.5C20 16 16.42 14 12 14Z"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linejoin="round"
               />
-              <path
-                d="M6 6L5 3H2"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-              <path
-                d="M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              />
             </svg>
-            <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
+          </button>
+
+          <button class="mobile-close" type="button" aria-label="Fechar menu">
+            ✖
           </button>
         </div>
-      </div>
 
         <nav class="mobile-links" aria-label="Links do menu mobile">
-          <a href="catalogo.html">Categorias</a>
-          <a href="catalogo.html?tag=creatina">Creatina</a>
-          <a href="catalogo.html?tag=proteinas">Proteínas</a>
-          <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
-          <a href="./index.html#kits">Kits</a>
-          <a href="./index.html#blog">Blog</a>
-          <a href="./index.html#contato">Contato</a>
+          <a href="/catalogo.html">Categorias</a>
+          <a href="/catalogo.html?tag=creatina">Creatina</a>
+          <a href="/catalogo.html?tag=proteinas">Proteínas</a>
+          <a href="/catalogo.html?tag=pre-treino">Pré-Treino</a>
+          <a href="/index.html#kits">Kits</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/index.html#contato">Contato</a>
         </nav>
+      </div>
+    </div>
 
-    </header>
-
-    <!-- MAIN -->
     <main class="container" style="padding: 28px 0">
       <section class="blog-hero">
         <div>
@@ -172,61 +104,50 @@
           <p class="muted">Guias rápidos, estratégias e comparativos.</p>
         </div>
 
-        <!-- ✅ Aqui os cards entram via /js/blog.js -->
         <div class="blog-grid" id="blogGrid"></div>
-
         <div class="blog-pagination" id="blogPager"></div>
       </section>
     </main>
 
-    <!-- FOOTER -->
     <footer class="site-footer">
       <div class="container">
         <small class="muted">© ForceLab Nutrition — Blog</small>
       </div>
     </footer>
 
-    <!-- ✅ CART DRAWER (tem que ficar ANTES dos scripts) -->
-    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
-      <div class="cart-overlay" data-close="cart"></div>
+    <div
+      id="cartOverlay"
+      class="cart-overlay"
+      aria-hidden="true"
+      onclick="toggleCart(false)"
+    ></div>
 
-      <aside class="cart-panel" role="dialog" aria-label="Carrinho">
-        <header class="cart-head">
-          <strong>Seu carrinho</strong>
-          <button class="btn-mini ghost" type="button" data-close="cart">
+    <div id="accountDrawer" class="acc-drawer" aria-hidden="true">
+      <div class="acc-overlay" data-close="account" aria-hidden="true"></div>
+
+      <aside class="acc-panel" role="dialog" aria-label="Conta">
+        <header class="acc-head">
+          <div class="acc-user">
+            <div class="acc-avatar" aria-hidden="true">👤</div>
+            <div>
+              <button id="accTitle">Minha conta</button>
+              <small id="accSub" class="muted"
+                >Entrar para acompanhar pedidos</small
+              >
+            </div>
+          </div>
+
+          <button class="btn-mini ghost" type="button" data-close="account">
             Fechar
           </button>
         </header>
 
-        <div class="cart-body">
-          <div class="cart-items" id="cartItems"></div>
-
-          <div class="divider"></div>
-
-          <div class="cart-summary">
-            <div class="kv">
-              <span>Subtotal</span>
-              <strong id="cartSubtotal">R$ 0,00</strong>
-            </div>
-            <div class="kv total">
-              <span>Total</span>
-              <strong id="cartTotal">R$ 0,00</strong>
-            </div>
-          </div>
-        </div>
-
-        <footer class="cart-foot">
-          <a class="btn btn-ghost" href="/cart.html">Ver carrinho</a>
-          <button class="btn btn-primary" type="button" id="btnCheckout">
-            Finalizar no WhatsApp
-          </button>
-        </footer>
+        <div class="acc-body" id="accBody"></div>
       </aside>
     </div>
-
-    <!-- ✅ Scripts (sempre por último) -->
-    <script src="/js/ui.js"></script>
+    <script src="/js/header-component.js"></script>
     <script src="/js/cart.js"></script>
+    <script src="/js/header.js"></script>
     <script type="module" src="/js/blog.js"></script>
     <script type="module" src="/cliente/_shared/account-drawer.js"></script>
   </body>

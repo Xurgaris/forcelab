@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Artigo | ForceLab</title>
     <meta name="description" content="Leia o artigo no blog da ForceLab." />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="shortcut icon" href="./img/force-logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="shortcut icon" href="/img/force-logo.png" type="image/x-icon" />
   </head>
 
   <body>
-    <!-- HEADER (igual ao blog, pode colar o mesmo) -->
+    <!-- HEADER -->
     <header class="topbar">
       <div class="container topbar-inner">
-        <a class="brand" href="index.html">
+        <a class="brand" href="/index.html">
           <div class="logo">
             <h1>FORCE<span>LAB</span></h1>
             <small>Nutrition</small>
@@ -47,21 +47,54 @@
             </button>
 
             <div class="nav-dd-menu" role="menu" aria-label="Categorias">
-              <a role="menuitem" href="catalogo.html?tag=forca">Força</a>
-              <a role="menuitem" href="catalogo.html?tag=energia">Energia</a>
-              <a role="menuitem" href="catalogo.html?tag=massa">Massa</a>
-              <a role="menuitem" href="catalogo.html?tag=saude">Saúde</a>
+              <a role="menuitem" href="/catalogo.html?tag=forca">Força</a>
+              <a role="menuitem" href="/catalogo.html?tag=energia">Energia</a>
+              <a role="menuitem" href="/catalogo.html?tag=massa">Massa</a>
+              <a role="menuitem" href="/catalogo.html?tag=saude">Saúde</a>
               <div class="sep"></div>
-              <a role="menuitem" href="catalogo.html">Ver catálogo completo</a>
+              <a role="menuitem" href="/catalogo.html">Ver catálogo completo</a>
             </div>
           </div>
 
-          <a href="catalogo.html?tag=creatina">Creatina</a>
-          <a href="catalogo.html?tag=proteinas">Proteínas</a>
-          <a href="catalogo.html?tag=pre-treino">Pré-Treino</a>
-          <a href="index.html#kits">Kits</a>
-          <a href="blog.html" class="active">Blog</a>
+          <a href="/catalogo.html?tag=creatina">Creatina</a>
+          <a href="/catalogo.html?tag=proteinas">Proteínas</a>
+          <a href="/catalogo.html?tag=pre-treino">Pré-Treino</a>
+          <a href="/index.html#kits">Kits</a>
+          <a href="/blog.html" class="active">Blog</a>
         </nav>
+
+        <!-- PERFIL DESKTOP -->
+        <button
+          id="accountBtn"
+          class="nav-account nav-account-desktop"
+          type="button"
+          aria-label="Conta"
+          aria-haspopup="true"
+        >
+          <svg
+            class="acc-ico"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2-8 4.5V21h16v-2.5C20 16 16.42 14 12 14Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <span
+            id="accBadge"
+            class="acc-badge"
+            aria-hidden="true"
+            style="display: none"
+            >!</span
+          >
+        </button>
 
         <div class="topbar-actions">
           <button
@@ -75,67 +108,56 @@
             <span class="sr-only">Abrir menu</span>
           </button>
 
+        
+        </div>
+      </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+      <div class="mobile-menu-inner" role="dialog" aria-label="Menu mobile">
+        <div class="mobile-menu-top">
+          <strong>Menu</strong>
+
           <button
-            class="cart-ico-btn"
+            class="mobile-top-account nav-account"
             type="button"
-            onclick="toggleCart()"
-            aria-label="Abrir carrinho"
+            aria-label="Abrir minha conta"
+            data-open-account
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <svg
+              class="acc-ico"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path
-                d="M6 6h15l-2 9H7L6 6z"
+                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2-8 4.5V21h16v-2.5C20 16 16.42 14 12 14Z"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linejoin="round"
               />
-              <path
-                d="M6 6L5 3H2"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-              <path
-                d="M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              />
             </svg>
-            <span class="cart-count-pill">(<span id="cartCount">0</span>)</span>
+          </button>
+
+          <button class="mobile-close" type="button" aria-label="Fechar menu">
+            ✖
           </button>
         </div>
+
+        <nav class="mobile-links" aria-label="Links do menu mobile">
+          <a href="/catalogo.html">Categorias</a>
+          <a href="/catalogo.html?tag=creatina">Creatina</a>
+          <a href="/catalogo.html?tag=proteinas">Proteínas</a>
+          <a href="/catalogo.html?tag=pre-treino">Pré-Treino</a>
+          <a href="/index.html#kits">Kits</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/index.html#contato">Contato</a>
+        </nav>
       </div>
-
-      <!-- MOBILE MENU (se já usa no blog, pode colar o mesmo) -->
-      <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-        <div class="mobile-menu-overlay" data-close="menu"></div>
-
-        <div class="mobile-menu-panel" role="dialog" aria-label="Menu">
-          <div class="mobile-menu-head">
-            <strong>Menu</strong>
-            <button class="btn-mini ghost" type="button" data-close="menu">
-              Fechar
-            </button>
-          </div>
-
-          <div class="mobile-menu-links">
-            <a href="catalogo.html">Catálogo</a>
-            <a href="catalogo.html?tag=creatina">Creatina</a>
-            <a href="catalogo.html?tag=proteinas">Proteínas</a>
-            <a href="catalogo.html?tag=pre-treino">Pré-treino</a>
-            <a href="index.html#kits">Kits</a>
-            <a href="blog.html" class="active">Blog</a>
-          </div>
-
-          <div class="mobile-menu-foot">
-            <a class="btn btn-primary" href="catalogo.html">Ver produtos</a>
-            <a class="btn btn-ghost" href="cart.html">Ir para o carrinho</a>
-          </div>
-        </div>
-      </div>
-    </header>
+    </div>
 
     <main class="container" style="padding: 28px 0">
       <!-- topo do artigo -->
@@ -172,8 +194,8 @@
             <div class="divider"></div>
 
             <div class="side-actions">
-              <a class="btn btn-primary" href="catalogo.html">Ver produtos</a>
-              <a class="btn btn-ghost" href="blog.html">Voltar ao blog</a>
+              <a class="btn btn-primary" href="/catalogo.html">Ver produtos</a>
+              <a class="btn btn-ghost" href="/blog.html">Voltar ao blog</a>
             </div>
           </div>
 
@@ -184,7 +206,6 @@
         </aside>
       </section>
 
-      <!-- relacionados em grid -->
       <section
         class="section"
         style="padding-top: 22px"
@@ -205,200 +226,44 @@
       </div>
     </footer>
 
-    <!-- CSS do artigo (pode ir pro style.css também) -->
-    <style>
-      .post-hero {
-        border-radius: 22px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
-        padding: 18px;
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 14px;
-        align-items: center;
-        margin-bottom: 14px;
-      }
-      .post-hero h1 {
-        font-size: clamp(26px, 2.8vw, 40px);
-        font-weight: 950;
-        letter-spacing: 0.2px;
-        line-height: 1.1;
-      }
-      .post-hero p {
-        margin-top: 10px;
-        color: rgba(255, 255, 255, 0.78);
-        font-weight: 800;
-        line-height: 1.45;
-        max-width: 70ch;
-      }
-      .post-hero .meta {
-        margin-top: 10px;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: 850;
-        font-size: 12px;
-      }
-      .post-hero .dot {
-        opacity: 0.6;
-      }
-      .post-hero .cover {
-        border-radius: 18px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.25);
-        aspect-ratio: 16/10;
-      }
-      .post-hero .cover img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
+    <!-- CART OVERLAY -->
+    <div
+      id="cartOverlay"
+      class="cart-overlay"
+      aria-hidden="true"
+      onclick="toggleCart(false)"
+    ></div>
 
-      .post-layout {
-        display: grid;
-        grid-template-columns: 1fr 360px;
-        gap: 14px;
-        align-items: start;
-      }
+   
+    <!-- ACCOUNT DRAWER -->
+    <div id="accountDrawer" class="acc-drawer" aria-hidden="true">
+      <div class="acc-overlay" data-close="account" aria-hidden="true"></div>
 
-      .post-content {
-        border-radius: 22px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
-        padding: 18px;
-        min-width: 0;
-      }
+      <aside class="acc-panel" role="dialog" aria-label="Conta">
+        <header class="acc-head">
+          <div class="acc-user">
+            <div class="acc-avatar" aria-hidden="true">👤</div>
+            <div>
+              <button id="accTitle">Minha conta</button>
+              <small id="accSub" class="muted"
+                >Entrar para acompanhar pedidos</small
+              >
+            </div>
+          </div>
 
-      .post-content h2 {
-        margin-top: 18px;
-        font-size: 18px;
-        font-weight: 950;
-      }
-      .post-content p {
-        margin-top: 10px;
-        color: rgba(255, 255, 255, 0.8);
-        font-weight: 800;
-        line-height: 1.65;
-      }
-      .post-content ul {
-        margin-top: 10px;
-        padding-left: 18px;
-        color: rgba(255, 255, 255, 0.8);
-        font-weight: 800;
-        line-height: 1.65;
-      }
-      .post-content li {
-        margin: 6px 0;
-      }
+          <button class="btn-mini ghost" type="button" data-close="account">
+            Fechar
+          </button>
+        </header>
 
-      .post-side {
-        min-width: 0;
-      }
-      .side-card {
-        border-radius: 22px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
-        padding: 14px;
-        margin-bottom: 14px;
-      }
-      .side-card h3 {
-        font-weight: 950;
-        font-size: 14px;
-        margin-bottom: 10px;
-        color: rgba(255, 255, 255, 0.86);
-      }
-      .side-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .related-mini {
-        display: grid;
-        gap: 10px;
-      }
-      .mini {
-        display: grid;
-        grid-template-columns: 56px 1fr;
-        gap: 10px;
-        align-items: center;
-        padding: 10px;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background: rgba(0, 0, 0, 0.22);
-      }
-      .mini img {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
-        object-fit: cover;
-        display: block;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      .mini strong {
-        display: block;
-        font-weight: 950;
-        line-height: 1.15;
-      }
-      .mini small {
-        display: block;
-        margin-top: 4px;
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: 800;
-        font-size: 12px;
-      }
-
-      @media (max-width: 980px) {
-        .post-hero {
-          grid-template-columns: 1fr;
-        }
-        .post-layout {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-
-    <!-- CART DRAWER (global) -->
-<div class="cart-drawer" id="cartDrawer" aria-hidden="true">
-  <div class="cart-overlay" data-close="cart"></div>
-
-  <aside class="cart-panel" role="dialog" aria-label="Carrinho">
-    <header class="cart-head">
-      <strong>Seu carrinho</strong>
-      <button class="btn-mini ghost" type="button" data-close="cart">Fechar</button>
-    </header>
-
-    <div class="cart-body">
-      <div class="cart-items" id="cartItems"></div>
-
-      <div class="divider"></div>
-
-      <div class="cart-summary">
-        <div class="kv">
-          <span>Subtotal</span>
-          <strong id="cartSubtotal">R$ 0,00</strong>
-        </div>
-        <div class="kv total">
-          <span>Total</span>
-          <strong id="cartTotal">R$ 0,00</strong>
-        </div>
-      </div>
+        <div class="acc-body" id="accBody"></div>
+      </aside>
     </div>
 
-    <footer class="cart-foot">
-      <a class="btn btn-ghost" href="cart.html">Ver carrinho</a>
-      <button class="btn btn-primary" type="button" id="btnCheckout">
-        Finalizar no WhatsApp
-      </button>
-    </footer>
-  </aside>
-</div>
-
-   <script></script>
+    <!-- Scripts -->
+    <script src="/js/cart.js"></script>
+    <script src="/js/header.js"></script>
     <script type="module" src="/js/artigo.js"></script>
-    <script type="module" src="/js/cart.js"></script>
     <script type="module" src="/cliente/_shared/account-drawer.js"></script>
   </body>
 </html>

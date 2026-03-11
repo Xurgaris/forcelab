@@ -196,7 +196,7 @@ const btnClearOrdersFilter = document.getElementById("btnClearOrdersFilter");
 
 function labelFilter(f) {
   if (f === "pending") return "Pendentes";
-  if (f === "confirm") return "Concluídos";
+  if (f === "confirm") return "Separação";
   if (f === "shipped") return "Enviados";
   if (f === "done") return "Finalizados";
   return "Todos";

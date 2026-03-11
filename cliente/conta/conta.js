@@ -143,7 +143,7 @@ function statusLabel(orderStatus, mpStatus) {
 
   // seu status interno
   if (s === "aguardando_pagamento") return "AGUARDANDO";
-  if (s === "pago") return "CONCLUÍDO";
+  if (s === "pago") return "Em separação";
   if (s === "enviado" || s === "shipped") return "ENVIADO";
   if (s === "entregue" || s === "delivered") return "FINALIZADO";
 
@@ -196,7 +196,7 @@ const btnClearOrdersFilter = document.getElementById("btnClearOrdersFilter");
 
 function labelFilter(f) {
   if (f === "pending") return "Pendentes";
-  if (f === "confirm") return "Separação";
+  if (f === "confirm") return "Em Separação";
   if (f === "shipped") return "Enviados";
   if (f === "done") return "Finalizados";
   return "Todos";
